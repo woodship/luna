@@ -10,22 +10,24 @@
 
 package org.woodship.luna;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
+import org.apache.commons.lang.StringUtils;
 import org.woodship.luna.data.DataProvider;
 import org.woodship.luna.data.Generator;
 import org.woodship.luna.data.MyConverterFactory;
+import org.woodship.luna.security.Resource;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.Transferable;
-import com.vaadin.event.dd.DragAndDropEvent;
-import com.vaadin.event.dd.DropHandler;
-import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -33,7 +35,6 @@ import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.AbstractSelect.AcceptItem;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -41,7 +42,6 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.DragAndDropWrapper;
-import com.vaadin.ui.DragAndDropWrapper.DragStartMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
@@ -53,6 +53,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.Tree;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -71,17 +72,7 @@ public class DashboardUI extends UI {
     CssLayout menu = new CssLayout();
     CssLayout content = new CssLayout();
 
-    HashMap<String, Class<? extends View>> routes = new HashMap<String, Class<? extends View>>() {
-        {
-            put("/dashboard", DashboardView.class);
-            put("/sales", SalesView.class);
-            put("/transactions", TransactionsView.class);
-            put("/reports", ReportsView.class);
-            put("/schedule", ScheduleView.class);
-        }
-    };
 
-    HashMap<String, Button> viewNameToMenuButton = new HashMap<String, Button>();
 
     private Navigator nav;
 
@@ -214,19 +205,24 @@ public class DashboardUI extends UI {
         loginLayout.setComponentAlignment(loginPanel, Alignment.MIDDLE_CENTER);
     }
 
-    private void buildMainView() {
+    @SuppressWarnings("serial")
+	private void buildMainView() {
 
         nav = new Navigator(this, content);
 
         //添加各视图到nav中
-        for (String route : routes.keySet()) {
-            nav.addView(route, routes.get(route));
+        for (Resource rootRes : Resource.getDemoResoures()) {
+        	for(Resource res : rootRes.getChildren()){
+        		nav.addView(res.getPath(), res.getViewClass());
+        	}
         }
 
         helpManager.closeAll();
         removeStyleName("login");
         root.removeComponent(loginLayout);
 
+        
+        //左侧菜单视图
         root.addComponent(new HorizontalLayout() {
             {
                 setSizeFull();
@@ -238,7 +234,7 @@ public class DashboardUI extends UI {
                         setWidth(null);
                         setHeight("100%");
 
-                        // Branding element
+                        // 顶部
                         addComponent(new CssLayout() {
                             {
                                 addStyleName("branding");
@@ -253,11 +249,11 @@ public class DashboardUI extends UI {
                             }
                         });
 
-                        // Main menu
+                        // 中间主菜单区域
                         addComponent(menu);
                         setExpandRatio(menu, 1);
 
-                        // User menu
+                        // 底部用户设置区域
                         addComponent(new VerticalLayout() {
                             {
                                 setSizeUndefined();
@@ -306,7 +302,7 @@ public class DashboardUI extends UI {
                         });
                     }
                 });
-                // Content
+                // 右侧内容区
                 addComponent(content);
                 content.setSizeFull();
                 content.addStyleName("view-content");
@@ -316,59 +312,33 @@ public class DashboardUI extends UI {
         });
 
         menu.removeAllComponents();
-
-        for (final String view : new String[] { "dashboard", "sales",
-                "transactions", "reports", "schedule" }) {
-            Button b = new NativeButton(view.substring(0, 1).toUpperCase()
-                    + view.substring(1).replace('-', ' '));
-            b.addStyleName("icon-" + view);
-            b.addClickListener(new ClickListener() {
-                @Override
-                public void buttonClick(ClickEvent event) {
-                    clearMenuSelection();
-                    event.getButton().addStyleName("selected");
-                    if (!nav.getState().equals("/" + view))
-                        nav.navigateTo("/" + view);
-                }
-            });
-
-            if (view.equals("reports")) {
-                // Add drop target to reports button
-                DragAndDropWrapper reports = new DragAndDropWrapper(b);
-                reports.setDragStartMode(DragStartMode.NONE);
-                reports.setDropHandler(new DropHandler() {
-
-                    @Override
-                    public void drop(DragAndDropEvent event) {
-                        clearMenuSelection();
-                        viewNameToMenuButton.get("/reports").addStyleName(
-                                "selected");
-                        autoCreateReport = true;
-                        items = event.getTransferable();
-                        nav.navigateTo("/reports");
-                    }
-
-                    @Override
-                    public AcceptCriterion getAcceptCriterion() {
-                        return AcceptItem.ALL;
-                    }
-
-                });
-                menu.addComponent(reports);
-                menu.addStyleName("no-vertical-drag-hints");
-                menu.addStyleName("no-horizontal-drag-hints");
-            } else {
-                menu.addComponent(b);
-            }
-
-            viewNameToMenuButton.put("/" + view, b);
+        Tree tree = new Tree();
+        menu.addComponent(tree);
+        //构建菜单
+        for (final Resource model : Resource.getDemoResoures()) {
+        	tree.addItem(model);
+        	tree.expandItem(model);
+        	for(Resource app : model.getChildren()){
+        		tree.addItem(app);
+        		tree.setParent(app,model);
+        		tree.setChildrenAllowed(app, false);
+        	}
         }
+        
+        //增加点击事件
+        tree.addItemClickListener(new ItemClickListener() {
+			@Override
+			public void itemClick(ItemClickEvent event) {
+				Resource res =  (Resource) event.getItemId();
+				if (StringUtils.isNotBlank(res.getPath()) 
+						& !nav.getState().equals( res.getPath()))//不是当前视图时，切换视图
+					nav.navigateTo(res.getPath());
+			}
+		});
+        
         menu.addStyleName("menu");
         menu.setHeight("100%");
 
-        viewNameToMenuButton.get("/dashboard").setHtmlContentAllowed(true);
-        viewNameToMenuButton.get("/dashboard").setCaption(
-                "Dashboard<span class=\"badge\">2</span>");
 
         String f = Page.getCurrent().getUriFragment();
         if (f != null && f.startsWith("!")) {
@@ -380,8 +350,8 @@ public class DashboardUI extends UI {
             helpManager.showHelpFor(DashboardView.class);
         } else {
             nav.navigateTo(f);
-            helpManager.showHelpFor(routes.get(f));
-            viewNameToMenuButton.get(f).addStyleName("selected");
+            //TODO showHelpFor 老崔
+           // helpManager.showHelpFor(routes.get(f));
         }
 
         nav.addViewChangeListener(new ViewChangeListener() {
@@ -420,15 +390,6 @@ public class DashboardUI extends UI {
         }
     }
 
-    void updateReportsButtonBadge(String badgeCount) {
-        viewNameToMenuButton.get("/reports").setHtmlContentAllowed(true);
-        viewNameToMenuButton.get("/reports").setCaption(
-                "Reports<span class=\"badge\">" + badgeCount + "</span>");
-    }
-
-    void clearDashboardButtonBadge() {
-        viewNameToMenuButton.get("/dashboard").setCaption("Dashboard");
-    }
 
     boolean autoCreateReport = false;
     Table transactions;
@@ -438,11 +399,18 @@ public class DashboardUI extends UI {
         autoCreateReport = true;
         nav.navigateTo("/reports");
         clearMenuSelection();
-        viewNameToMenuButton.get("/reports").addStyleName("selected");
     }
 
     HelpManager getHelpManager() {
         return helpManager;
     }
+
+	public void clearDashboardButtonBadge() {
+		
+	}
+
+	public void updateReportsButtonBadge(String string) {
+		
+	}
 
 }

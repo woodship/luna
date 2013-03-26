@@ -7,6 +7,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
+import org.woodship.luna.DashboardView;
+import org.woodship.luna.ReportsView;
+import org.woodship.luna.SalesView;
+import org.woodship.luna.ScheduleView;
+import org.woodship.luna.TransactionsView;
 import org.woodship.luna.base.PersonVeiw;
 
 import com.vaadin.navigator.View;
@@ -146,20 +151,39 @@ public class Resource {
 		this.children = children;
 	}
 	
-	public void addChild(Resource child){
+	public List<Resource> add(Resource child){
 		this.children.add(child);
+		return this.children;
 	}
 	
+	/**
+	 * 注意目前仅支持两层
+	 * @return
+	 */
 	public static List<Resource> getDemoResoures(){
 		List<Resource> res = new  ArrayList<Resource>();
+		//保留原始示例模块
+		Resource demo = new Resource("示例模块", ResourceType.MODULE);
+		Resource dashboard = new Resource("dashboard", ResourceType.APPLICATION, demo, "/dashboard", DashboardView.class);
+		Resource sales = new Resource("sales", ResourceType.APPLICATION, demo, "/sales", SalesView.class);
+		Resource transactions = new Resource("transactions", ResourceType.APPLICATION, demo, "/transactions", TransactionsView.class);
+		Resource reports = new Resource("reports", ResourceType.APPLICATION, demo, "/reports", ReportsView.class);
+		Resource schedule = new Resource("schedule", ResourceType.APPLICATION, demo, "/schedule", ScheduleView.class);
+		demo.add(dashboard);
+		demo.add(sales);
+		demo.add(transactions);
+		demo.add(reports);
+		demo.add(schedule);
+		res.add(demo);
 		
 		//增加一个模块
 		Resource base = new Resource("基础应用", ResourceType.MODULE);
 		//建立应用
-		Resource person = new Resource("人员管理", ResourceType.APPLICATION, base, "person", PersonVeiw.class);
+		Resource person = new Resource("人员管理", ResourceType.APPLICATION, base, "/person", PersonVeiw.class);
 		//把该应用增加到模块下
-		base.addChild(person);//
-		
+		base.add(person);//
+		res.add(base);
+	
 		return res;
 	}
 }
