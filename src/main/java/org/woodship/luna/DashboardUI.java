@@ -93,7 +93,7 @@ public class DashboardUI extends UI {
 
         helpManager = new HelpManager(this);
 
-        setLocale(Locale.US);
+        setLocale(Locale.CHINESE);
 
         setContent(root);
         root.addStyleName("root");
@@ -218,6 +218,7 @@ public class DashboardUI extends UI {
 
         nav = new Navigator(this, content);
 
+        //添加各视图到nav中
         for (String route : routes.keySet()) {
             nav.addView(route, routes.get(route));
         }
@@ -242,7 +243,7 @@ public class DashboardUI extends UI {
                             {
                                 addStyleName("branding");
                                 Label logo = new Label(
-                                        "<span>QuickTickets</span> Dashboard",
+                                        "<span>WoodShip</span> Luna",
                                         ContentMode.HTML);
                                 logo.setSizeUndefined();
                                 addComponent(logo);
