@@ -8,17 +8,18 @@
  * 
  */
 
-package com.vaadin.demo.dashboard;
+package org.woodship.luna;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
+import org.woodship.luna.data.DataProvider;
+import org.woodship.luna.data.Generator;
+import org.woodship.luna.data.MyConverterFactory;
+
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
-import com.vaadin.demo.dashboard.data.DataProvider;
-import com.vaadin.demo.dashboard.data.Generator;
-import com.vaadin.demo.dashboard.data.MyConverterFactory;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.Transferable;
@@ -56,7 +57,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 @Theme("dashboard")
-@Title("QuickTickets Dashboard")
+@Title("luna")
 public class DashboardUI extends UI {
 
     DataProvider dataProvider = new DataProvider();

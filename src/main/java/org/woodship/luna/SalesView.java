@@ -8,16 +8,17 @@
  * 
  */
 
-package com.vaadin.demo.dashboard;
+package org.woodship.luna;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.woodship.luna.data.DataProvider;
+import org.woodship.luna.data.DataProvider.Movie;
+
 import com.vaadin.addon.timeline.Timeline;
 import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.demo.dashboard.data.DataProvider;
-import com.vaadin.demo.dashboard.data.DataProvider.Movie;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.navigator.View;

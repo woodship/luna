@@ -8,7 +8,7 @@
  * 
  */
 
-package com.vaadin.demo.dashboard.data;
+package org.woodship.luna.data;
 
 import java.util.Calendar;
 import java.util.Date;

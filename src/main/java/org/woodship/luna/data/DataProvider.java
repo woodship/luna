@@ -8,7 +8,7 @@
  * 
  */
 
-package com.vaadin.demo.dashboard.data;
+package org.woodship.luna.data;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -8,7 +8,7 @@
  * 
  */
 
-package com.vaadin.demo.dashboard;
+package org.woodship.luna;
 
 import java.awt.Color;
 import java.text.DecimalFormat;
@@ -17,9 +17,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.woodship.luna.data.Generator;
+
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
-import com.vaadin.demo.dashboard.data.Generator;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;

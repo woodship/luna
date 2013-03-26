@@ -1,4 +1,4 @@
-package com.vaadin.demo.dashboard;
+package org.woodship.luna;
 
 import com.vaadin.server.UIClassSelectionEvent;
 import com.vaadin.server.UIProvider;

@@ -22,15 +22,15 @@
 		<servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
 		<init-param>
 			<param-name>UI</param-name>
-			<param-value>com.vaadin.demo.dashboard.DashboardUI</param-value>
+			<param-value>org.woodship.luna.DashboardUI</param-value>
 		</init-param>
 		<init-param>
 			<param-name>widgetset</param-name>
-			<param-value>com.vaadin.demo.dashboard.DashboardWidgetSet</param-value>
+			<param-value>org.woodship.luna.DashboardWidgetSet</param-value>
 		</init-param>
 		<init-param>
 			<param-name>UIProvider</param-name>
-			<param-value>com.vaadin.demo.dashboard.DashboardUIProvider</param-value>
+			<param-value>org.woodship.luna.DashboardUIProvider</param-value>
 		</init-param>
 	</servlet>
 	<servlet-mapping>
