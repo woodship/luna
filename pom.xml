@@ -7,6 +7,7 @@
 	<packaging>war</packaging>
 
 	<properties>
+	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<productionMode>false</productionMode>
 		<vaadin.version>7.0.3</vaadin.version>
 		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
