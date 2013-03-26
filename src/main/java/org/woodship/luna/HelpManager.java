@@ -8,7 +8,7 @@
  * 
  */
 
-package com.vaadin.demo.dashboard;
+package org.woodship.luna;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,13 +1,14 @@
-package com.vaadin.demo.dashboard;
+package org.woodship.luna;
 
 import java.util.ArrayList;
+
+import org.woodship.luna.data.DataProvider;
+import org.woodship.luna.data.DataProvider.Movie;
 
 import com.vaadin.addon.charts.Chart;
 import com.vaadin.addon.charts.model.ChartType;
 import com.vaadin.addon.charts.model.DataSeries;
 import com.vaadin.addon.charts.model.DataSeriesItem;
-import com.vaadin.demo.dashboard.data.DataProvider;
-import com.vaadin.demo.dashboard.data.DataProvider.Movie;
 
 public class TopSixTheatersChart extends Chart {
 

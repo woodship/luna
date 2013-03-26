@@ -1,4 +1,4 @@
-package com.vaadin.demo.dashboard.data;
+package org.woodship.luna.data;
 
 
 public class Generator {

@@ -21,7 +21,7 @@
 	<!-- <set-property name="user.agent" value="safari"/> -->
 
 	<!-- WidgetSetOptimizer -->
-	<generate-with class="com.vaadin.demo.dashboard.OptimizedConnectorBundleLoaderFactory">
+	<generate-with class="org.woodship.luna.OptimizedConnectorBundleLoaderFactory">
 		<when-type-assignable
 			class="com.vaadin.client.metadata.ConnectorBundleLoader" />
 	</generate-with>

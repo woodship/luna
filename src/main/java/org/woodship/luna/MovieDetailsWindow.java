@@ -1,9 +1,10 @@
-package com.vaadin.demo.dashboard;
+package org.woodship.luna;
 
 import java.text.SimpleDateFormat;
 
-import com.vaadin.demo.dashboard.ScheduleView.MovieEvent;
-import com.vaadin.demo.dashboard.data.DataProvider.Movie;
+import org.woodship.luna.ScheduleView.MovieEvent;
+import org.woodship.luna.data.DataProvider.Movie;
+
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
