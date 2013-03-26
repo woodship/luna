@@ -1,4 +1,4 @@
-package com.vaadin.demo.dashboard;
+package org.woodship.luna;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;

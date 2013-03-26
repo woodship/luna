@@ -8,13 +8,15 @@
  * 
  */
 
-package com.vaadin.demo.dashboard;
+package org.woodship.luna;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.vaadin.cssinject.CSSInject;
+import org.woodship.luna.data.DataProvider;
+import org.woodship.luna.data.DataProvider.Movie;
 
 import com.vaadin.addon.calendar.event.CalendarEvent;
 import com.vaadin.addon.calendar.event.CalendarEventProvider;
@@ -30,8 +32,6 @@ import com.vaadin.addon.calendar.ui.CalendarComponentEvents.MoveEvent;
 import com.vaadin.addon.calendar.ui.CalendarTargetDetails;
 import com.vaadin.addon.calendar.ui.handler.BasicEventMoveHandler;
 import com.vaadin.addon.calendar.ui.handler.BasicEventResizeHandler;
-import com.vaadin.demo.dashboard.data.DataProvider;
-import com.vaadin.demo.dashboard.data.DataProvider.Movie;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.dd.DragAndDropEvent;

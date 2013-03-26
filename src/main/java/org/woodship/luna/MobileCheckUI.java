@@ -1,4 +1,4 @@
-package com.vaadin.demo.dashboard;
+package org.woodship.luna;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;

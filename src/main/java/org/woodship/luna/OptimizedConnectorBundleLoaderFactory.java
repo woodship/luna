@@ -1,4 +1,4 @@
-package com.vaadin.demo.dashboard;
+package org.woodship.luna;
 
 import java.util.HashSet;
 import java.util.Set;

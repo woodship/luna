@@ -1,14 +1,15 @@
-package com.vaadin.demo.dashboard;
+package org.woodship.luna;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.woodship.luna.data.DataProvider;
+import org.woodship.luna.data.DataProvider.Movie;
 
 import com.vaadin.addon.charts.Chart;
 import com.vaadin.addon.charts.model.ChartType;
 import com.vaadin.addon.charts.model.ListSeries;
 import com.vaadin.addon.charts.model.Series;
-import com.vaadin.demo.dashboard.data.DataProvider;
-import com.vaadin.demo.dashboard.data.DataProvider.Movie;
 
 public class TopGrossingMoviesChart extends Chart {
 

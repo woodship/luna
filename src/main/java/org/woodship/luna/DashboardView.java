@@ -8,13 +8,14 @@
  * 
  */
 
-package com.vaadin.demo.dashboard;
+package org.woodship.luna;
 
 import java.text.DecimalFormat;
 
+import org.woodship.luna.data.DataProvider;
+import org.woodship.luna.data.Generator;
+
 import com.vaadin.data.Property;
-import com.vaadin.demo.dashboard.data.DataProvider;
-import com.vaadin.demo.dashboard.data.Generator;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
