@@ -7,11 +7,11 @@
 
 	<context:spring-configured/>
 	<context:component-scan base-package="org.woodship.luna" />
-	<context:property-placeholder location="/WEB-INF/jdbc.properties"/>
+	<context:property-placeholder location="classpath*:*.properties"/>
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<property name="basename" value="/WEB-INF/locales/messages" />
+		<property name="basename" value="classpath*:messages" />
 		<property name="fallbackToSystemLocale" value="false" />
 	</bean>
 	
