@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.context.annotation.Scope;
 import org.woodship.luna.data.DataProvider;
 import org.woodship.luna.data.Generator;
 import org.woodship.luna.data.MyConverterFactory;
@@ -21,11 +22,9 @@ import org.woodship.luna.security.Resource;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
-import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.Transferable;
 import com.vaadin.navigator.Navigator;
@@ -59,6 +58,8 @@ import com.vaadin.ui.VerticalLayout;
 
 @Theme("dashboard")
 @Title("luna")
+@org.springframework.stereotype.Component
+@Scope("prototype")
 public class DashboardUI extends UI {
 
     DataProvider dataProvider = new DataProvider();

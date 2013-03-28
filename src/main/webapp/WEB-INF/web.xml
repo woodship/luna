@@ -2,40 +2,49 @@
 <web-app id="WebApp_ID" version="2.4"
 	xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-	<display-name>QuickTickets Dashboard</display-name>
-	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
-		<welcome-file>index.htm</welcome-file>
-		<welcome-file>index.jsp</welcome-file>
-		<welcome-file>default.html</welcome-file>
-		<welcome-file>default.htm</welcome-file>
-		<welcome-file>default.jsp</welcome-file>
-	</welcome-file-list>
-
+	<display-name>Luna</display-name>
 	<context-param>
 		<description>Vaadin production mode</description>
 		<param-name>productionMode</param-name>
-		<param-value>${productionMode}</param-value>
+		<param-value>false</param-value>
 	</context-param>
+	<!-- Spring -->
+	<context-param>
+	    <param-name>contextConfigLocation</param-name>
+	    <param-value>/WEB-INF/context.xml</param-value>
+	</context-param>
+	<listener>
+	    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<listener>
+	    <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+	<filter>     
+        <filter-name>encoding</filter-name>     
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>     
+            <param-value>UTF-8</param-value>     
+        </init-param>     
+    </filter>     
+    <filter-mapping>     
+        <filter-name>encoding</filter-name>     
+        <url-pattern>/*</url-pattern>     
+    </filter-mapping>
 	<servlet>
-		<servlet-name>QuickTicketsDashboard</servlet-name>
-		<servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
+		<servlet-name>Luna</servlet-name>
+		<servlet-class>org.woodship.luna.spring.SpringVaadinServlet</servlet-class>
 		<init-param>
-			<param-name>UI</param-name>
-			<param-value>org.woodship.luna.DashboardUI</param-value>
+		    <param-name>UIBean</param-name>
+		    <param-value>dashboardUI</param-value>
 		</init-param>
 		<init-param>
-			<param-name>widgetset</param-name>
-			<param-value>org.woodship.luna.DashboardWidgetSet</param-value>
-		</init-param>
-		<init-param>
-			<param-name>UIProvider</param-name>
-			<param-value>org.woodship.luna.DashboardUIProvider</param-value>
+		    <param-name>systemMessagesBeanName</param-name>
+		    <param-value>DEFAULT</param-value>
 		</init-param>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>QuickTicketsDashboard</servlet-name>
+		<servlet-name>Luna</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
-
 </web-app>
