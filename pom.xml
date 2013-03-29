@@ -117,6 +117,13 @@
 			<artifactId>cssinject</artifactId>
 			<version>2.0.3</version>
 		</dependency>
+		
+		<!-- jpacontainer -->
+		<dependency>
+			<groupId>com.vaadin.addon</groupId>
+			<artifactId>jpacontainer</artifactId>
+			<version>3.0.0.beta1</version>
+		</dependency>
 
 		<!-- ICEPush -->
 		<dependency>
@@ -199,6 +206,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<!-- hibernate -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -287,7 +295,7 @@
 			<version>${shiro.version}</version>
 		</dependency>
 
-		<!-- db -->
+		<!-- h2 db -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-c3p0</artifactId>
@@ -310,7 +318,7 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			
+
 
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>

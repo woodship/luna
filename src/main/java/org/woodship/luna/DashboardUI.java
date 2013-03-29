@@ -19,6 +19,7 @@ import org.woodship.luna.data.DataProvider;
 import org.woodship.luna.data.Generator;
 import org.woodship.luna.data.MyConverterFactory;
 import org.woodship.luna.security.Resource;
+import org.woodship.luna.spring.DiscoveryNavigator;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
@@ -75,7 +76,7 @@ public class DashboardUI extends UI {
 
 
 
-    private Navigator nav;
+    private DiscoveryNavigator nav;
 
     private HelpManager helpManager;
 
@@ -209,12 +210,12 @@ public class DashboardUI extends UI {
     @SuppressWarnings("serial")
 	private void buildMainView() {
 
-        nav = new Navigator(this, content);
+        nav = new DiscoveryNavigator(this, content);
 
         //添加各视图到nav中
         for (Resource rootRes : Resource.getDemoResoures()) {
         	for(Resource res : rootRes.getChildren()){
-        		nav.addView(res.getPath(), res.getViewClass());
+        		nav.addBeanView(res.getPath(), res.getViewClass());
         	}
         }
 
@@ -346,7 +347,7 @@ public class DashboardUI extends UI {
             f = f.substring(1);
         }
         if (f == null || f.equals("") || f.equals("/")) {
-            nav.navigateTo("/dashboard");
+            nav.navigateTo("/application");
             menu.getComponent(0).addStyleName("selected");
             helpManager.showHelpFor(DashboardView.class);
         } else {

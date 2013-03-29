@@ -3,6 +3,7 @@ package org.woodship.luna.spring;
 import java.io.Serializable;
 
 import org.springframework.context.ApplicationContext;
+import org.woodship.luna.db.ContainerUtils;
 
 @SuppressWarnings("serial")
 public class SpringApplicationContext implements Serializable {
@@ -15,5 +16,9 @@ public class SpringApplicationContext implements Serializable {
 
 	public static void setApplicationContext(ApplicationContext applicationContext) {
 		SpringApplicationContext.applicationContext = applicationContext;
+	}
+	
+	public static ContainerUtils getContainerUtils(){
+		return applicationContext.getBean(ContainerUtils.class);
 	}
 }

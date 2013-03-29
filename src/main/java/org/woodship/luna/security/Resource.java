@@ -3,16 +3,25 @@ package org.woodship.luna.security;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
 import org.woodship.luna.DashboardView;
 import org.woodship.luna.ReportsView;
 import org.woodship.luna.SalesView;
 import org.woodship.luna.ScheduleView;
 import org.woodship.luna.TransactionsView;
 import org.woodship.luna.base.PersonVeiw;
+import org.woodship.luna.db.IdEntity;
 
 import com.vaadin.navigator.View;
 
@@ -22,7 +31,11 @@ import com.vaadin.navigator.View;
  * 系统资源，可生成菜单，进行权限控制
  * @author laocui
  */
-public class Resource {
+@Entity
+@Table(name = "Reource_", uniqueConstraints = { @UniqueConstraint(columnNames = {
+		"name", "path" }) })
+//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+public class Resource extends IdEntity<Resource>{
 
 	public Resource(String name, ResourceType resType, Resource parent, String path, Class<? extends View> viewClass) {
 		super();
@@ -40,19 +53,22 @@ public class Resource {
 		this.name = name;
 		this.resType = resType;
 	}
-
+	
+	
 	private String name;
 
 	private String path;
 
 	private Class<? extends View> viewClass;
 
+	@Enumerated(EnumType.STRING)
 	private ResourceType resType;
 
 	private String icon;
-
+	@ManyToOne
 	private Resource parent;
 
+	@Transient
 	private List<Resource> children = new ArrayList<Resource>();
 
 	public boolean isLeaf() {
@@ -156,6 +172,15 @@ public class Resource {
 		return this.children;
 	}
 	
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	/**
 	 * 注意目前仅支持两层
 	 * @return
@@ -163,18 +188,27 @@ public class Resource {
 	public static List<Resource> getDemoResoures(){
 		List<Resource> res = new  ArrayList<Resource>();
 		//保留原始示例模块
-		Resource demo = new Resource("示例模块", ResourceType.MODULE);
-		Resource dashboard = new Resource("dashboard", ResourceType.APPLICATION, demo, "/dashboard", DashboardView.class);
-		Resource sales = new Resource("sales", ResourceType.APPLICATION, demo, "/sales", SalesView.class);
-		Resource transactions = new Resource("transactions", ResourceType.APPLICATION, demo, "/transactions", TransactionsView.class);
-		Resource reports = new Resource("reports", ResourceType.APPLICATION, demo, "/reports", ReportsView.class);
-		Resource schedule = new Resource("schedule", ResourceType.APPLICATION, demo, "/schedule", ScheduleView.class);
-		demo.add(dashboard);
-		demo.add(sales);
-		demo.add(transactions);
-		demo.add(reports);
-		demo.add(schedule);
-		res.add(demo);
+//		Resource demo = new Resource("示例模块", ResourceType.MODULE);
+//		Resource dashboard = new Resource("dashboard", ResourceType.APPLICATION, demo, "/dashboard", DashboardView.class);
+//		Resource sales = new Resource("sales", ResourceType.APPLICATION, demo, "/sales", SalesView.class);
+//		Resource transactions = new Resource("transactions", ResourceType.APPLICATION, demo, "/transactions", TransactionsView.class);
+//		Resource reports = new Resource("reports", ResourceType.APPLICATION, demo, "/reports", ReportsView.class);
+//		Resource schedule = new Resource("schedule", ResourceType.APPLICATION, demo, "/schedule", ScheduleView.class);
+//		demo.add(dashboard);
+//		demo.add(sales);
+//		demo.add(transactions);
+//		demo.add(reports);
+//		demo.add(schedule);
+//		res.add(demo);
+		
+
+		//增加一个模块
+		Resource sys = new Resource("系统管理", ResourceType.MODULE);
+		//建立应用
+		Resource app = new Resource("应用管理", ResourceType.APPLICATION, sys, "/application", ApplicationVeiw.class);
+		//把该应用增加到模块下
+		sys.add(app);//
+		res.add(sys);
 		
 		//增加一个模块
 		Resource base = new Resource("基础应用", ResourceType.MODULE);
@@ -183,6 +217,7 @@ public class Resource {
 		//把该应用增加到模块下
 		base.add(person);//
 		res.add(base);
+		
 	
 		return res;
 	}

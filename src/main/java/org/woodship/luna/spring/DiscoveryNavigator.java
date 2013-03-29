@@ -56,51 +56,21 @@ public class DiscoveryNavigator extends Navigator implements ViewCacheContainer 
 
 	public DiscoveryNavigator(UI ui, ComponentContainer container) {
 		super(ui, container);
-		initViews();
 	}
 
 	public DiscoveryNavigator(UI ui, SingleComponentContainer container) {
 		super(ui, container);
-		initViews();
 	}
 
 	public DiscoveryNavigator(UI ui, ViewDisplay display) {
 		super(ui, display);
-		initViews();
 	}
 
 	public DiscoveryNavigator(UI ui, NavigationStateManager stateManager,
 			ViewDisplay display) {
 		super(ui, stateManager, display);
-		initViews();
 	}
 
-	@SuppressWarnings("unchecked")
-	protected void initViews() {
-		if (views.isEmpty()) {
-			String[] beansName = SpringApplicationContext
-					.getApplicationContext().getBeanDefinitionNames();
-			for (String beanName : beansName) {
-				Class<? extends View> beanClass = (Class<? extends View>) SpringApplicationContext
-						.getApplicationContext().getType(beanName);
-
-				if (beanClass != null
-						&& beanClass.isAnnotationPresent(VaadinView.class)
-						&& View.class.isAssignableFrom(beanClass)) {
-					VaadinView vaadinView = (VaadinView) beanClass
-							.getAnnotation(VaadinView.class);
-					String viewName = vaadinView.value();
-					boolean viewCached = vaadinView.cached();
-
-					ViewCache viewCache = new ViewCache(viewName, beanName,
-							beanClass, viewCached);
-					views.add(viewCache);
-				}
-			}
-		}
-
-		addCachedBeans();
-	}
 
 	public void addBeanView(String viewName, Class<? extends View> viewClass) {
 		addBeanView(viewName, viewClass, false);
