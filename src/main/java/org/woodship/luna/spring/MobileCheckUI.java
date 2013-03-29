@@ -1,4 +1,4 @@
-package org.woodship.luna;
+package org.woodship.luna.spring;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
@@ -10,7 +10,8 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.Reindeer;
 
 @Theme(Reindeer.THEME_NAME)
-@Title("QuickTickets Dashboard")
+@Title("Copernicium 技术平台")
+@SuppressWarnings("serial")
 public class MobileCheckUI extends UI {
 
     @Override
@@ -20,10 +21,10 @@ public class MobileCheckUI extends UI {
             {
                 setMargin(true);
                 addComponent(new Label(
-                        "<h1>QuickTickets Dashboard</h1><h3>This Vaadin demo application is not designed for mobile devices.</h3><p>If you wish, you can continue to <a href=\""
+                        "<h1>Copernicium 技术平台</h1><h3>Copernicium 技术平台暂时还有提供移动设备上访问!</h3><p>如果你愿意访问桌面版, <a href=\""
                                 + request.getContextPath()
                                 + request.getPathInfo()
-                                + "?mobile=false\">load it anyway</a>.</p><p>You can also <a href=\"https://vaadin.com/blog/-/blogs/it-s-demo-time\">read more about the demo application</a> and it's design from the Vaadin blog.</p>",
+                                + "?mobile=false\">请点击这里</a>.",
                         ContentMode.HTML));
             }
         });
