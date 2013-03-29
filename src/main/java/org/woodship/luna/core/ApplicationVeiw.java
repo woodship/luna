@@ -1,4 +1,4 @@
-package org.woodship.luna.security;
+package org.woodship.luna.core;
 
 import java.awt.Button;
 
@@ -14,7 +14,6 @@ import org.woodship.luna.spring.VaadinView;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
 
@@ -37,7 +36,6 @@ public class ApplicationVeiw extends HorizontalLayout implements View {
 		//    		table.setEditable(true);
 		this.addComponent(table);
 		Button add = new Button("add");
-
 	}
 
 

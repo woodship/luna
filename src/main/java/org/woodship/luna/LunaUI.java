@@ -15,10 +15,7 @@ import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.context.annotation.Scope;
-import org.woodship.luna.data.DataProvider;
-import org.woodship.luna.data.Generator;
-import org.woodship.luna.data.MyConverterFactory;
-import org.woodship.luna.security.Resource;
+import org.woodship.luna.core.Resource;
 import org.woodship.luna.spring.DiscoveryNavigator;
 
 import com.vaadin.annotations.Theme;
@@ -28,7 +25,6 @@ import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.Transferable;
-import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
@@ -61,9 +57,8 @@ import com.vaadin.ui.VerticalLayout;
 @Title("luna")
 @org.springframework.stereotype.Component
 @Scope("prototype")
-public class DashboardUI extends UI {
+public class LunaUI extends UI {
 
-    DataProvider dataProvider = new DataProvider();
 
     private static final long serialVersionUID = 1L;
 
@@ -82,7 +77,8 @@ public class DashboardUI extends UI {
 
     @Override
     protected void init(VaadinRequest request) {
-        getSession().setConverterFactory(new MyConverterFactory());
+    	 //TODO setConverterFactory 老崔
+//        getSession().setConverterFactory(new MyConverterFactory());
 
         helpManager = new HelpManager(this);
 
@@ -265,10 +261,7 @@ public class DashboardUI extends UI {
                                         new ThemeResource("img/profile-pic.png"));
                                 profilePic.setWidth("34px");
                                 addComponent(profilePic);
-                                Label userName = new Label(Generator
-                                        .randomFirstName()
-                                        + " "
-                                        + Generator.randomLastName());
+                                Label userName = new Label("张三");
                                 userName.setSizeUndefined();
                                 addComponent(userName);
 
@@ -349,7 +342,8 @@ public class DashboardUI extends UI {
         if (f == null || f.equals("") || f.equals("/")) {
             nav.navigateTo("/application");
             menu.getComponent(0).addStyleName("selected");
-            helpManager.showHelpFor(DashboardView.class);
+            //TODO showHelpFor 老崔
+            //helpManager.showHelpFor(DashboardView.class);
         } else {
             nav.navigateTo(f);
             //TODO showHelpFor 老崔
@@ -368,9 +362,6 @@ public class DashboardUI extends UI {
             public void afterViewChange(ViewChangeEvent event) {
                 View newView = event.getNewView();
                 helpManager.showHelpFor(newView);
-                if (autoCreateReport && newView instanceof ReportsView) {
-                    ((ReportsView) newView).autoCreate(2, items, transactions);
-                }
                 autoCreateReport = false;
             }
         });

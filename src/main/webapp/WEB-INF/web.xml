@@ -36,7 +36,7 @@
 		<servlet-class>org.woodship.luna.spring.SpringVaadinServlet</servlet-class>
 		<init-param>
 		    <param-name>UIBean</param-name>
-		    <param-value>dashboardUI</param-value>
+		    <param-value>lunaUI</param-value>
 		</init-param>
 		<init-param>
 		    <param-name>systemMessagesBeanName</param-name>

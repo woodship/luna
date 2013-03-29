@@ -1,6 +1,6 @@
 package org.woodship.luna.spring;
 
-import org.woodship.luna.DashboardUI;
+import org.woodship.luna.LunaUI;
 
 import com.vaadin.server.UIClassSelectionEvent;
 import com.vaadin.server.UICreateEvent;
@@ -31,7 +31,7 @@ public class SpringUIProvider extends UIProvider {
             return MobileCheckUI.class;
         }
 
-		return  DashboardUI.class;
+		return  LunaUI.class;
 	}
 	
 	@Override

@@ -1,4 +1,4 @@
-package org.woodship.luna.security;
+package org.woodship.luna.core;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,20 +6,12 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.GenericGenerator;
-import org.woodship.luna.DashboardView;
-import org.woodship.luna.ReportsView;
-import org.woodship.luna.SalesView;
-import org.woodship.luna.ScheduleView;
-import org.woodship.luna.TransactionsView;
 import org.woodship.luna.base.PersonVeiw;
 import org.woodship.luna.db.IdEntity;
 
@@ -187,21 +179,7 @@ public class Resource extends IdEntity<Resource>{
 	 */
 	public static List<Resource> getDemoResoures(){
 		List<Resource> res = new  ArrayList<Resource>();
-		//保留原始示例模块
-//		Resource demo = new Resource("示例模块", ResourceType.MODULE);
-//		Resource dashboard = new Resource("dashboard", ResourceType.APPLICATION, demo, "/dashboard", DashboardView.class);
-//		Resource sales = new Resource("sales", ResourceType.APPLICATION, demo, "/sales", SalesView.class);
-//		Resource transactions = new Resource("transactions", ResourceType.APPLICATION, demo, "/transactions", TransactionsView.class);
-//		Resource reports = new Resource("reports", ResourceType.APPLICATION, demo, "/reports", ReportsView.class);
-//		Resource schedule = new Resource("schedule", ResourceType.APPLICATION, demo, "/schedule", ScheduleView.class);
-//		demo.add(dashboard);
-//		demo.add(sales);
-//		demo.add(transactions);
-//		demo.add(reports);
-//		demo.add(schedule);
-//		res.add(demo);
 		
-
 		//增加一个模块
 		Resource sys = new Resource("系统管理", ResourceType.MODULE);
 		//建立应用
