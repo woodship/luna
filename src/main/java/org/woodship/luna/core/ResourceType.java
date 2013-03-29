@@ -1,4 +1,4 @@
-package org.woodship.luna.security;
+package org.woodship.luna.core;
 
 import java.io.Serializable;
 
