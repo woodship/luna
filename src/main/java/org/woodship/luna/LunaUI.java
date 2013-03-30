@@ -14,8 +14,10 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.woodship.luna.core.Resource;
+import org.woodship.luna.db.InitData;
 import org.woodship.luna.spring.DiscoveryNavigator;
 
 import com.vaadin.annotations.Theme;
@@ -75,8 +77,14 @@ public class LunaUI extends UI {
 
     private HelpManager helpManager;
 
+    @Autowired
+    private InitData initData;
+    
     @Override
     protected void init(VaadinRequest request) {
+    	//初始化数据
+    	initData.init();
+    	
     	 //TODO setConverterFactory 老崔
 //        getSession().setConverterFactory(new MyConverterFactory());
 

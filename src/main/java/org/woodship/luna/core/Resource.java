@@ -12,7 +12,7 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.StringUtils;
-import org.woodship.luna.base.PersonVeiw;
+import org.woodship.luna.base.PersonView;
 import org.woodship.luna.db.IdEntity;
 
 import com.vaadin.navigator.View;
@@ -24,7 +24,7 @@ import com.vaadin.navigator.View;
  * @author laocui
  */
 @Entity
-@Table(name = "Reource_", uniqueConstraints = { @UniqueConstraint(columnNames = {
+@Table(name = "Resource_", uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"name", "path" }) })
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Resource extends IdEntity<Resource>{
@@ -183,7 +183,7 @@ public class Resource extends IdEntity<Resource>{
 		//增加一个模块
 		Resource sys = new Resource("系统管理", ResourceType.MODULE);
 		//建立应用
-		Resource app = new Resource("应用管理", ResourceType.APPLICATION, sys, "/application", ApplicationVeiw.class);
+		Resource app = new Resource("应用管理", ResourceType.APPLICATION, sys, "/application", ApplicationView.class);
 		//把该应用增加到模块下
 		sys.add(app);//
 		res.add(sys);
@@ -191,7 +191,7 @@ public class Resource extends IdEntity<Resource>{
 		//增加一个模块
 		Resource base = new Resource("基础应用", ResourceType.MODULE);
 		//建立应用
-		Resource person = new Resource("人员管理", ResourceType.APPLICATION, base, "/person", PersonVeiw.class);
+		Resource person = new Resource("人员管理", ResourceType.APPLICATION, base, "/person", PersonView.class);
 		//把该应用增加到模块下
 		base.add(person);//
 		res.add(base);

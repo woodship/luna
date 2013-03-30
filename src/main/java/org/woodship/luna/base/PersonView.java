@@ -13,11 +13,11 @@ import com.vaadin.ui.Label;
 @Component
 @Scope("prototype")
 @VaadinView("person")
-public class PersonVeiw extends HorizontalLayout implements View {
+public class PersonView extends HorizontalLayout implements View {
 	private static final long serialVersionUID = 1L;
 
 	
-	public PersonVeiw() {
+	public PersonView() {
 		super();
 		
 		this.addComponent(new Label("实现人员增删改查"));
