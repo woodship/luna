@@ -13,7 +13,7 @@ package org.woodship.luna;
 import java.util.Iterator;
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
+import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.woodship.luna.core.Resource;
@@ -333,7 +333,7 @@ public class LunaUI extends UI {
 			@Override
 			public void itemClick(ItemClickEvent event) {
 				Resource res =  (Resource) event.getItemId();
-				if (StringUtils.isNotBlank(res.getPath()) 
+				if (!StringUtils.isNullOrEmpty(res.getPath()) 
 						& !nav.getState().equals( res.getPath()))//不是当前视图时，切换视图
 					nav.navigateTo(res.getPath());
 			}

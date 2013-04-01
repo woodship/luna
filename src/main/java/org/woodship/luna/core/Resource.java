@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import org.apache.commons.lang.StringUtils;
+import org.h2.util.StringUtils;
 import org.woodship.luna.base.PersonView;
 import org.woodship.luna.db.IdEntity;
 
@@ -71,7 +71,7 @@ public class Resource extends IdEntity<Resource>{
 	}
 	
 	public String getIcon(){
-		if(StringUtils.isBlank(icon)){
+		if(!StringUtils.isNullOrEmpty(icon)){
 			return "icons/item.png";
 		}
 		return icon;

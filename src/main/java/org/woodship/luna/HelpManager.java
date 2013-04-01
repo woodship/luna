@@ -10,6 +10,7 @@
 
 package org.woodship.luna;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,9 +19,10 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 
-public class HelpManager {
+public class HelpManager implements Serializable{
 
-    private UI ui;
+	private static final long serialVersionUID = 1L;
+	private UI ui;
     private List<HelpOverlay> overlays = new ArrayList<HelpOverlay>();
 
     public HelpManager(UI ui) {
