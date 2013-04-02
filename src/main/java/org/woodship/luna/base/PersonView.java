@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.transaction.annotation.Transactional;
 import org.woodship.luna.base.PersonEditor.EditorSavedEvent;
 import org.woodship.luna.base.PersonEditor.EditorSavedListener;
+import org.woodship.luna.db.BaseDao;
 import org.woodship.luna.db.ContainerUtils;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
@@ -42,6 +43,9 @@ import com.vaadin.ui.VerticalLayout;
 public class PersonView extends HorizontalSplitPanel implements ComponentContainer, View{
 	@Autowired
 	ContainerUtils conu;
+	
+	@Autowired
+	BaseDao bdao;
 	
 	@PersistenceContext
 	private  EntityManager entityManager;
@@ -132,7 +136,8 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 
             @Override
             public void buttonClick(ClickEvent event) {
-                deletePerson( personTable.getValue());
+//                deletePerson( personTable.getValue());
+            	bdao.deleteEntity(persons,personTable.getValue());
             }
         });
         deleteButton.setEnabled(false);
@@ -221,16 +226,21 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
     }
 
 	@Override
+	@Transactional
 	public void enter(ViewChangeEvent event) {
-		// TODO Auto-generated method stub
-		
+//		Person p = new Person();
+//		p.setFirstName("XX");
+//		p.setDepartment((Department) departments.getItem(departments.getIdByIndex(1)));
+//		persons.addEntity(p);
 	}
 	
 	@Transactional
 	public void deletePerson(Object id){
-		persons.removeItem(id);
-//		Person person = entityManager.find(Person.class, id);
-//		entityManager.remove(person);
+//		Person p = new Person();
+//		p.setFirstName("aa");
+//		persons.removeItem(id);
+		Person person = entityManager.find(Person.class, id);
+		entityManager.remove(person);
 //		persons.refresh();
 	}
 }

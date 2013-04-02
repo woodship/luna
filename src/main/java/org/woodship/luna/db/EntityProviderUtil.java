@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Transient;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -21,7 +20,6 @@ import com.vaadin.addon.jpacontainer.util.HibernateLazyLoadingDelegate;
 @Scope("prototype")
 public class EntityProviderUtil {
 	@PersistenceContext
-	@Transient
 	private  EntityManager entityManager;
 	
     private static Map<Class<?>, CachingMutableLocalEntityProvider<?>> providerMap = new HashMap<Class<?>, CachingMutableLocalEntityProvider<?>>();
