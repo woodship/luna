@@ -73,11 +73,10 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
         buildTree();
         buildMainArea();
 
-        setSplitPosition(30);
+        setSplitPosition(20);
     }
 
     private void buildMainArea() {
-    	this.setSplitPosition(150L);
     	//右侧
         VerticalLayout verticalLayout = new VerticalLayout();
         setSecondComponent(verticalLayout);
@@ -136,7 +135,6 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 
             @Override
             public void buttonClick(ClickEvent event) {
-//                deletePerson( personTable.getValue());
             	bdao.deleteEntity(persons,personTable.getValue());
             }
         });
@@ -186,11 +184,11 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 
         groupTree.setImmediate(true);
         groupTree.setSelectable(true);
-        groupTree.addListener(new Property.ValueChangeListener() {
-
-            @Override
-            public void valueChange(ValueChangeEvent event) {
-                Object id = event.getProperty().getValue();
+        groupTree.addItemClickListener(new ItemClickListener() {
+			
+			@Override
+			public void itemClick(ItemClickEvent event) {
+				Object id = event.getItemId();
                 if (id != null) {
                     Department entity = departments.getItem(id).getEntity();
                     departmentFilter = entity;
@@ -198,9 +196,9 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
                     departmentFilter = null;
                 }
                 updateFilters();
-            }
-
-        });
+				
+			}
+		});
         setFirstComponent(groupTree);
     }
 
@@ -226,21 +224,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
     }
 
 	@Override
-	@Transactional
 	public void enter(ViewChangeEvent event) {
-//		Person p = new Person();
-//		p.setFirstName("XX");
-//		p.setDepartment((Department) departments.getItem(departments.getIdByIndex(1)));
-//		persons.addEntity(p);
 	}
 	
-	@Transactional
-	public void deletePerson(Object id){
-//		Person p = new Person();
-//		p.setFirstName("aa");
-//		persons.removeItem(id);
-		Person person = entityManager.find(Person.class, id);
-		entityManager.remove(person);
-//		persons.refresh();
-	}
 }

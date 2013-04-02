@@ -15,15 +15,11 @@
  */
 package org.woodship.luna.base;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.woodship.luna.db.ContainerUtils;
+import org.woodship.luna.spring.SpringApplicationContext;
 
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.JPAContainer;
-import com.vaadin.addon.jpacontainer.JPAContainerFactory;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.converter.Converter;
 import com.vaadin.data.util.filter.Compare.Equal;
@@ -36,12 +32,8 @@ import com.vaadin.ui.CustomField;
 /**
  * A custom field that allows selection of a department.
  */
-@org.springframework.stereotype.Component
-@Scope("prototype")
 public class DepartmentSelector extends CustomField<Department> {
-	@Autowired
 	ContainerUtils conu;
-
 	
     private ComboBox geographicalDepartment = new ComboBox();
     private ComboBox department = new ComboBox();
@@ -49,8 +41,9 @@ public class DepartmentSelector extends CustomField<Department> {
     private JPAContainer<Department> container;
     private JPAContainer<Department> geoContainer;
 
-    @PostConstruct
-    public void DepartmentSelector() {
+    public  DepartmentSelector() {
+    	setImmediate(false);
+    	conu = SpringApplicationContext.getContainerUtils();
         container = conu.createJPAContainer(Department.class);
         geoContainer = conu.createJPAContainer(Department.class);
         setCaption("Department");
@@ -87,11 +80,11 @@ public class DepartmentSelector extends CustomField<Department> {
                  * Modify the actual value of the custom field.
                  */
                 if (department.getValue() == null) {
-                    setValue(null, false);
+                   // setValue(null, false);
                 } else {
                     Department entity = container
                             .getItem(department.getValue()).getEntity();
-                    setValue(entity, false);
+                    //setValue(entity, false);
                 }
             }
         });
