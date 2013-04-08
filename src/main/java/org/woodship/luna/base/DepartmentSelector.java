@@ -16,7 +16,8 @@
 package org.woodship.luna.base;
 
 import org.woodship.luna.db.ContainerUtils;
-import org.woodship.luna.spring.SpringApplicationContext;
+
+import ru.xpoft.vaadin.SpringApplicationContext;
 
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.JPAContainer;
@@ -43,9 +44,11 @@ public class DepartmentSelector extends CustomField<Department> {
 
     public  DepartmentSelector() {
     	setImmediate(false);
-    	conu = SpringApplicationContext.getContainerUtils();
-        container = conu.createJPAContainer(Department.class);
-        geoContainer = conu.createJPAContainer(Department.class);
+    	//conu = SpringApplicationContext.getContainerUtils();
+        container = conu.createJPABatchableContainer(Department.class);
+        geoContainer = conu.createJPABatchableContainer(Department.class);
+        geoContainer.setAutoCommit(false);
+        container.setAutoCommit(false);
         setCaption("Department");
         // Only list "roots" which are in our example geographical super
         // departments
@@ -80,11 +83,11 @@ public class DepartmentSelector extends CustomField<Department> {
                  * Modify the actual value of the custom field.
                  */
                 if (department.getValue() == null) {
-                   // setValue(null, false);
+                    setValue(null, false);
                 } else {
                     Department entity = container
                             .getItem(department.getValue()).getEntity();
-                    //setValue(entity, false);
+                    setValue(entity, false);
                 }
             }
         });

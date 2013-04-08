@@ -112,7 +112,7 @@
 			<artifactId>cssinject</artifactId>
 			<version>2.0.3</version>
 		</dependency>
-		
+
 		<!-- jpacontainer -->
 		<dependency>
 			<groupId>com.vaadin.addon</groupId>
@@ -130,14 +130,20 @@
 			<groupId>org.icepush</groupId>
 			<artifactId>icepush</artifactId>
 			<version>3.2.0</version>
-			<exclusions>  
-                <exclusion>  
-                    <groupId>javax.servlet</groupId>  
-                    <artifactId>javax.servlet-api</artifactId>
-                </exclusion>  
-            </exclusions>  
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>javax.servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-
+		
+		<!-- spring-vaadin-integration -->
+		<dependency>
+			<groupId>ru.xpoft.vaadin</groupId>
+			<artifactId>spring-vaadin-integration</artifactId>
+			<version>1.7.3</version>
+		</dependency>
 
 		<!-- Spring dependencies -->
 		<dependency>
@@ -207,7 +213,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<!-- hibernate -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -313,7 +319,7 @@
 			<artifactId>h2</artifactId>
 			<version>1.3.171</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>

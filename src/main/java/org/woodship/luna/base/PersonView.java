@@ -5,14 +5,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
-import org.springframework.transaction.annotation.Transactional;
-import org.woodship.luna.base.PersonEditor.EditorSavedEvent;
-import org.woodship.luna.base.PersonEditor.EditorSavedListener;
-import org.woodship.luna.db.BaseDao;
 import org.woodship.luna.db.ContainerUtils;
 
+import com.vaadin.addon.jpacontainer.EntityProvider;
 import com.vaadin.addon.jpacontainer.JPAContainer;
+import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItem;
@@ -39,13 +38,14 @@ import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 @org.springframework.stereotype.Component
-@Scope("prototype")
+@Scope("singleton")
 public class PersonView extends HorizontalSplitPanel implements ComponentContainer, View{
 	@Autowired
 	ContainerUtils conu;
 	
-	@Autowired
-	BaseDao bdao;
+	@Autowired()
+	@Qualifier("personEntityProvider")
+	EntityProvider<Person> personProvider;
 	
 	@PersistenceContext
 	private  EntityManager entityManager;
@@ -69,7 +69,11 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
     @PostConstruct
 	public void PostConstruct(){
         departments = conu.createJPAHierarchialContainer(Department.class);
-        persons = conu.createJPAContainer(Person.class);
+//        persons = conu.createJPAContainer(Person.class);
+        persons = new JPAContainer<Person>(Person.class);
+       persons.setEntityProvider(personProvider);
+        
+        persons.getEntityProvider();
         buildTree();
         buildMainArea();
 
@@ -117,16 +121,15 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 
             @Override
             public void buttonClick(ClickEvent event) {
-                final BeanItem<Person> newPersonItem = new BeanItem<Person>(
-                        new Person());
-                PersonEditor personEditor = new PersonEditor(newPersonItem);
-                personEditor.addListener(new EditorSavedListener() {
-                    @Override
-                    public void editorSaved(EditorSavedEvent event) {
-                        persons.addEntity(newPersonItem.getBean());
-                    }
-                });
-                UI.getCurrent().addWindow(personEditor);
+//                final JPAContainerItem<Person> newPersonItem = new JPAContainerItem(persons,new Person());
+//                PersonEditor personEditor = new PersonEditor(newPersonItem);
+//                personEditor.addListener(new EditorSavedListener() {
+//                    @Override
+//                    public void editorSaved(EditorSavedEvent event) {
+//                        persons.addEntity(newPersonItem.getBean());
+//                    }
+//                });
+//                UI.getCurrent().addWindow(personEditor);
             }
         });
 
@@ -135,7 +138,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 
             @Override
             public void buttonClick(ClickEvent event) {
-            	bdao.deleteEntity(persons,personTable.getValue());
+            	persons.removeItem(personTable.getValue());
             }
         });
         deleteButton.setEnabled(false);
@@ -226,5 +229,6 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 	@Override
 	public void enter(ViewChangeEvent event) {
 	}
+	
 	
 }

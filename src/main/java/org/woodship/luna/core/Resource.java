@@ -53,7 +53,6 @@ public class Resource extends IdEntity<Resource>{
 
 	private Class<? extends View> viewClass;
 
-	@Enumerated(EnumType.STRING)
 	private ResourceType resType;
 
 	private String icon;

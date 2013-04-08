@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.woodship.luna.db.ContainerUtils;
-import org.woodship.luna.spring.VaadinView;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.navigator.View;

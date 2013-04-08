@@ -15,130 +15,102 @@
  */
 package org.woodship.luna.base;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Arrays;
+import javax.persistence.EntityManager;
 
+import com.vaadin.addon.jpacontainer.JPAContainerFactory;
+import com.vaadin.addon.jpacontainer.JPAContainerItem;
+import com.vaadin.addon.jpacontainer.fieldfactory.SingleSelectConverter;
 import com.vaadin.data.Item;
+import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
+import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.validator.BeanValidator;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.DefaultFieldFactory;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
-import com.vaadin.ui.Form;
-import com.vaadin.ui.FormFieldFactory;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Window;
 
 @SuppressWarnings("serial")
-public class PersonEditor extends Window implements Button.ClickListener,
-        FormFieldFactory {
+public class PersonEditor extends Window  {
 
-    private final Item personItem;
-    private Form editorForm;
-    private Button saveButton;
-    private Button cancelButton;
+	public PersonEditor(final Item item) {
+		FormLayout formLayout = new FormLayout();
 
-    public PersonEditor(Item personItem) {
-        this.personItem = personItem;
-        editorForm = new Form();
-        editorForm.setFormFieldFactory(this);
-        editorForm.setBuffered(true);
-        editorForm.setImmediate(true);
-        editorForm.setItemDataSource(personItem, Arrays.asList("firstName",
-                "lastName", "phoneNumber", "street", "city", "zipCode",
-                "department"));
+		// Just edit the first item in the JPAContainer
+		final FieldGroup fg = new FieldGroup(item) {
+			/*
+			 * Override configureField to add a bean validator to each field.
+			 */
+			@Override
+			protected void configureField(Field<?> field) {
+				super.configureField(field);
+				// Add Bean validators if there are annotations
+				// Note that this requires a bean validation implementation to
+				// be available.
+				BeanValidator validator = new BeanValidator(Person.class,
+						getPropertyId(field).toString());
+				field.addValidator(validator);
+				if (field.getLocale() != null) {
+					validator.setLocale(field.getLocale());
+				}
+			}
+		};
 
-        saveButton = new Button("Save", this);
-        cancelButton = new Button("Cancel", this);
+		/*
+		 * This is an example of a field factory that constructs a complex
+		 * field.
+		 */
+		fg.setFieldFactory(new DefaultFieldGroupFieldFactory() {
+			@Override
+			public <T extends Field> T createField(Class<?> type,
+					Class<T> fieldType) {
+				if (type.isAssignableFrom(Department.class)) {
+					ComboBox cb = new ComboBox();
+					EntityManager em =( (JPAContainerItem<?>)item).getContainer().getEntityProvider().getEntityManager();
+					cb.setContainerDataSource(JPAContainerFactory.make(Department.class, em));
+					cb.setItemCaptionPropertyId("name");
+					cb.setConverter(new SingleSelectConverter(cb));
+					return (T) cb;
+				}
+				return super.createField(type, fieldType);
+			}
+		});
 
-        editorForm.getFooter().addComponent(saveButton);
-        editorForm.getFooter().addComponent(cancelButton);
-        setSizeUndefined();
-        setContent(editorForm);
-        setCaption(buildCaption());
-    }
+		formLayout.addComponent(fg.buildAndBind("firstName"));
+		formLayout.addComponent(fg.buildAndBind("lastName"));
+		formLayout.addComponent(fg.buildAndBind("street"));
+		formLayout.addComponent(fg.buildAndBind("city"));
+		formLayout.addComponent(fg.buildAndBind("zipCode"));
+		formLayout.addComponent(fg.buildAndBind("phoneNumber"));
+		formLayout.addComponent(fg.buildAndBind("department"));
 
-    /**
-     * @return the caption of the editor window
-     */
-    private String buildCaption() {
-        return String.format("%s %s", personItem.getItemProperty("firstName")
-                .getValue(), personItem.getItemProperty("lastName").getValue());
-    }
+		Button saveButton = new Button("Save");
+		saveButton.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(Button.ClickEvent event) {
+				try {
+					fg.commit();
+				} catch (FieldGroup.CommitException e) {
+					e.printStackTrace();
+					Notification.show("Couldn't commit values: "
+							+ e.getCause().getMessage(),
+							Notification.Type.ERROR_MESSAGE);
+				}
+			}
+		});
+		Button cancelButton = new Button("Cancel");
+		cancelButton.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(Button.ClickEvent event) {
+				fg.discard();
+			}
+		});
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.vaadin.ui.Button.ClickListener#buttonClick(com.vaadin.ui.Button.
-     * ClickEvent)
-     */
-    @Override
-    public void buttonClick(ClickEvent event) {
-        if (event.getButton() == saveButton) {
-            editorForm.commit();
-            fireEvent(new EditorSavedEvent(this, personItem));
-        } else if (event.getButton() == cancelButton) {
-            editorForm.discard();
-        }
-        close();
-    }
+		formLayout.addComponent(saveButton);
+		formLayout.addComponent(cancelButton);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.vaadin.ui.FormFieldFactory#createField(com.vaadin.data.Item,
-     * java.lang.Object, com.vaadin.ui.Component)
-     */
-    @Override
-    public Field createField(Item item, Object propertyId, Component uiContext) {
-        Field field = DefaultFieldFactory.get().createField(item, propertyId,
-                uiContext);
-        if ("department".equals(propertyId)) {
-            field = new DepartmentSelector();
-        } else if (field instanceof TextField) {
-            ((TextField) field).setNullRepresentation("");
-        }
-
-        field.addValidator(new BeanValidator(Person.class, propertyId
-                .toString()));
-
-        return field;
-    }
-
-    public void addListener(EditorSavedListener listener) {
-        try {
-            Method method = EditorSavedListener.class.getDeclaredMethod(
-                    "editorSaved", new Class[] { EditorSavedEvent.class });
-            addListener(EditorSavedEvent.class, listener, method);
-        } catch (final java.lang.NoSuchMethodException e) {
-            // This should never happen
-            throw new java.lang.RuntimeException(
-                    "Internal error, editor saved method not found");
-        }
-    }
-
-    public void removeListener(EditorSavedListener listener) {
-        removeListener(EditorSavedEvent.class, listener);
-    }
-
-    public static class EditorSavedEvent extends Component.Event {
-
-        private Item savedItem;
-
-        public EditorSavedEvent(Component source, Item savedItem) {
-            super(source);
-            this.savedItem = savedItem;
-        }
-
-        public Item getSavedItem() {
-            return savedItem;
-        }
-    }
-
-    public interface EditorSavedListener extends Serializable {
-        public void editorSaved(EditorSavedEvent event);
-    }
+		setContent(formLayout);
+	}
 
 }

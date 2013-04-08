@@ -18,7 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.woodship.luna.core.Resource;
 import org.woodship.luna.db.InitData;
-import org.woodship.luna.spring.DiscoveryNavigator;
+
+import ru.xpoft.vaadin.DiscoveryNavigator;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
@@ -58,7 +59,7 @@ import com.vaadin.ui.VerticalLayout;
 @Theme("dashboard")
 @Title("luna")
 @org.springframework.stereotype.Component
-@Scope("prototype")
+@Scope("session")
 public class LunaUI extends UI {
 
 
@@ -219,7 +220,7 @@ public class LunaUI extends UI {
         //添加各视图到nav中
         for (Resource rootRes : Resource.getDemoResoures()) {
         	for(Resource res : rootRes.getChildren()){
-        		nav.addBeanView(res.getPath(), res.getViewClass());
+        		nav.addBeanView(res.getPath(), res.getViewClass(), true);
         	}
         }
 
