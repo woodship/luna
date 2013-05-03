@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
     <groupId>org.woodship.luna_osgi</groupId>
-    <artifactId>Contract</artifactId>
+    <artifactId>Application</artifactId>
     <version>1.0</version>
     <relativePath>../pom.xml</relativePath>
     </parent>
@@ -12,11 +12,11 @@
         <vaadin.version>7.0.2</vaadin.version>
     </properties>
     <groupId>org.woodship.luna_osgi</groupId>
-    <artifactId>Contract_spi</artifactId>
+    <artifactId>Application_UICmdBroker</artifactId>
     <packaging>jar</packaging>
     <version>1.0</version>
-    <name>Contract:spi:1.0</name>
-    <url>http://luna_osgi.woodship.org/Contract/spi</url>
+    <name>luna_osgi:Application_UICmdBroker:1.0</name>
+    <url>http://luna_osgi.woodship.org/Application/UICmdBroker</url>
     <build>
         <plugins>
             <plugin>
@@ -39,23 +39,23 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
+                <artifactId>maven-war-plugin</artifactId>
                 <version>2.3</version>
                 <configuration>
                     <archive>
                         <manifest>
-                            <addClasspath>true</addClasspath>
+                            <addClasspath>false</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
                         <manifestEntries>
                             <Class-Path>${project.build.finalName}.jar</Class-Path>
-                            <Built-By>Killko Hon</Built-By>
+                            <Built-By>KillkoHon</Built-By>
                             <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
                             <Bundle-Name>${project.groupId}.${project.ArtifactId}</Bundle-Name>
                             <Bundle-SymbolicName>${project.name}</Bundle-SymbolicName>
                             <Bundle-Version>${project.version}</Bundle-Version>
                             <Bundle-Vendor>${project.groupId}</Bundle-Vendor>
-                            <Export-Package>org.woodship.luna_osgi.Contract.spi;version="1.0"</Export-Package>
+                            <Export-Package>org.woodship.luna_osgi.Application.UICmdBroker;version="1.0"</Export-Package>
                             <Import-Package>org.osgi.framework</Import-Package>
                         </manifestEntries>
                     </archive>
@@ -63,6 +63,8 @@
             </plugin>
         </plugins>
     </build>
+    
+    
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -71,6 +73,31 @@
             <type>jar</type>
             <scope>test</scope>
             <optional>true</optional>
+        </dependency>
+             <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.4</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <version>2.9.2</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.woodship.luna_osgi</groupId>
+            <artifactId>Contract_spi</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
 </project>
