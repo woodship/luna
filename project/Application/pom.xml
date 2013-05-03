@@ -47,6 +47,6 @@
     </dependencyManagement>
     <!--子模块 -->
     <modules>
-      
+        <module>UICmdBroker</module>
     </modules>
 </project>
