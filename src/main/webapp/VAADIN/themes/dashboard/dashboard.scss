@@ -1,4 +1,4 @@
-@import "../base/base.scss";
+@import "../runo/runo.scss";
 
 @import "icons/fontello.scss";
 @import "fonts/open-sans.scss";
@@ -30,7 +30,7 @@
 
 @mixin dashboard {
 	
-	@include base;
+	@include runo;
 	
 	@include dashboard-loading-indicator;
 	@include dashboard-common;
@@ -147,7 +147,7 @@
 	
 	
 	.sidebar {
-		background: #414243 url(img/sidebar-gradient.png) repeat-y top right;
+		background: #7798c8 url(img/sidebar-gradient.png) repeat-y top right;
 		@include move-right;
 		-webkit-user-select: none;
 		-moz-user-select: none;

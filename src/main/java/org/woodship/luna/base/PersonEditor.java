@@ -15,11 +15,10 @@
  */
 package org.woodship.luna.base;
 
-import javax.persistence.EntityManager;
+import org.woodship.luna.db.ContainerUtils;
 
-import com.vaadin.addon.jpacontainer.JPAContainerFactory;
-import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.addon.jpacontainer.fieldfactory.SingleSelectConverter;
+import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -48,6 +47,7 @@ public class PersonEditor extends Window  {
 				// Add Bean validators if there are annotations
 				// Note that this requires a bean validation implementation to
 				// be available.
+				field.removeAllValidators();
 				BeanValidator validator = new BeanValidator(Person.class,
 						getPropertyId(field).toString());
 				field.addValidator(validator);
@@ -67,8 +67,8 @@ public class PersonEditor extends Window  {
 					Class<T> fieldType) {
 				if (type.isAssignableFrom(Department.class)) {
 					ComboBox cb = new ComboBox();
-					EntityManager em =( (JPAContainerItem<?>)item).getContainer().getEntityProvider().getEntityManager();
-					cb.setContainerDataSource(JPAContainerFactory.make(Department.class, em));
+					Container container = ContainerUtils.getInstance().createJPAContainer(Department.class);
+					cb.setContainerDataSource(container);
 					cb.setItemCaptionPropertyId("name");
 					cb.setConverter(new SingleSelectConverter(cb));
 					return (T) cb;
@@ -85,7 +85,7 @@ public class PersonEditor extends Window  {
 		formLayout.addComponent(fg.buildAndBind("phoneNumber"));
 		formLayout.addComponent(fg.buildAndBind("department"));
 
-		Button saveButton = new Button("Save");
+		Button saveButton = new Button("保存");
 		saveButton.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(Button.ClickEvent event) {
@@ -99,7 +99,7 @@ public class PersonEditor extends Window  {
 				}
 			}
 		});
-		Button cancelButton = new Button("Cancel");
+		Button cancelButton = new Button("重置");
 		cancelButton.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(Button.ClickEvent event) {

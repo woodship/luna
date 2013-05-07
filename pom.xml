@@ -112,7 +112,18 @@
 			<artifactId>cssinject</artifactId>
 			<version>2.0.3</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.vaadin.addon</groupId>
+			<artifactId>beanvalidation-addon</artifactId>
+			<version>1.0.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.vaadin</groupId>
+					<artifactId>vaadin</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
 		<!-- jpacontainer -->
 		<dependency>
 			<groupId>com.vaadin.addon</groupId>
