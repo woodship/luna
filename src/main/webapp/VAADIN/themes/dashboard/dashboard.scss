@@ -1,4 +1,4 @@
-@import "../runo/runo.scss";
+@import "../base/base.scss";
 
 @import "icons/fontello.scss";
 @import "fonts/open-sans.scss";
@@ -30,7 +30,7 @@
 
 @mixin dashboard {
 	
-	@include runo;
+	@include base;
 	
 	@include dashboard-loading-indicator;
 	@include dashboard-common;
