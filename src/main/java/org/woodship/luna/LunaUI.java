@@ -339,6 +339,7 @@ public class LunaUI extends UI {
         tree.setMultiSelect(false);
         tree.setContainerDataSource(con);
         tree.setItemCaptionPropertyId("name");
+        tree.setImmediate(true);//解决菜单与视图不同步问题
         menu.addComponent(tree);
         //默认展开树菜单
         for(Object id : tree.getItemIds()){
@@ -356,21 +357,9 @@ public class LunaUI extends UI {
         	f = "";
         }
         
+        //进入地址指定视图
         nav.navigateTo(f);
         tree.select(viewsId.get(f));
-        nav.addViewChangeListener(new ViewChangeListener() {
-
-            @Override
-            public boolean beforeViewChange(ViewChangeEvent event) {
-                return true;
-            }
-
-            @Override
-            public void afterViewChange(ViewChangeEvent event) {
-            	tree.select(viewsId.get(event.getViewName()));
-            }
-        });
-        
     
         //增加点击事件
         tree.addItemClickListener(new ItemClickListener() {
@@ -383,13 +372,6 @@ public class LunaUI extends UI {
 				if ( ResourceType.APPLICATION.equals(res.getResType()) 
 						& !nav.getState().equals( res.getPath())){
 					nav.navigateTo(res.getPath());
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					tree.select(event.getItemId());
 				}
 			}
 		});
