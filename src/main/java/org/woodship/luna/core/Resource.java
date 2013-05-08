@@ -29,6 +29,9 @@ import com.vaadin.navigator.View;
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Resource extends IdEntity<Resource>{
 
+	private static final long serialVersionUID = 1L;
+
+
 	public Resource(String name, ResourceType resType, Resource parent, String path, Class<? extends View> viewClass) {
 		super();
 		this.name = name;
@@ -59,8 +62,6 @@ public class Resource extends IdEntity<Resource>{
 	@ManyToOne
 	private Resource parent;
 
-	@Transient
-	private List<Resource> children = new ArrayList<Resource>();
 
 	public boolean isLeaf() {
 		if (ResourceType.MODULE.equals(resType)) {
@@ -150,19 +151,6 @@ public class Resource extends IdEntity<Resource>{
 		this.icon = icon;
 	}
 	
-	public List<Resource> getChildren() {
-		return children;
-	}
-
-	public void setChildren(List<Resource> children) {
-		this.children = children;
-	}
-	
-	public List<Resource> add(Resource child){
-		this.children.add(child);
-		return this.children;
-	}
-	
 	
 	public String getId() {
 		return id;
@@ -172,30 +160,4 @@ public class Resource extends IdEntity<Resource>{
 		this.id = id;
 	}
 
-	/**
-	 * 注意目前仅支持两层
-	 * @return
-	 */
-	public static List<Resource> getDemoResoures(){
-		List<Resource> res = new  ArrayList<Resource>();
-		
-		//增加一个模块
-		Resource sys = new Resource("系统管理", ResourceType.MODULE);
-		//建立应用
-		Resource app = new Resource("应用管理", ResourceType.APPLICATION, sys, "/application", ApplicationView.class);
-		//把该应用增加到模块下
-		sys.add(app);//
-		res.add(sys);
-		
-		//增加一个模块
-		Resource base = new Resource("基础应用", ResourceType.MODULE);
-		//建立应用
-		Resource person = new Resource("人员管理", ResourceType.APPLICATION, base, "/person", PersonView.class);
-		//把该应用增加到模块下
-		base.add(person);//
-		res.add(base);
-		
-	
-		return res;
-	}
 }

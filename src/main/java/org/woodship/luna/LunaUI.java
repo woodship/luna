@@ -15,12 +15,17 @@ import java.util.Locale;
 
 import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.woodship.luna.core.Resource;
+import org.woodship.luna.core.ResourceType;
 import org.woodship.luna.db.InitData;
 
 import ru.xpoft.vaadin.DiscoveryNavigator;
 
+import com.vaadin.addon.jpacontainer.EntityProvider;
+import com.vaadin.addon.jpacontainer.JPAContainer;
+import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.event.ItemClickEvent;
@@ -81,6 +86,10 @@ public class LunaUI extends UI {
     @Autowired
     private InitData initData;
     
+	@Autowired()
+	@Qualifier("resourceEntityProvider")
+	EntityProvider<Resource> resourceEntityProvider;
+	
     @Override
     protected void init(VaadinRequest request) {
     	//初始化数据
@@ -216,13 +225,29 @@ public class LunaUI extends UI {
 	private void buildMainView() {
 
         nav = new DiscoveryNavigator(this, content);
-
+        JPAContainer<Resource> con = new JPAContainer<Resource>(Resource.class){
+        	{
+        		setEntityProvider(resourceEntityProvider);
+        		setParentProperty("parent");
+        	}
+            @Override
+            public boolean areChildrenAllowed(Object itemId) {
+                return super.areChildrenAllowed(itemId)
+                        && getItem(itemId).getEntity().getResType().equals(ResourceType.MODULE);
+            }
+        };
         //添加各视图到nav中
-        for (Resource rootRes : Resource.getDemoResoures()) {
-        	for(Resource res : rootRes.getChildren()){
+        for(Object id : con.getItemIds()){
+        	Resource res = con.getItem(id).getEntity();
+        	if(ResourceType.APPLICATION.equals(res.getResType())){
         		nav.addBeanView(res.getPath(), res.getViewClass(), true);
         	}
         }
+//        for (Resource rootRes : Resource.getDemoResoures()) {
+//        	for(Resource res : rootRes.getChildren()){
+//        		nav.addBeanView(res.getPath(), res.getViewClass(), true);
+//        	}
+//        }
 
         helpManager.closeAll();
         removeStyleName("login");
@@ -318,23 +343,17 @@ public class LunaUI extends UI {
 
         menu.removeAllComponents();
         Tree tree = new Tree();
+        tree.setContainerDataSource(con);
+        tree.setItemCaptionPropertyId("name");
         menu.addComponent(tree);
-        //构建菜单
-        for (final Resource model : Resource.getDemoResoures()) {
-        	tree.addItem(model);
-        	tree.expandItem(model);
-        	for(Resource app : model.getChildren()){
-        		tree.addItem(app);
-        		tree.setParent(app,model);
-        		tree.setChildrenAllowed(app, false);
-        	}
-        }
         
         //增加点击事件
         tree.addItemClickListener(new ItemClickListener() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public void itemClick(ItemClickEvent event) {
-				Resource res =  (Resource) event.getItemId();
+				JPAContainerItem<Resource> item = (JPAContainerItem<Resource>) event.getItem();
+				Resource res =  item.getEntity();
 				if (!StringUtils.isNullOrEmpty(res.getPath()) 
 						& !nav.getState().equals( res.getPath()))//不是当前视图时，切换视图
 					nav.navigateTo(res.getPath());
@@ -350,7 +369,7 @@ public class LunaUI extends UI {
             f = f.substring(1);
         }
         if (f == null || f.equals("") || f.equals("/")) {
-            nav.navigateTo("/application");
+            nav.navigateTo("/home");
             menu.getComponent(0).addStyleName("selected");
             //TODO showHelpFor 老崔
             //helpManager.showHelpFor(DashboardView.class);
