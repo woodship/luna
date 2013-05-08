@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.woodship.luna.db.ContainerUtils;
 
+import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.EntityProvider;
 import com.vaadin.addon.jpacontainer.JPAContainer;
-import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItem;
@@ -38,7 +38,7 @@ import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 @org.springframework.stereotype.Component
-@Scope("singleton")
+@Scope("prototype")
 public class PersonView extends HorizontalSplitPanel implements ComponentContainer, View{
 	@Autowired
 	ContainerUtils conu;
@@ -69,7 +69,6 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
     @PostConstruct
 	public void PostConstruct(){
         departments = conu.createJPAHierarchialContainer(Department.class);
-//        persons = conu.createJPAContainer(Person.class);
         persons = new JPAContainer<Person>(Person.class);
        persons.setEntityProvider(personProvider);
         
@@ -121,15 +120,9 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 
             @Override
             public void buttonClick(ClickEvent event) {
-//                final JPAContainerItem<Person> newPersonItem = new JPAContainerItem(persons,new Person());
-//                PersonEditor personEditor = new PersonEditor(newPersonItem);
-//                personEditor.addListener(new EditorSavedListener() {
-//                    @Override
-//                    public void editorSaved(EditorSavedEvent event) {
-//                        persons.addEntity(newPersonItem.getBean());
-//                    }
-//                });
-//                UI.getCurrent().addWindow(personEditor);
+                final EntityItem<Person> newPersonItem = persons.createEntityItem(new Person());
+                PersonEditor personEditor = new PersonEditor(newPersonItem);
+                UI.getCurrent().addWindow(personEditor);
             }
         });
 

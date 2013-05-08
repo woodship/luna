@@ -1,0 +1,4 @@
+1.view中不能有事务注解，不然DiscoveryNavigator会找不到该view，因为有事务注解过的bean会生成代理bean,代理bean的类型已经变了
+
+2.TransactionalEntityProvider类相当于是公共DAO,具体实体的EntityProvider实现该类，然后用其生成jpacontainer.增删改如果有其它业务需求，
+ 可覆盖TransactionalEntityProvider中的相应方法，增加业务代码。

@@ -10,25 +10,28 @@
 
 package org.woodship.luna;
 
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
-import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.woodship.luna.core.Resource;
+import org.woodship.luna.core.ResourceType;
 import org.woodship.luna.db.InitData;
 
 import ru.xpoft.vaadin.DiscoveryNavigator;
 
+import com.vaadin.addon.jpacontainer.EntityProvider;
+import com.vaadin.addon.jpacontainer.JPAContainer;
+import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
-import com.vaadin.event.Transferable;
-import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
@@ -38,9 +41,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.DragAndDropWrapper;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
@@ -50,7 +51,6 @@ import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.NativeButton;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.UI;
@@ -81,6 +81,10 @@ public class LunaUI extends UI {
     @Autowired
     private InitData initData;
     
+	@Autowired()
+	@Qualifier("resourceEntityProvider")
+	EntityProvider<Resource> resourceEntityProvider;
+	
     @Override
     protected void init(VaadinRequest request) {
     	//初始化数据
@@ -113,13 +117,13 @@ public class LunaUI extends UI {
             root.removeAllComponents();
         }
         helpManager.closeAll();
-        HelpOverlay w = helpManager
-                .addOverlay(
-                        "Welcome to the Dashboard Demo Application",
-                        "<p>This application is not real, it only demonstrates an application built with the <a href=\"http://vaadin.com\">Vaadin framework</a>.</p><p>No username or password is required, just click the ‘Sign In’ button to continue. You can try out a random username and password, though.</p>",
-                        "login");
-        w.center();
-        addWindow(w);
+//        HelpOverlay w = helpManager
+//                .addOverlay(
+//                        "Welcome to the Dashboard Demo Application",
+//                        "<p>This application is not real, it only demonstrates an application built with the <a href=\"http://vaadin.com\">Vaadin framework</a>.</p><p>No username or password is required, just click the ‘Sign In’ button to continue. You can try out a random username and password, though.</p>",
+//                        "login");
+//        w.center();
+//        addWindow(w);
 
         addStyleName("login");
 
@@ -216,11 +220,25 @@ public class LunaUI extends UI {
 	private void buildMainView() {
 
         nav = new DiscoveryNavigator(this, content);
-
+        JPAContainer<Resource> con = new JPAContainer<Resource>(Resource.class){
+        	{
+        		setEntityProvider(resourceEntityProvider);
+        		setParentProperty("parent");
+        	}
+            @Override
+            public boolean areChildrenAllowed(Object itemId) {
+                return super.areChildrenAllowed(itemId)
+                        && getItem(itemId).getEntity().getResType().equals(ResourceType.MODULE);
+            }
+        };
+        
+        final Map<String,Object> viewsId = new HashMap<String,Object> ();//应用ID,用于选择
         //添加各视图到nav中
-        for (Resource rootRes : Resource.getDemoResoures()) {
-        	for(Resource res : rootRes.getChildren()){
+        for(Object id : con.getItemIds()){
+        	Resource res = con.getItem(id).getEntity();
+        	if(ResourceType.APPLICATION.equals(res.getResType())){
         		nav.addBeanView(res.getPath(), res.getViewClass(), true);
+        		viewsId.put(res.getPath(), res.getId());
         	}
         }
 
@@ -229,13 +247,14 @@ public class LunaUI extends UI {
         root.removeComponent(loginLayout);
 
         
-        //左侧菜单视图
+      //开始构建视图
         root.addComponent(new HorizontalLayout() {
             {
                 setSizeFull();
                 addStyleName("main-view");
+                
                 addComponent(new VerticalLayout() {
-                    // Sidebar
+                	//左侧菜单视图
                     {
                         addStyleName("sidebar");
                         setWidth(null);
@@ -316,29 +335,16 @@ public class LunaUI extends UI {
         });
 
         menu.removeAllComponents();
-        Tree tree = new Tree();
+        final Tree tree = new Tree();
+        tree.setMultiSelect(false);
+        tree.setContainerDataSource(con);
+        tree.setItemCaptionPropertyId("name");
+        tree.setImmediate(true);//解决菜单与视图不同步问题
         menu.addComponent(tree);
-        //构建菜单
-        for (final Resource model : Resource.getDemoResoures()) {
-        	tree.addItem(model);
-        	tree.expandItem(model);
-        	for(Resource app : model.getChildren()){
-        		tree.addItem(app);
-        		tree.setParent(app,model);
-        		tree.setChildrenAllowed(app, false);
-        	}
+        //默认展开树菜单
+        for(Object id : tree.getItemIds()){
+        	tree.expandItem(id);
         }
-        
-        //增加点击事件
-        tree.addItemClickListener(new ItemClickListener() {
-			@Override
-			public void itemClick(ItemClickEvent event) {
-				Resource res =  (Resource) event.getItemId();
-				if (!StringUtils.isNullOrEmpty(res.getPath()) 
-						& !nav.getState().equals( res.getPath()))//不是当前视图时，切换视图
-					nav.navigateTo(res.getPath());
-			}
-		});
         
         menu.addStyleName("menu");
         menu.setHeight("100%");
@@ -347,72 +353,35 @@ public class LunaUI extends UI {
         String f = Page.getCurrent().getUriFragment();
         if (f != null && f.startsWith("!")) {
             f = f.substring(1);
+        }else{
+        	f = "";
         }
-        if (f == null || f.equals("") || f.equals("/")) {
-            nav.navigateTo("/application");
-            menu.getComponent(0).addStyleName("selected");
-            //TODO showHelpFor 老崔
-            //helpManager.showHelpFor(DashboardView.class);
-        } else {
-            nav.navigateTo(f);
-            //TODO showHelpFor 老崔
-           // helpManager.showHelpFor(routes.get(f));
-        }
-
-        nav.addViewChangeListener(new ViewChangeListener() {
-
-            @Override
-            public boolean beforeViewChange(ViewChangeEvent event) {
-                helpManager.closeAll();
-                return true;
-            }
-
-            @Override
-            public void afterViewChange(ViewChangeEvent event) {
-                View newView = event.getNewView();
-                helpManager.showHelpFor(newView);
-                autoCreateReport = false;
-            }
-        });
-
-    }
-
-    private Transferable items;
-
-    private void clearMenuSelection() {
-        for (Iterator<Component> it = menu.getComponentIterator(); it.hasNext();) {
-            Component next = it.next();
-            if (next instanceof NativeButton) {
-                next.removeStyleName("selected");
-            } else if (next instanceof DragAndDropWrapper) {
-                // Wow, this is ugly (even uglier than the rest of the code)
-                ((DragAndDropWrapper) next).iterator().next()
-                        .removeStyleName("selected");
-            }
-        }
+        
+        //进入地址指定视图
+        nav.navigateTo(f);
+        tree.select(viewsId.get(f));
+    
+        //增加点击事件
+        tree.addItemClickListener(new ItemClickListener() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public void itemClick(ItemClickEvent event) {
+				JPAContainerItem<Resource> item = (JPAContainerItem<Resource>) event.getItem();
+				Resource res =  item.getEntity();
+				//不是当前视图时，切换视图
+				if ( ResourceType.APPLICATION.equals(res.getResType()) 
+						& !nav.getState().equals( res.getPath())){
+					nav.navigateTo(res.getPath());
+				}
+			}
+		});
+        
     }
 
 
-    boolean autoCreateReport = false;
-    Table transactions;
-
-    public void openReports(Table t) {
-        transactions = t;
-        autoCreateReport = true;
-        nav.navigateTo("/reports");
-        clearMenuSelection();
-    }
 
     HelpManager getHelpManager() {
         return helpManager;
     }
-
-	public void clearDashboardButtonBadge() {
-		
-	}
-
-	public void updateReportsButtonBadge(String string) {
-		
-	}
 
 }

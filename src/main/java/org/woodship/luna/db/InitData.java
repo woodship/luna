@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.woodship.luna.base.Department;
@@ -20,14 +21,15 @@ import org.woodship.luna.core.HomeView;
 import org.woodship.luna.core.Resource;
 import org.woodship.luna.core.ResourceType;
 
-@Component
-public class InitData {
+import com.vaadin.addon.jpacontainer.EntityProvider;
 
-	@Autowired
-	ContainerUtils conu;
+@SuppressWarnings("serial")
+@Component
+public class InitData{
 
 	@PersistenceContext
 	private  EntityManager entityManager;
+
 	
 	@Transactional
 	public void init(){
@@ -46,7 +48,9 @@ public class InitData {
 	}
 	
 	private void createResource(){
-
+		Resource home = new Resource("主页", ResourceType.APPLICATION, null, "", HomeView.class);
+		entityManager.persist(home);
+		
 		//增加系统管理模块
 		Resource sys = new Resource("系统管理", ResourceType.MODULE);
 		entityManager.persist(sys);
@@ -60,8 +64,7 @@ public class InitData {
 		entityManager.persist(base);
 		Resource person = new Resource("人员管理", ResourceType.APPLICATION, base, "/person", PersonView.class);
 		entityManager.persist(person);
-		Resource home = new Resource("主页", ResourceType.APPLICATION, base, "/home", HomeView.class);
-		entityManager.persist(home);
+
 		
 	}
 	

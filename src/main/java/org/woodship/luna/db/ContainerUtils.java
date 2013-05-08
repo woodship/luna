@@ -7,12 +7,15 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import ru.xpoft.vaadin.SpringApplicationContext;
+
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.IndexedContainer;
 
 @Component
 public class ContainerUtils {
+	
 	
 	@Autowired
 	private EntityProviderUtil entityProviderUtil;
@@ -73,5 +76,11 @@ public class ContainerUtils {
     	 }
     	return new HJPAContainer<E>(c);
     }
+    
+    public static  ContainerUtils getInstance(){
+    	Object bean = SpringApplicationContext.getApplicationContext().getBean(ContainerUtils.class);
+    	return (ContainerUtils)bean;
+    }
+    
        
 }
