@@ -1,13 +1,3 @@
-/**
- * DISCLAIMER
- * 
- * The quality of the code is such that you should not copy any of it as best
- * practice how to build Vaadin applications.
- * 
- * @author jouni@vaadin.com
- * 
- */
-
 package org.woodship.luna;
 
 import java.util.HashMap;
@@ -17,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
+import org.woodship.luna.base.AndroidRequestHandler;
 import org.woodship.luna.core.Resource;
 import org.woodship.luna.core.ResourceType;
 import org.woodship.luna.db.InitData;
@@ -32,7 +23,6 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
-import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
@@ -87,6 +77,7 @@ public class LunaUI extends UI {
 	
     @Override
     protected void init(VaadinRequest request) {
+    	
     	//初始化数据
     	initData.init();
     	
@@ -257,7 +248,7 @@ public class LunaUI extends UI {
                 	//左侧菜单视图
                     {
                         addStyleName("sidebar");
-                        setWidth(null);
+                        setWidth("150px");
                         setHeight("100%");
 
                         // 顶部

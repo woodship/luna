@@ -16,15 +16,13 @@
 package org.woodship.luna.base;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.woodship.luna.core.Resource;
 import org.woodship.luna.db.IdEntity;
+
+import com.vaadin.data.fieldgroup.Caption;
 
 @SuppressWarnings("serial")
 @Entity
@@ -32,6 +30,7 @@ public class Person extends IdEntity<Person>{
 
     @NotNull
     @Size(min = 2, max = 24)
+    @Caption("姓")
     private String firstName;
     @Size(min = 2, max = 24)
     private String lastName;
@@ -42,8 +41,7 @@ public class Person extends IdEntity<Person>{
     @NotNull
     @ManyToOne
     private Department department;
-
-
+    
     public String getFirstName() {
         return firstName;
     }

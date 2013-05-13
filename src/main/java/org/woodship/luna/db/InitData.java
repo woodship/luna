@@ -9,8 +9,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.woodship.luna.base.Department;
@@ -20,8 +18,7 @@ import org.woodship.luna.core.ApplicationView;
 import org.woodship.luna.core.HomeView;
 import org.woodship.luna.core.Resource;
 import org.woodship.luna.core.ResourceType;
-
-import com.vaadin.addon.jpacontainer.EntityProvider;
+import org.woodship.luna.eam.ItemView;
 
 @SuppressWarnings("serial")
 @Component
@@ -64,7 +61,12 @@ public class InitData{
 		entityManager.persist(base);
 		Resource person = new Resource("人员管理", ResourceType.APPLICATION, base, "/person", PersonView.class);
 		entityManager.persist(person);
-
+		
+		//增加进销存管理模块
+		Resource eam = new Resource("进销存", ResourceType.MODULE);
+		entityManager.persist(eam);
+		Resource item = new Resource("库存项目", ResourceType.APPLICATION, eam, "/item", ItemView.class);
+		entityManager.persist(item);
 		
 	}
 	

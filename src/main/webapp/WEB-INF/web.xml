@@ -44,7 +44,7 @@
 	
 	<servlet>
 		<servlet-name>Luna</servlet-name>
-		<servlet-class>ru.xpoft.vaadin.SpringVaadinServlet</servlet-class>
+		<servlet-class>org.woodship.luna.SpringVaadinServlet</servlet-class>
 		<init-param>
 			<param-name>beanName</param-name>
 			<param-value>lunaUI</param-value>
