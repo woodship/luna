@@ -123,7 +123,7 @@ public class ItemView extends HorizontalSplitPanel implements ComponentContainer
             @Override
             public void buttonClick(ClickEvent event) {
                 final EntityItem<Person> newPersonItem = persons.createEntityItem(new Person());
-                PersonEditor personEditor = new PersonEditor(newPersonItem);
+                PersonEditor personEditor = new PersonEditor(newPersonItem,persons);
                 UI.getCurrent().addWindow(personEditor);
             }
         });
@@ -144,8 +144,7 @@ public class ItemView extends HorizontalSplitPanel implements ComponentContainer
             @Override
             public void buttonClick(ClickEvent event) {
                 UI.getCurrent().addWindow(
-                        new PersonEditor(personTable.getItem(personTable
-                                .getValue())));
+                        new PersonEditor(personTable.getItem(personTable.getValue()),persons));
             }
         });
         editButton.setEnabled(false);

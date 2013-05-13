@@ -17,6 +17,8 @@ package org.woodship.luna.base;
 
 import org.woodship.luna.db.ContainerUtils;
 
+import com.vaadin.addon.jpacontainer.JPAContainer;
+import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.addon.jpacontainer.fieldfactory.SingleSelectConverter;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
@@ -28,12 +30,17 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
 
 @SuppressWarnings("serial")
 public class PersonEditor extends Window  {
-
-	public PersonEditor(final Item item) {
+	JPAContainer<Person> persons = null;
+	JPAContainerItem<Person> person = null;
+	
+	public PersonEditor(final Item item,  final JPAContainer<Person> persons) {
+		this.persons = persons;
+		this.person = (JPAContainerItem<Person>) item;
 		FormLayout formLayout = new FormLayout();
 
 		// Just edit the first item in the JPAContainer
@@ -54,6 +61,10 @@ public class PersonEditor extends Window  {
 				if (field.getLocale() != null) {
 					validator.setLocale(field.getLocale());
 				}
+				
+				if (field instanceof TextField) {
+		            ((TextField) field).setNullRepresentation("");
+		        }
 			}
 		};
 
@@ -90,7 +101,13 @@ public class PersonEditor extends Window  {
 			@Override
 			public void buttonClick(Button.ClickEvent event) {
 				try {
-					fg.commit();
+					if(person.getEntity().getId() != null){
+						fg.commit();
+					}else{
+						fg.commit();
+						Person p = ((JPAContainerItem<Person>)fg.getItemDataSource()).getEntity();
+						persons.addEntity(p);
+					}
 				} catch (FieldGroup.CommitException e) {
 					e.printStackTrace();
 					Notification.show("Couldn't commit values: "
