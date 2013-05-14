@@ -14,10 +14,8 @@ import com.vaadin.addon.jpacontainer.EntityProvider;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.filter.Compare.Equal;
 import com.vaadin.data.util.filter.Like;
-import com.vaadin.data.util.filter.Or;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.ItemClickEvent;
@@ -28,6 +26,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComponentContainer;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Table;
@@ -111,8 +110,8 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
             }
         });
 
-        personTable.setVisibleColumns(new Object[] { "firstName", "lastName",
-                "department", "phoneNumber", "street", "city", "zipCode" });
+        //TODO 自动生成列名
+        personTable.setVisibleColumns(new Object[] { "trueName", "department", "phoneNumber", "street", "city", "worknum" });
 
         HorizontalLayout toolbar = new HorizontalLayout();
         newButton = new Button("Add");
@@ -122,6 +121,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
             public void buttonClick(ClickEvent event) {
                 final EntityItem<Person> newPersonItem = persons.createEntityItem(new Person());
                 PersonEditor personEditor = new PersonEditor(newPersonItem,persons);
+                personEditor.center();
                 UI.getCurrent().addWindow(personEditor);
             }
         });
@@ -141,8 +141,9 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 
             @Override
             public void buttonClick(ClickEvent event) {
-                UI.getCurrent().addWindow(
-                        new PersonEditor(personTable.getItem(personTable.getValue()),persons));
+            	PersonEditor pe = new PersonEditor(personTable.getItem(personTable.getValue()),persons);
+            	pe.center();
+                UI.getCurrent().addWindow(pe);
             }
         });
         editButton.setEnabled(false);
@@ -165,6 +166,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
         toolbar.setWidth("100%");
         toolbar.setExpandRatio(searchField, 1);
         toolbar.setComponentAlignment(searchField, Alignment.TOP_RIGHT);
+        toolbar.setMargin(true);
 
         verticalLayout.addComponent(toolbar);
         verticalLayout.addComponent(personTable);
@@ -211,9 +213,8 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
             }
         }
         if (textFilter != null && !textFilter.equals("")) {
-            Or or = new Or(new Like("firstName", textFilter + "%", false),
-                    new Like("lastName", textFilter + "%", false));
-            persons.addContainerFilter(or);
+            Like like =new Like("trueName", textFilter + "%", false);
+            persons.addContainerFilter(like);
         }
         persons.applyFilters();
     }

@@ -113,7 +113,7 @@ public class ItemView extends HorizontalSplitPanel implements ComponentContainer
             }
         });
 
-        personTable.setVisibleColumns(new Object[] { "firstName", "lastName",
+        personTable.setVisibleColumns(new Object[] { "trueName", 
                 "department", "phoneNumber", "street", "city", "zipCode" });
 
         HorizontalLayout toolbar = new HorizontalLayout();

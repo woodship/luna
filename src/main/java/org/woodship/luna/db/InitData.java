@@ -76,12 +76,12 @@ public class InitData{
 			"Research and Development", "Production", "Sales", "Marketing" };
 	final static String[] officeNames = { "London",
 		"New York", "Tokyo", "Turku"};
-	final static String[] fnames = { "张", "王", "李", "赵",
-			"马", "Nina", "Alex", "Rita", "Dan", "Umberto", "Henrik",
-			"Rene", "Lisa", "Marge" };
-	final static String[] lnames = { "Smith", "Gordon", "Simpson", "Brown",
-			"Clavel", "Simons", "Verne", "Scott", "Allison", "Gates",
-			"Rowling", "Barks", "Ross", "Schneider", "Tate" };
+	final static String[] fnames = { "赵", "钱", "孙", "李",
+			"周","吴","郑","王","冯","陈","褚",
+			"卫","蒋","沈"};
+	final static String[] lnames = { "万全", "心社", "彭勇", "建国",
+			"定之", "洁敏", "正", "长赋", "焕成", "伏瞻",
+			"卫", "继伟", "振华", "益民", "名照" };
 	final static String cities[] = { "Amsterdam", "Berlin", "Helsinki",
 			"Hong Kong", "London", "Luxemburg", "New York", "Oslo", "Paris",
 			"Rome", "Stockholm", "Tokyo", "Turku" };
@@ -121,8 +121,7 @@ public class InitData{
 				int amount = r.nextInt(15) + 1;
 				for (int i = 0; i < amount; i++) {
 					Person p = new Person();
-					p.setFirstName(fnames[r.nextInt(fnames.length)]);
-					p.setLastName(lnames[r.nextInt(lnames.length)]);
+					p.setTrueName(fnames[r.nextInt(fnames.length)]+lnames[r.nextInt(lnames.length)]);
 					p.setCity(cities[r.nextInt(cities.length)]);
 					p.setPhoneNumber("+358 02 555 " + r.nextInt(10) + r.nextInt(10)
 							+ r.nextInt(10) + r.nextInt(10));
@@ -130,7 +129,7 @@ public class InitData{
 					if (n < 10000) {
 						n += 10000;
 					}
-					p.setZipCode("" + n);
+					p.setWorknum("" + n);
 					p.setStreet(streets[r.nextInt(streets.length)]);
 					p.setDepartment(group);
 					gPersons.add(p);
