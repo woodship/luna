@@ -29,10 +29,10 @@ import com.vaadin.data.fieldgroup.Caption;
 public class Person extends IdEntity<Person>{
 
     @NotNull
-    @Size(min = 2, max = 24)
+    @Size(min = 1, max = 24)
     @Caption("姓")
     private String firstName;
-    @Size(min = 2, max = 24)
+    @Size(min = 1, max = 24)
     private String lastName;
     private String street;
     private String city;

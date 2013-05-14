@@ -76,8 +76,8 @@ public class InitData{
 			"Research and Development", "Production", "Sales", "Marketing" };
 	final static String[] officeNames = { "London",
 		"New York", "Tokyo", "Turku"};
-	final static String[] fnames = { "Peter", "Alice", "Joshua", "Mike",
-			"Olivia", "Nina", "Alex", "Rita", "Dan", "Umberto", "Henrik",
+	final static String[] fnames = { "张", "王", "李", "赵",
+			"马", "Nina", "Alex", "Rita", "Dan", "Umberto", "Henrik",
 			"Rene", "Lisa", "Marge" };
 	final static String[] lnames = { "Smith", "Gordon", "Simpson", "Brown",
 			"Clavel", "Simons", "Verne", "Scott", "Allison", "Gates",

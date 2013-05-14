@@ -7,7 +7,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
-import org.woodship.luna.base.AndroidRequestHandler;
 import org.woodship.luna.core.Resource;
 import org.woodship.luna.core.ResourceType;
 import org.woodship.luna.db.InitData;
@@ -17,6 +16,7 @@ import ru.xpoft.vaadin.DiscoveryNavigator;
 import com.vaadin.addon.jpacontainer.EntityProvider;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
+import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.event.ItemClickEvent;
@@ -49,7 +49,8 @@ import com.vaadin.ui.VerticalLayout;
 @Theme("dashboard")
 @Title("luna")
 @org.springframework.stereotype.Component
-@Scope("session")
+@Scope("request")
+@PreserveOnRefresh//支持F5刷新
 public class LunaUI extends UI {
 
 
