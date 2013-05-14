@@ -28,37 +28,29 @@ import com.vaadin.data.fieldgroup.Caption;
 @Entity
 public class Person extends IdEntity<Person>{
 
-    @NotNull
     @Size(min = 1, max = 24)
-    @Caption("姓")
-    private String firstName;
-    @Size(min = 1, max = 24)
-    private String lastName;
+    @Caption("姓名")
+    private String trueName;
     private String street;
     private String city;
-    private String zipCode;
+    @Caption("工号")
+    private String worknum;
+    @Caption("电话")
     private String phoneNumber;
     @NotNull
     @ManyToOne
+    @Caption("部门")
     private Department department;
     
-    public String getFirstName() {
-        return firstName;
-    }
+    public String getTrueName() {
+		return trueName;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public void setTrueName(String trueName) {
+		this.trueName = trueName;
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getStreet() {
+	public String getStreet() {
         return street;
     }
 
@@ -74,15 +66,15 @@ public class Person extends IdEntity<Person>{
         this.city = city;
     }
 
-    public String getZipCode() {
-        return zipCode;
-    }
+    public String getWorknum() {
+		return worknum;
+	}
 
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
+	public void setWorknum(String worknum) {
+		this.worknum = worknum;
+	}
 
-    public String getPhoneNumber() {
+	public String getPhoneNumber() {
         return phoneNumber;
     }
 

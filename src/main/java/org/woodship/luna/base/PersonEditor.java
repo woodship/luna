@@ -16,6 +16,7 @@
 package org.woodship.luna.base;
 
 import org.woodship.luna.db.ContainerUtils;
+import org.woodship.luna.util.JPAContainerItemFieldGroup;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
@@ -24,95 +25,90 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.validator.BeanValidator;
+import com.vaadin.server.ErrorMessage;
+import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.AbstractField;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
 
 @SuppressWarnings("serial")
 public class PersonEditor extends Window  {
 	JPAContainer<Person> persons = null;
-	JPAContainerItem<Person> person = null;
-	
+	JPAContainerItem<Person> jpaitem = null;
+
+	@SuppressWarnings("unchecked")
 	public PersonEditor(final Item item,  final JPAContainer<Person> persons) {
 		this.persons = persons;
-		this.person = (JPAContainerItem<Person>) item;
-		FormLayout formLayout = new FormLayout();
-
-		// Just edit the first item in the JPAContainer
-		final FieldGroup fg = new FieldGroup(item) {
-			/*
-			 * Override configureField to add a bean validator to each field.
-			 */
-			@Override
-			protected void configureField(Field<?> field) {
-				super.configureField(field);
-				// Add Bean validators if there are annotations
-				// Note that this requires a bean validation implementation to
-				// be available.
-				field.removeAllValidators();
-				BeanValidator validator = new BeanValidator(Person.class,
-						getPropertyId(field).toString());
-				field.addValidator(validator);
-				if (field.getLocale() != null) {
-					validator.setLocale(field.getLocale());
-				}
-				
-				if (field instanceof TextField) {
-		            ((TextField) field).setNullRepresentation("");
-		        }
-			}
-		};
-
+		this.jpaitem = (JPAContainerItem<Person>) item;
+		final FormLayout formLayout = new FormLayout();
+		formLayout.setMargin(true);
+		final JPAContainerItemFieldGroup<Person> fg = new JPAContainerItemFieldGroup<Person>(Person.class);
+		fg.setItemDataSource(jpaitem);
 		/*
-		 * This is an example of a field factory that constructs a complex
-		 * field.
+		 * 构建Field,在此处理自定义字段
 		 */
 		fg.setFieldFactory(new DefaultFieldGroupFieldFactory() {
+			@SuppressWarnings("rawtypes")
 			@Override
-			public <T extends Field> T createField(Class<?> type,
-					Class<T> fieldType) {
-				if (type.isAssignableFrom(Department.class)) {
+			public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
+				if (dataType.isAssignableFrom(Department.class)) {
 					ComboBox cb = new ComboBox();
 					Container container = ContainerUtils.getInstance().createJPAContainer(Department.class);
 					cb.setContainerDataSource(container);
 					cb.setItemCaptionPropertyId("name");
-					cb.setConverter(new SingleSelectConverter(cb));
+					cb.setConverter(new SingleSelectConverter<Object>(cb));
 					return (T) cb;
 				}
-				return super.createField(type, fieldType);
+				return super.createField(dataType, fieldType);
 			}
 		});
 
-		formLayout.addComponent(fg.buildAndBind("firstName"));
-		formLayout.addComponent(fg.buildAndBind("lastName"));
+		formLayout.addComponent(fg.buildAndBind("trueName"));
 		formLayout.addComponent(fg.buildAndBind("street"));
 		formLayout.addComponent(fg.buildAndBind("city"));
-		formLayout.addComponent(fg.buildAndBind("zipCode"));
+		formLayout.addComponent(fg.buildAndBind("worknum"));
 		formLayout.addComponent(fg.buildAndBind("phoneNumber"));
 		formLayout.addComponent(fg.buildAndBind("department"));
 
+		final Label error = new Label("", ContentMode.HTML);
+		error.setVisible(false);
+		formLayout.addComponent(error);
+
+		// Buffer the form content
+		fg.setBuffered(true);
+
+		//处理保存事件
 		Button saveButton = new Button("保存");
 		saveButton.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(Button.ClickEvent event) {
 				try {
-					if(person.getEntity().getId() != null){
-						fg.commit();
-					}else{
-						fg.commit();
-						Person p = ((JPAContainerItem<Person>)fg.getItemDataSource()).getEntity();
+					//编辑的直接提交即可
+					fg.commit();
+					//新增的需要单独处理
+					if(jpaitem.getEntity().getId() == null){
+						Person p =fg.getItemDataSource().getEntity();
 						persons.addEntity(p);
 					}
+					Notification.show("保存成功");
+//					error.setVisible(false);
+					PersonEditor.this.close();//关闭，防止再将点击，重复增加
 				} catch (FieldGroup.CommitException e) {
-					e.printStackTrace();
-					Notification.show("Couldn't commit values: "
-							+ e.getCause().getMessage(),
-							Notification.Type.ERROR_MESSAGE);
+					for (Field<?> field: fg.getFields()) {
+						ErrorMessage errMsg = ((AbstractField<?>)field).getErrorMessage();
+						if (errMsg != null) {
+							error.setValue("<div style='color:red'> " + field.getCaption() + ": " +  errMsg.getFormattedHtmlMessage() + "</div>");
+							error.setVisible(true);
+							break;
+						}
+					}
 				}
 			}
 		});
@@ -123,10 +119,14 @@ public class PersonEditor extends Window  {
 				fg.discard();
 			}
 		});
-
-		formLayout.addComponent(saveButton);
-		formLayout.addComponent(cancelButton);
-
+		
+		
+		HorizontalLayout buttons = new HorizontalLayout();
+		buttons.setMargin(true);
+		buttons.addComponent(saveButton);
+		buttons.addComponent(cancelButton);
+		formLayout.addComponent(buttons);
+		formLayout.setComponentAlignment(buttons, Alignment.MIDDLE_LEFT);
 		setContent(formLayout);
 	}
 
