@@ -26,6 +26,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Table.RowHeaderMode;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -52,7 +53,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 	
     private Tree groupTree;
 
-    private Table personTable;
+    private Table mainTable;
 
     private TextField searchField;
 
@@ -70,7 +71,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 	public void PostConstruct(){
         departments = conu.createJPAHierarchialContainer(Department.class);
         persons = new JPAContainer<Person>(Person.class);
-       persons.setEntityProvider(personProvider);
+        persons.setEntityProvider(personProvider);
         
         persons.getEntityProvider();
         buildTree();
@@ -85,10 +86,12 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
         setSecondComponent(verticalLayout);
 
         
-        personTable = new Table(null, persons);
-        personTable.setSelectable(true);
-        personTable.setImmediate(true);
-        personTable.addValueChangeListener(new Property.ValueChangeListener() {
+        mainTable = new Table(null, persons);
+        mainTable.setSelectable(true);
+        mainTable.setImmediate(true);
+        mainTable.setRowHeaderMode(RowHeaderMode.INDEX);
+//     mainTable.setColumnWidth(null, 24);//设置序号列宽度
+        mainTable.addValueChangeListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 setModificationsEnabled(event.getProperty().getValue() != null);
@@ -100,18 +103,18 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
             }
         });
 
-        personTable.setSizeFull();
+        mainTable.setSizeFull();
         // personTable.setSelectable(true);
-        personTable.addItemClickListener(new ItemClickListener() {
+        mainTable.addItemClickListener(new ItemClickListener() {
             @Override
             public void itemClick(ItemClickEvent event) {
                 if (event.isDoubleClick()) {
-                    personTable.select(event.getItemId());
+                    mainTable.select(event.getItemId());
                 }
             }
         });
 
-        Utils.configTableHead(personTable, Person.class);
+        Utils.configTableHead(mainTable, Person.class);
         
 
         HorizontalLayout toolbar = new HorizontalLayout();
@@ -132,7 +135,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 
             @Override
             public void buttonClick(ClickEvent event) {
-            	persons.removeItem(personTable.getValue());
+            	persons.removeItem(mainTable.getValue());
             }
         });
         deleteButton.setEnabled(false);
@@ -142,7 +145,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 
             @Override
             public void buttonClick(ClickEvent event) {
-            	PersonEditor pe = new PersonEditor(personTable.getItem(personTable.getValue()),persons);
+            	PersonEditor pe = new PersonEditor(mainTable.getItem(mainTable.getValue()),persons);
             	pe.center();
                 UI.getCurrent().addWindow(pe);
             }
@@ -170,8 +173,8 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
         toolbar.setMargin(true);
 
         verticalLayout.addComponent(toolbar);
-        verticalLayout.addComponent(personTable);
-        verticalLayout.setExpandRatio(personTable, 1);
+        verticalLayout.addComponent(mainTable);
+        verticalLayout.setExpandRatio(mainTable, 1);
         verticalLayout.setSizeFull();
 
     }

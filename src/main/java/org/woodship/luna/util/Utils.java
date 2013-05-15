@@ -6,8 +6,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.Caption;
 import com.vaadin.data.fieldgroup.FieldGroup;
+import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Table;
 
 public class Utils {
@@ -61,14 +63,12 @@ public class Utils {
 	 * @param beanClass 要绑定到{@link BeanFieldGroup}上的beanClass
 	 * @return 最终绑定的字段
 	 */
-	public static List<com.vaadin.ui.Field<?>> buildAndBindFieldGroup(FieldGroup fieldGroup, Class<?> beanClass){
-		List<com.vaadin.ui.Field<?>> fields = new ArrayList<com.vaadin.ui.Field<?>>();
+	public static void buildAndBindFieldGroup(FieldGroup fieldGroup, Class<?> beanClass,ComponentContainer layout){
 		for(Field f : beanClass.getDeclaredFields()){
 			Caption caption = f.getAnnotation(Caption.class);
 			if(caption != null){
-				fields.add(fieldGroup.buildAndBind(f.getName()));
+				layout.addComponent(fieldGroup.buildAndBind(f.getName()));
 			}
 		}
-		return fields;
 	}
 }

@@ -32,7 +32,6 @@ import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -73,9 +72,8 @@ public class PersonEditor extends Window  {
 		});
 		
 		//增加默认字段
-		for(Field<?> f : Utils.buildAndBindFieldGroup(fg, Person.class)){
-			formLayout.addComponents(f);
-		}
+		Utils.buildAndBindFieldGroup(fg, Person.class, formLayout);
+//		formLayout.addComponent(fg.buildAndBind("trueName"));
 
 		final Label error = new Label("", ContentMode.HTML);
 		error.setVisible(false);
@@ -92,6 +90,7 @@ public class PersonEditor extends Window  {
 				try {
 					//编辑的直接提交即可
 					fg.commit();
+					fg.getField("trueName").getValue();
 					//新增的需要单独处理
 					if(jpaitem.getEntity().getId() == null){
 						Person p =fg.getItemDataSource().getEntity();

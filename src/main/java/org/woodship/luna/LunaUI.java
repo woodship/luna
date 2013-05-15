@@ -83,7 +83,7 @@ public class LunaUI extends UI {
     	initData.init();
     	
     	 //TODO setConverterFactory 老崔
-//        getSession().setConverterFactory(new MyConverterFactory());
+        //getSession().setConverterFactory(new MyConverterFactory());
 
         helpManager = new HelpManager(this);
 
@@ -109,13 +109,15 @@ public class LunaUI extends UI {
             root.removeAllComponents();
         }
         helpManager.closeAll();
-//        HelpOverlay w = helpManager
-//                .addOverlay(
-//                        "Welcome to the Dashboard Demo Application",
-//                        "<p>This application is not real, it only demonstrates an application built with the <a href=\"http://vaadin.com\">Vaadin framework</a>.</p><p>No username or password is required, just click the ‘Sign In’ button to continue. You can try out a random username and password, though.</p>",
-//                        "login");
-//        w.center();
-//        addWindow(w);
+        HelpOverlay w = helpManager
+                .addOverlay(
+                        "Welcome to the WoodShip Luna",
+                        "<p>该程序是一个真实的，可以直接使用的程序, 基于 <a href=\"http://vaadin.com\">Vaadin framework</a>构建.</p>" +
+                        "<p>用户名密码为空.</p>" +
+                        "<p>该程序是一个真实的，可以直接使用的程序, 基于 <a href=\"http://vaadin.com\">Vaadin framework</a>构建.</p>",
+                        "login");
+        w.center();
+        addWindow(w);
 
         addStyleName("login");
 
@@ -139,7 +141,7 @@ public class LunaUI extends UI {
         labels.addComponent(welcome);
         labels.setComponentAlignment(welcome, Alignment.MIDDLE_LEFT);
 
-        Label title = new Label("QuickTickets Dashboard");
+        Label title = new Label("WoodShip Luna");
         title.setSizeUndefined();
         title.addStyleName("h2");
         title.addStyleName("light");

@@ -122,14 +122,14 @@ public class InitData{
 				for (int i = 0; i < amount; i++) {
 					Person p = new Person();
 					p.setTrueName(fnames[r.nextInt(fnames.length)]+lnames[r.nextInt(lnames.length)]);
-					p.setCity(cities[r.nextInt(cities.length)]);
+					p.setIdCard(cities[r.nextInt(cities.length)]);
 					p.setPhoneNumber("+358 02 555 " + r.nextInt(10) + r.nextInt(10)
 							+ r.nextInt(10) + r.nextInt(10));
 					int n = r.nextInt(100000);
 					if (n < 10000) {
 						n += 10000;
 					}
-					p.setWorknum("" + n);
+					p.setWorkNum("" + n);
 					p.setStreet(streets[r.nextInt(streets.length)]);
 					p.setDepartment(group);
 					gPersons.add(p);

@@ -6,6 +6,8 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.Caption;
@@ -130,8 +132,30 @@ public class JPAContainerItemFieldGroup<T> extends FieldGroup {
     protected void configureField(Field<?> field) {
         super.configureField(field);
         String pid = getPropertyId(field).toString();
+    	
+		for(java.lang.reflect.Field f : fields){
+			if(f.getName().equals(pid)){
+				//设置默认caption
+				Caption captionAnnotation = f.getAnnotation(Caption.class);
+		        if (captionAnnotation != null) {
+		            field.setCaption(captionAnnotation.value());
+		        }
+		        //设置字段必填标识*
+		        NotNull notNullAnnotation = f.getAnnotation(NotNull.class);
+		        Size sizeAnnotation = f.getAnnotation(Size.class);
+		        NotEmpty ne = f.getAnnotation(NotEmpty.class);
+		        if (notNullAnnotation != null 
+		        		|| (sizeAnnotation != null && sizeAnnotation.min()>0)
+		        		|| ne != null
+		        		) {
+		           field.setCaption(field.getCaption()+"*");
+		        }
+				break;
+			}
+		}
         // Add Bean validators if there are annotations
         if (isBeanValidationImplementationAvailable()) {
+        	field.removeAllValidators();
             BeanValidator validator = new BeanValidator(beanType,pid);
             field.addValidator(validator);
 //            field.setRequired(required)
@@ -146,23 +170,7 @@ public class JPAContainerItemFieldGroup<T> extends FieldGroup {
         }else if ( field instanceof TextArea) {
 			((TextArea) field).setNullRepresentation("");
 		}
-		
-		for(java.lang.reflect.Field f : fields){
-			if(f.getName().equals(pid)){
-				//设置默认caption
-				Caption captionAnnotation = f.getAnnotation(Caption.class);
-		        if (captionAnnotation != null) {
-		            field.setCaption(captionAnnotation.value());
-		        }
-		        //设置字段必填标识*
-		        NotNull notNullAnnotation = f.getAnnotation(NotNull.class);
-		        Size sizeAnnotation = f.getAnnotation(Size.class);
-		        if (notNullAnnotation != null || sizeAnnotation != null) {
-		            field.setRequired(true);
-		        }
-				break;
-			}
-		}
+	
         
      
     }
