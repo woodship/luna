@@ -17,6 +17,7 @@ package org.woodship.luna.base;
 
 import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.JPAContainerItemFieldGroup;
+import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
@@ -31,6 +32,7 @@ import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -69,13 +71,11 @@ public class PersonEditor extends Window  {
 				return super.createField(dataType, fieldType);
 			}
 		});
-
-		formLayout.addComponent(fg.buildAndBind("trueName"));
-		formLayout.addComponent(fg.buildAndBind("street"));
-		formLayout.addComponent(fg.buildAndBind("city"));
-		formLayout.addComponent(fg.buildAndBind("worknum"));
-		formLayout.addComponent(fg.buildAndBind("phoneNumber"));
-		formLayout.addComponent(fg.buildAndBind("department"));
+		
+		//增加默认字段
+		for(Field<?> f : Utils.buildAndBindFieldGroup(fg, Person.class)){
+			formLayout.addComponents(f);
+		}
 
 		final Label error = new Label("", ContentMode.HTML);
 		error.setVisible(false);
@@ -99,7 +99,7 @@ public class PersonEditor extends Window  {
 					}
 					Notification.show("保存成功");
 //					error.setVisible(false);
-					PersonEditor.this.close();//关闭，防止再将点击，重复增加
+					PersonEditor.this.close();//关闭，防止再点击，重复增加
 				} catch (FieldGroup.CommitException e) {
 					for (Field<?> field: fg.getFields()) {
 						ErrorMessage errMsg = ((AbstractField<?>)field).getErrorMessage();

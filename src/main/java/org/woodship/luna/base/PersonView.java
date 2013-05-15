@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.woodship.luna.db.ContainerUtils;
+import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.EntityProvider;
@@ -110,8 +111,8 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
             }
         });
 
-        //TODO 自动生成列名
-        personTable.setVisibleColumns(new Object[] { "trueName", "department", "phoneNumber", "street", "city", "worknum" });
+        Utils.configTableHead(personTable, Person.class);
+        
 
         HorizontalLayout toolbar = new HorizontalLayout();
         newButton = new Button("Add");

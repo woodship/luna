@@ -17,7 +17,7 @@ import com.vaadin.ui.TextField;
 
 /**
  * @author 老崔
- * 参考BeanFieldGroup，仅支持japcontainerItem
+ * 参考 {@link BeanFieldGroup}，仅支持japcontainerItem
  * 增加caption功能，增加必填标识生成功能，字符串类字段值设置为""
  */
 public class JPAContainerItemFieldGroup<T> extends FieldGroup {
