@@ -59,9 +59,9 @@ public class PersonEditor extends Window  {
 			@SuppressWarnings("rawtypes")
 			@Override
 			public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
-				if (dataType.isAssignableFrom(Department.class)) {
+				if (dataType.isAssignableFrom(Organization.class)) {
 					ComboBox cb = new ComboBox();
-					Container container = ContainerUtils.getInstance().createJPAContainer(Department.class);
+					Container container = ContainerUtils.getInstance().createJPAContainer(Organization.class);
 					cb.setContainerDataSource(container);
 					cb.setItemCaptionPropertyId("name");
 					cb.setConverter(new SingleSelectConverter<Object>(cb));

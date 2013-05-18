@@ -7,7 +7,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
-import org.woodship.luna.base.Department;
+import org.woodship.luna.base.Organization;
 import org.woodship.luna.base.Person;
 import org.woodship.luna.base.PersonEditor;
 import org.woodship.luna.db.ContainerUtils;
@@ -62,15 +62,15 @@ public class ItemView extends HorizontalSplitPanel implements ComponentContainer
     private Button deleteButton;
     private Button editButton;
 
-    private JPAContainer<Department> departments;
+    private JPAContainer<Organization> departments;
     private JPAContainer<Person> persons;
 
-    private Department departmentFilter;
+    private Organization departmentFilter;
     private String textFilter;
 
     @PostConstruct
 	public void PostConstruct(){
-        departments = conu.createJPAHierarchialContainer(Department.class);
+        departments = conu.createJPAHierarchialContainer(Organization.class);
         persons = new JPAContainer<Person>(Person.class);
        persons.setEntityProvider(personProvider);
         
@@ -187,7 +187,7 @@ public class ItemView extends HorizontalSplitPanel implements ComponentContainer
 			public void itemClick(ItemClickEvent event) {
 				Object id = event.getItemId();
                 if (id != null) {
-                    Department entity = departments.getItem(id).getEntity();
+                    Organization entity = departments.getItem(id).getEntity();
                     departmentFilter = entity;
                 } else if (departmentFilter != null) {
                     departmentFilter = null;

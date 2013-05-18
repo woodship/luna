@@ -26,18 +26,18 @@ import org.woodship.luna.db.HierarchialEntity;
 
 @SuppressWarnings("serial")
 @Entity
-public class Department  extends HierarchialEntity<Department>{
+public class Organization  extends HierarchialEntity<Organization>{
 
     private String name;
 
-    @OneToMany(mappedBy = "department")
+    @OneToMany(mappedBy = "org")
     private Set<Person> persons;
 
     @Transient
     private Boolean leaf;
 
     @ManyToOne
-    private Department parent;
+    private Organization parent;
 
 
     public String getName() {
@@ -56,11 +56,11 @@ public class Department  extends HierarchialEntity<Department>{
         this.persons = persons;
     }
 
-    public Department getParent() {
+    public Organization getParent() {
         return parent;
     }
 
-    public void setParent(Department parent) {
+    public void setParent(Organization parent) {
         this.parent = parent;
     }
 

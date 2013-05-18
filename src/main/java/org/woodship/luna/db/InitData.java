@@ -9,16 +9,20 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
+import org.apache.shiro.authc.credential.DefaultPasswordService;
+import org.apache.shiro.authc.credential.PasswordService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.woodship.luna.base.Department;
+import org.woodship.luna.base.Organization;
 import org.woodship.luna.base.Person;
 import org.woodship.luna.base.PersonView;
 import org.woodship.luna.core.ApplicationView;
 import org.woodship.luna.core.HomeView;
 import org.woodship.luna.core.Resource;
 import org.woodship.luna.core.ResourceType;
-import org.woodship.luna.eam.ItemView;
+import org.woodship.luna.core.security.User;
+import org.woodship.luna.util.MD5Uitls;
+
 
 @SuppressWarnings("serial")
 @Component
@@ -106,14 +110,13 @@ public class InitData{
 			"561-9262 Iaculis Avenue" };
 
 	public  void createOrgAndPerson() {
-
-
+		
 		Random r = new Random(0);
 		for (String o : officeNames) {
-			Department geoGroup = new Department();
+			Organization geoGroup = new Organization();
 			geoGroup.setName(o);
 			for (String g : groupsNames) {
-				Department group = new Department();
+				Organization group = new Organization();
 				group.setName(g);
 				entityManager.persist(group);
 				Set<Person> gPersons = new HashSet<Person>();
@@ -131,9 +134,14 @@ public class InitData{
 					}
 					p.setWorkNum("" + n);
 					p.setStreet(streets[r.nextInt(streets.length)]);
-					p.setDepartment(group);
+					p.setOrg(group);
 					gPersons.add(p);
 					entityManager.persist(p);
+					
+					//增加用户
+//					User user = new User();
+//					user.setPerson(p);
+//					entityManager.persist(user);
 				}
 				group.setParent(geoGroup);
 				group.setPersons(gPersons);
@@ -142,7 +150,16 @@ public class InitData{
 			entityManager.persist(geoGroup);
 		}
 
+		//增加管理员
+		PasswordService svc = new DefaultPasswordService();  
+//		String pw = svc.encryptPassword(User.DEFAULT_PASSWORD);
+		String pw = User.DEFAULT_PASSWORD;
+		pw = MD5Uitls.getHashString(pw);
+		User admin = new User(User.ADMIN_USERNAME,pw,"管理员");
+		entityManager.persist(admin);
 	}
+	
+	
 
 
 

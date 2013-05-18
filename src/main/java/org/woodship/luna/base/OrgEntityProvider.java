@@ -4,10 +4,10 @@ import org.springframework.stereotype.Component;
 import org.woodship.luna.db.TransactionalEntityProvider;
 
 @Component
-public class DepartmentEntityProvider  extends TransactionalEntityProvider<Department> {
+public class OrgEntityProvider  extends TransactionalEntityProvider<Organization> {
 	
-	    public DepartmentEntityProvider() {
-	        super(Department.class);
+	    public OrgEntityProvider() {
+	        super(Organization.class);
 	    }
 
 	    

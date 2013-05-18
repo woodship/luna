@@ -61,15 +61,15 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
     private Button deleteButton;
     private Button editButton;
 
-    private JPAContainer<Department> departments;
+    private JPAContainer<Organization> departments;
     private JPAContainer<Person> persons;
 
-    private Department departmentFilter;
+    private Organization departmentFilter;
     private String textFilter;
 
     @PostConstruct
 	public void PostConstruct(){
-        departments = conu.createJPAHierarchialContainer(Department.class);
+        departments = conu.createJPAHierarchialContainer(Organization.class);
         persons = new JPAContainer<Person>(Person.class);
         persons.setEntityProvider(personProvider);
         
@@ -191,7 +191,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 			public void itemClick(ItemClickEvent event) {
 				Object id = event.getItemId();
                 if (id != null) {
-                    Department entity = departments.getItem(id).getEntity();
+                    Organization entity = departments.getItem(id).getEntity();
                     departmentFilter = entity;
                 } else if (departmentFilter != null) {
                     departmentFilter = null;
@@ -209,10 +209,10 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
         if (departmentFilter != null) {
             // two level hierarchy at max in our demo
             if (departmentFilter.getParent() == null) {
-                persons.addContainerFilter(new Equal("department.parent",
+                persons.addContainerFilter(new Equal("org.parent",
                         departmentFilter));
             } else {
-                persons.addContainerFilter(new Equal("department",
+                persons.addContainerFilter(new Equal("org",
                         departmentFilter));
             }
         }

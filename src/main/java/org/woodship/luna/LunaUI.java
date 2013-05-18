@@ -4,6 +4,14 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.ExcessiveAttemptsException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
@@ -52,8 +60,6 @@ import com.vaadin.ui.VerticalLayout;
 @Scope("request")
 @PreserveOnRefresh//支持F5刷新
 public class LunaUI extends UI {
-
-
     private static final long serialVersionUID = 1L;
 
     CssLayout root = new CssLayout();
@@ -62,8 +68,6 @@ public class LunaUI extends UI {
 
     CssLayout menu = new CssLayout();
     CssLayout content = new CssLayout();
-
-
 
     private DiscoveryNavigator nav;
 
@@ -78,7 +82,6 @@ public class LunaUI extends UI {
 	
     @Override
     protected void init(VaadinRequest request) {
-    	
     	//初始化数据
     	initData.init();
     	
@@ -104,7 +107,8 @@ public class LunaUI extends UI {
 
     }
 
-    private void buildLoginView(boolean exit) {
+    @SuppressWarnings("serial")
+	private void buildLoginView(boolean exit) {
         if (exit) {
             root.removeAllComponents();
         }
@@ -113,8 +117,8 @@ public class LunaUI extends UI {
                 .addOverlay(
                         "Welcome to the WoodShip Luna",
                         "<p>该程序是一个真实的，可以直接使用的程序, 基于 <a href=\"http://vaadin.com\">Vaadin framework</a>构建.</p>" +
-                        "<p>用户名密码为空.</p>" +
-                        "<p>该程序是一个真实的，可以直接使用的程序, 基于 <a href=\"http://vaadin.com\">Vaadin framework</a>构建.</p>",
+                        "<p>用户名admin密码111.</p>" +
+                        "<p>源代码地址 <a href=\"https://github.com/woodship/luna\">Luna</a>.</p>",
                         "login");
         w.center();
         addWindow(w);
@@ -176,29 +180,42 @@ public class LunaUI extends UI {
         signin.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                if (username.getValue() != null
-                        && username.getValue().equals("")
-                        && password.getValue() != null
-                        && password.getValue().equals("")) {
-                    signin.removeShortcutListener(enter);
-                    buildMainView();
-                } else {
-                    if (loginPanel.getComponentCount() > 2) {
-                        // Remove the previous error message
-                        loginPanel.removeComponent(loginPanel.getComponent(2));
-                    }
-                    // Add new error message
-                    Label error = new Label(
-                            "Wrong username or password. <span>Hint: try empty values</span>",
-                            ContentMode.HTML);
-                    error.addStyleName("error");
-                    error.setSizeUndefined();
-                    error.addStyleName("light");
-                    // Add animation
-                    error.addStyleName("v-animate-reveal");
-                    loginPanel.addComponent(error);
-                    username.focus();
-                }
+            	   String usernameIn = username.getValue();
+                   String passwordIn = password.getValue();
+
+            		try {
+            				UsernamePasswordToken token = new UsernamePasswordToken(usernameIn, passwordIn);
+            				// Remember Me built-in, just do this:
+            				token.setRememberMe(true);
+
+            				// With most of Shiro, you'll always want to make sure you're working
+            				// with the currently executing user,
+            				// referred to as the subject
+            				Subject currentUser = SecurityUtils.getSubject();
+            				// Authenticate
+            				currentUser.login(token);
+            				// Store the current user in the service session
+            	            getSession().setAttribute("user", username);
+            				// Navigate to main view
+            	            signin.removeShortcutListener(enter);
+                            buildMainView();
+            		} catch (UnknownAccountException uae) {
+            			Notification.show("未知帐户错误");
+            		} catch (IncorrectCredentialsException ice) {
+            			Notification.show("登陆密码错误");
+            		} catch (LockedAccountException lae) {
+            			Notification.show("帐户已被锁定");
+            		} catch (ExcessiveAttemptsException eae) {
+            			Notification.show("登陆次数超过最大次数");
+            		} catch (AuthenticationException ae) {
+            			Notification.show("用户名或密码错误");
+            		} catch (Exception ex) {
+            			ex.printStackTrace();
+            			Notification.show(
+            					"Exception " + ex.getMessage());
+            		}finally{
+//            			System.out.println(111);
+            		}
             }
         });
 

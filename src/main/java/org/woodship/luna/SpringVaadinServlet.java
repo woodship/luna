@@ -99,6 +99,7 @@ public class SpringVaadinServlet extends VaadinServlet
             	event.getSession().addRequestHandler(rh);
             }
         });
+        
         return service;
     }
 }
