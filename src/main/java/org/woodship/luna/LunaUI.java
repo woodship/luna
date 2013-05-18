@@ -117,7 +117,7 @@ public class LunaUI extends UI {
                 .addOverlay(
                         "Welcome to the WoodShip Luna",
                         "<p>该程序是一个真实的，可以直接使用的程序, 基于 <a href=\"http://vaadin.com\">Vaadin framework</a>构建.</p>" +
-                        "<p>用户名admin密码111.</p>" +
+                        "<p>用户名:  admin密码:  111 </p>" +
                         "<p>源代码地址 <a href=\"https://github.com/woodship/luna\">Luna</a>.</p>",
                         "login");
         w.center();
@@ -214,7 +214,6 @@ public class LunaUI extends UI {
             			Notification.show(
             					"Exception " + ex.getMessage());
             		}finally{
-//            			System.out.println(111);
             		}
             }
         });
