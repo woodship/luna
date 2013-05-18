@@ -1,4 +1,4 @@
-package org.woodship.luna.core;
+package org.woodship.luna.core.security;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.woodship.luna.core.Resource;
 import org.woodship.luna.db.IdEntity;
 
 /**

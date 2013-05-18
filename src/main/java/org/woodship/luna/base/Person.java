@@ -29,7 +29,7 @@ public class Person extends IdEntity<Person>{
     @NotNull
     @ManyToOne
     @Caption("部门")
-    private Department department;
+    private Organization org;
     
     public String getTrueName() {
 		return trueName;
@@ -80,11 +80,12 @@ public class Person extends IdEntity<Person>{
         this.phoneNumber = phoneNumber;
     }
 
-    public Department getDepartment() {
-        return department;
-    }
+	public Organization getOrg() {
+		return org;
+	}
 
-    public void setDepartment(Department group) {
-        department = group;
-    }
+	public void setOrg(Organization org) {
+		this.org = org;
+	}
+
 }

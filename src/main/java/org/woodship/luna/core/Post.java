@@ -10,20 +10,16 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.woodship.luna.db.IdEntity;
 
 @Entity
-@Table(name="DUTY_")
+@Table(name="POST")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Duty extends IdEntity<Duty>{
+public class Post extends IdEntity<Post>{
 	private static final long serialVersionUID = 1L;
-	public static final String ZONG_JING_LI = "\u603B\u7ECF\u7406";
-	public static final String BU_MENG_JING_LI = "\u90E8\u95E8\u7ECF\u7406";
-	public static final String ZHI_YUAN = "\u804C\u5458";
-	public static final String ADMIN = "\u7BA1\u7406\u5458";
 	
-	public Duty(String name) {
+	public Post(String name) {
 		this.name = name;
 	}
 
-	public Duty() {
+	public Post() {
 	}
 
 	@NotNull
