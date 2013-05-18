@@ -389,7 +389,6 @@ public class LunaUI extends UI {
     }
 
 
-
     HelpManager getHelpManager() {
         return helpManager;
     }
