@@ -1,4 +1,4 @@
-package org.woodship.luna.base;
+package org.woodship.luna.eam;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -7,6 +7,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
+import org.woodship.luna.base.Organization;
 import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.Utils;
 
@@ -26,12 +27,11 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Table.RowHeaderMode;
 import com.vaadin.ui.ComponentContainer;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Table.RowHeaderMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.UI;
@@ -40,13 +40,13 @@ import com.vaadin.ui.VerticalLayout;
 @SuppressWarnings("serial")
 @org.springframework.stereotype.Component
 @Scope("prototype")
-public class PersonView extends HorizontalSplitPanel implements ComponentContainer, View{
+public class ProductView extends HorizontalSplitPanel implements ComponentContainer, View{
 	@Autowired
 	ContainerUtils conu;
 	
 	@Autowired()
 	@Qualifier("personEntityProvider")
-	EntityProvider<Person> personProvider;
+	EntityProvider<Product> personProvider;
 	
 	@PersistenceContext
 	private  EntityManager entityManager;
@@ -62,7 +62,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
     private Button editButton;
 
     private JPAContainer<Organization> departments;
-    private JPAContainer<Person> persons;
+    private JPAContainer<Product> persons;
 
     private Organization departmentFilter;
     private String textFilter;
@@ -70,7 +70,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
     @PostConstruct
 	public void PostConstruct(){
         departments = conu.createJPAHierarchialContainer(Organization.class);
-        persons = new JPAContainer<Person>(Person.class);
+        persons = new JPAContainer<Product>(Product.class);
         persons.setEntityProvider(personProvider);
         
         persons.getEntityProvider();
@@ -114,23 +114,23 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
             }
         });
 
-        Utils.configTableHead(mainTable, Person.class);
+        Utils.configTableHead(mainTable, Product.class);
         
 
         HorizontalLayout toolbar = new HorizontalLayout();
-        newButton = new Button("增加");
+        newButton = new Button("Add");
         newButton.addClickListener(new Button.ClickListener() {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                final EntityItem<Person> newPersonItem = persons.createEntityItem(new Person());
-                PersonEditor personEditor = new PersonEditor(newPersonItem,persons);
+                final EntityItem<Product> newProductItem = persons.createEntityItem(new Product());
+                ProductEditor personEditor = new ProductEditor(newProductItem,persons);
                 personEditor.center();
                 UI.getCurrent().addWindow(personEditor);
             }
         });
 
-        deleteButton = new Button("删除");
+        deleteButton = new Button("Delete");
         deleteButton.addClickListener(new Button.ClickListener() {
 
             @Override
@@ -140,12 +140,12 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
         });
         deleteButton.setEnabled(false);
 
-        editButton = new Button("编辑");
+        editButton = new Button("Edit");
         editButton.addClickListener(new Button.ClickListener() {
 
             @Override
             public void buttonClick(ClickEvent event) {
-            	PersonEditor pe = new PersonEditor(mainTable.getItem(mainTable.getValue()),persons);
+            	ProductEditor pe = new ProductEditor(mainTable.getItem(mainTable.getValue()),persons);
             	pe.center();
                 UI.getCurrent().addWindow(pe);
             }

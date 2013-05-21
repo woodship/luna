@@ -7,19 +7,14 @@ import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
-import org.woodship.luna.base.Organization;
-import org.woodship.luna.base.Person;
-import org.woodship.luna.base.PersonEditor;
 import org.woodship.luna.db.ContainerUtils;
+import org.woodship.luna.util.Utils;
 
-import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.EntityProvider;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.util.filter.Compare.Equal;
 import com.vaadin.data.util.filter.Like;
-import com.vaadin.data.util.filter.Or;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.ItemClickEvent;
@@ -33,9 +28,9 @@ import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Table.RowHeaderMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
@@ -47,14 +42,14 @@ public class ItemView extends HorizontalSplitPanel implements ComponentContainer
 	
 	@Autowired()
 	@Qualifier("personEntityProvider")
-	EntityProvider<Person> personProvider;
+	EntityProvider<InvItem> personProvider;
 	
 	@PersistenceContext
 	private  EntityManager entityManager;
 	
     private Tree groupTree;
 
-    private Table personTable;
+    private Table mainTable;
 
     private TextField searchField;
 
@@ -62,20 +57,16 @@ public class ItemView extends HorizontalSplitPanel implements ComponentContainer
     private Button deleteButton;
     private Button editButton;
 
-    private JPAContainer<Organization> departments;
-    private JPAContainer<Person> persons;
+    private JPAContainer<InvItem> persons;
 
-    private Organization departmentFilter;
     private String textFilter;
 
     @PostConstruct
 	public void PostConstruct(){
-        departments = conu.createJPAHierarchialContainer(Organization.class);
-        persons = new JPAContainer<Person>(Person.class);
-       persons.setEntityProvider(personProvider);
+        persons = new JPAContainer<InvItem>(InvItem.class);
+        persons.setEntityProvider(personProvider);
         
         persons.getEntityProvider();
-        buildTree();
         buildMainArea();
 
         setSplitPosition(20);
@@ -87,10 +78,12 @@ public class ItemView extends HorizontalSplitPanel implements ComponentContainer
         setSecondComponent(verticalLayout);
 
         
-        personTable = new Table(null, persons);
-        personTable.setSelectable(true);
-        personTable.setImmediate(true);
-        personTable.addValueChangeListener(new Property.ValueChangeListener() {
+        mainTable = new Table(null, persons);
+        mainTable.setSelectable(true);
+        mainTable.setImmediate(true);
+        mainTable.setRowHeaderMode(RowHeaderMode.INDEX);
+//     mainTable.setColumnWidth(null, 24);//设置序号列宽度
+        mainTable.addValueChangeListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 setModificationsEnabled(event.getProperty().getValue() != null);
@@ -102,49 +95,51 @@ public class ItemView extends HorizontalSplitPanel implements ComponentContainer
             }
         });
 
-        personTable.setSizeFull();
+        mainTable.setSizeFull();
         // personTable.setSelectable(true);
-        personTable.addItemClickListener(new ItemClickListener() {
+        mainTable.addItemClickListener(new ItemClickListener() {
             @Override
             public void itemClick(ItemClickEvent event) {
                 if (event.isDoubleClick()) {
-                    personTable.select(event.getItemId());
+                    mainTable.select(event.getItemId());
                 }
             }
         });
 
-        personTable.setVisibleColumns(new Object[] { "trueName", 
-                "department", "phoneNumber", "street", "city", "zipCode" });
+        Utils.configTableHead(mainTable, InvItem.class);
+        
 
         HorizontalLayout toolbar = new HorizontalLayout();
-        newButton = new Button("Add");
+        newButton = new Button("增加");
         newButton.addClickListener(new Button.ClickListener() {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                final EntityItem<Person> newPersonItem = persons.createEntityItem(new Person());
-                PersonEditor personEditor = new PersonEditor(newPersonItem,persons);
-                UI.getCurrent().addWindow(personEditor);
+//                final EntityItem<InvItem> newItemItem = persons.createEntityItem(new InvItem());
+//                ItemEditor personEditor = new ItemEditor(newItemItem,persons);
+//                personEditor.center();
+//                UI.getCurrent().addWindow(personEditor);
             }
         });
 
-        deleteButton = new Button("Delete");
+        deleteButton = new Button("删除");
         deleteButton.addClickListener(new Button.ClickListener() {
 
             @Override
             public void buttonClick(ClickEvent event) {
-            	persons.removeItem(personTable.getValue());
+            	persons.removeItem(mainTable.getValue());
             }
         });
         deleteButton.setEnabled(false);
 
-        editButton = new Button("Edit");
+        editButton = new Button("编辑");
         editButton.addClickListener(new Button.ClickListener() {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                UI.getCurrent().addWindow(
-                        new PersonEditor(personTable.getItem(personTable.getValue()),persons));
+//            	ItemEditor pe = new ItemEditor(mainTable.getItem(mainTable.getValue()),persons);
+//            	pe.center();
+//                UI.getCurrent().addWindow(pe);
             }
         });
         editButton.setEnabled(false);
@@ -167,55 +162,23 @@ public class ItemView extends HorizontalSplitPanel implements ComponentContainer
         toolbar.setWidth("100%");
         toolbar.setExpandRatio(searchField, 1);
         toolbar.setComponentAlignment(searchField, Alignment.TOP_RIGHT);
+        toolbar.setMargin(true);
 
         verticalLayout.addComponent(toolbar);
-        verticalLayout.addComponent(personTable);
-        verticalLayout.setExpandRatio(personTable, 1);
+        verticalLayout.addComponent(mainTable);
+        verticalLayout.setExpandRatio(mainTable, 1);
         verticalLayout.setSizeFull();
 
     }
 
-    private void buildTree() {
-        groupTree = new Tree(null, departments);
-        groupTree.setItemCaptionPropertyId("name");
-
-        groupTree.setImmediate(true);
-        groupTree.setSelectable(true);
-        groupTree.addItemClickListener(new ItemClickListener() {
-			
-			@Override
-			public void itemClick(ItemClickEvent event) {
-				Object id = event.getItemId();
-                if (id != null) {
-                    Organization entity = departments.getItem(id).getEntity();
-                    departmentFilter = entity;
-                } else if (departmentFilter != null) {
-                    departmentFilter = null;
-                }
-                updateFilters();
-				
-			}
-		});
-        setFirstComponent(groupTree);
-    }
 
     private void updateFilters() {
         persons.setApplyFiltersImmediately(false);
         persons.removeAllContainerFilters();
-        if (departmentFilter != null) {
-            // two level hierarchy at max in our demo
-            if (departmentFilter.getParent() == null) {
-                persons.addContainerFilter(new Equal("department.parent",
-                        departmentFilter));
-            } else {
-                persons.addContainerFilter(new Equal("department",
-                        departmentFilter));
-            }
-        }
+        
         if (textFilter != null && !textFilter.equals("")) {
-            Or or = new Or(new Like("firstName", textFilter + "%", false),
-                    new Like("lastName", textFilter + "%", false));
-            persons.addContainerFilter(or);
+            Like like =new Like("trueName", textFilter + "%", false);
+            persons.addContainerFilter(like);
         }
         persons.applyFilters();
     }
