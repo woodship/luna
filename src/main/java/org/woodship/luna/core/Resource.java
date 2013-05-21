@@ -1,20 +1,14 @@
 package org.woodship.luna.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.h2.util.StringUtils;
-import org.woodship.luna.base.PersonView;
-import org.woodship.luna.db.IdEntity;
+import org.woodship.luna.db.HierarchialEntity;
 
+import com.vaadin.data.fieldgroup.Caption;
 import com.vaadin.navigator.View;
 
 
@@ -27,7 +21,7 @@ import com.vaadin.navigator.View;
 @Table(name = "Resource_", uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"name", "path" }) })
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Resource extends IdEntity<Resource>{
+public class Resource extends HierarchialEntity<Resource>{
 
 	private static final long serialVersionUID = 1L;
 
@@ -49,16 +43,22 @@ public class Resource extends IdEntity<Resource>{
 		this.resType = resType;
 	}
 	
-	
+	@Caption("名称")
 	private String name;
-
+	
+	@Caption("访问路径")
 	private String path;
 
+	@Caption("视图类")
 	private Class<? extends View> viewClass;
 
+	@Caption("类型")
 	private ResourceType resType;
 
+	@Caption("显示图标")
 	private String icon;
+	
+	@Caption("上级")
 	@ManyToOne
 	private Resource parent;
 

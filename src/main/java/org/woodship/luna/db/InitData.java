@@ -20,6 +20,7 @@ import org.woodship.luna.core.ApplicationView;
 import org.woodship.luna.core.HomeView;
 import org.woodship.luna.core.Resource;
 import org.woodship.luna.core.ResourceType;
+import org.woodship.luna.core.security.RoleView;
 import org.woodship.luna.core.security.User;
 import org.woodship.luna.util.MD5Uitls;
 
@@ -55,10 +56,11 @@ public class InitData{
 		//增加系统管理模块
 		Resource sys = new Resource("系统管理", ResourceType.MODULE);
 		entityManager.persist(sys);
-		
 		//建立应用
 		Resource app = new Resource("应用管理", ResourceType.APPLICATION, sys, "/application", ApplicationView.class);
 		entityManager.persist(app);
+		Resource role = new Resource("角色管理", ResourceType.APPLICATION, sys, "/role", RoleView.class);
+		entityManager.persist(role);
 		
 		//增加基础应用模块
 		Resource base = new Resource("基础应用", ResourceType.MODULE);
@@ -71,6 +73,13 @@ public class InitData{
 //		entityManager.persist(eam);
 //		Resource item = new Resource("库存项目", ResourceType.APPLICATION, eam, "/item", ItemView.class);
 //		entityManager.persist(item);
+		
+		
+
+		//增加管理员
+		String pw =  MD5Uitls.getHashString(User.DEFAULT_PASSWORD);
+		User admin = new User(User.ADMIN_USERNAME,pw,"管理员");
+		entityManager.persist(admin);
 		
 	}
 	
@@ -150,13 +159,6 @@ public class InitData{
 			entityManager.persist(geoGroup);
 		}
 
-		//增加管理员
-		PasswordService svc = new DefaultPasswordService();  
-//		String pw = svc.encryptPassword(User.DEFAULT_PASSWORD);
-		String pw = User.DEFAULT_PASSWORD;
-		pw = MD5Uitls.getHashString(pw);
-		User admin = new User(User.ADMIN_USERNAME,pw,"管理员");
-		entityManager.persist(admin);
 	}
 	
 	

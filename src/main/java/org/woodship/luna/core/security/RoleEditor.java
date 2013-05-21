@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.woodship.luna.eam;
+package org.woodship.luna.core.security;
 
+import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.JPAContainerItemFieldGroup;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
+import com.vaadin.addon.jpacontainer.fieldfactory.SingleSelectConverter;
+import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -28,6 +31,7 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -36,17 +40,17 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Window;
 
 @SuppressWarnings("serial")
-public class ItemEditor extends Window  {
-	JPAContainer<Item> persons = null;
-	JPAContainerItem<Item> jpaitem = null;
+public class RoleEditor extends Window  {
+	JPAContainer<Role> persons = null;
+	JPAContainerItem<Role> jpaitem = null;
 
 	@SuppressWarnings("unchecked")
-	public ItemEditor(final Item item,  final JPAContainer<Item> persons) {
+	public RoleEditor(final Item item,  final JPAContainer<Role> persons) {
 		this.persons = persons;
-		this.jpaitem = (JPAContainerItem<Item>) item;
+		this.jpaitem = (JPAContainerItem<Role>) item;
 		final FormLayout formLayout = new FormLayout();
 		formLayout.setMargin(true);
-		final JPAContainerItemFieldGroup<Item> fg = new JPAContainerItemFieldGroup<Item>(Item.class);
+		final JPAContainerItemFieldGroup<Role> fg = new JPAContainerItemFieldGroup<Role>(Role.class);
 		fg.setItemDataSource(jpaitem);
 		/*
 		 * 构建Field,在此处理自定义字段
@@ -60,7 +64,7 @@ public class ItemEditor extends Window  {
 		});
 		
 		//增加默认字段
-		Utils.buildAndBindFieldGroup(fg, Item.class, formLayout);
+		Utils.buildAndBindFieldGroup(fg, Role.class, formLayout);
 //		formLayout.addComponent(fg.buildAndBind("trueName"));
 
 		final Label error = new Label("", ContentMode.HTML);
@@ -79,13 +83,13 @@ public class ItemEditor extends Window  {
 					//编辑的直接提交即可
 					fg.commit();
 					//新增的需要单独处理
-					if(jpaitem.getEntity() == null){
-						Item p =fg.getItemDataSource().getEntity();
+					if(jpaitem.getEntity().getId() == null){
+						Role p =fg.getItemDataSource().getEntity();
 						persons.addEntity(p);
 					}
 					Notification.show("保存成功");
 //					error.setVisible(false);
-					ItemEditor.this.close();//关闭，防止再点击，重复增加
+					RoleEditor.this.close();//关闭，防止再点击，重复增加
 				} catch (FieldGroup.CommitException e) {
 					for (Field<?> field: fg.getFields()) {
 						ErrorMessage errMsg = ((AbstractField<?>)field).getErrorMessage();

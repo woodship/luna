@@ -82,7 +82,6 @@ public class ProductEditor extends Window  {
 				try {
 					//编辑的直接提交即可
 					fg.commit();
-					fg.getField("trueName").getValue();
 					//新增的需要单独处理
 					if(jpaitem.getEntity().getId() == null){
 						Product p =fg.getItemDataSource().getEntity();

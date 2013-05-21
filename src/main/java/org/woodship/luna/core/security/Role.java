@@ -15,8 +15,11 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.woodship.luna.core.Resource;
 import org.woodship.luna.db.IdEntity;
+
+import com.vaadin.data.fieldgroup.Caption;
 
 /**
  * 权限组.
@@ -27,15 +30,17 @@ import org.woodship.luna.db.IdEntity;
 public class Role extends IdEntity<Role>{
 	private static final long serialVersionUID = 1L;
 
-	public final static String ADMIN = "admin";
-
-	public static final String USER = "user";
-	
-	@NotNull
+	@NotEmpty
+	@Caption("角色名称")
 	private String name;
 
+	@Caption("内置角色")
+	private boolean sysRole;
+	
+	@Caption("备注")
 	private String remark;
 	
+	@Caption("功能")
 	@ManyToMany(fetch=FetchType.EAGER)
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	private Set<Resource> resource = new LinkedHashSet<Resource>();
@@ -97,6 +102,14 @@ public class Role extends IdEntity<Role>{
 
 	public void setResource(Set<Resource> resource) {
 		this.resource = resource;
+	}
+
+	public boolean isSysRole() {
+		return sysRole;
+	}
+
+	public void setSysRole(boolean sysRole) {
+		this.sysRole = sysRole;
 	}
 
 
