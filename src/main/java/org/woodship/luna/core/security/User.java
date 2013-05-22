@@ -40,12 +40,15 @@ public class User extends IdEntity<User>{
 	@NotEmpty
 	@Caption("显示名")
 	private String showName;
+	
+	@Caption("系统用户")
+	private boolean sysUser;
 
 	@Caption("对应人员")
 	private Person person;
 
-	@ManyToMany(fetch=FetchType.EAGER)
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+	@ManyToMany(fetch=FetchType.EAGER ,mappedBy="users")
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE )
 	private Set<Role> roles = new LinkedHashSet<Role>();
 
 	public void addRole(Role role){
@@ -97,7 +100,16 @@ public class User extends IdEntity<User>{
 	}
 
 	public boolean isAdmin(){
+		//TODO 只要是管理员角色都应该返回true
 		return User.ADMIN_USERNAME.equals(this.getUsername());
+	}
+
+	public boolean isSysUser() {
+		return sysUser;
+	}
+
+	public void setSysUser(boolean sysUser) {
+		this.sysUser = sysUser;
 	}
 
 

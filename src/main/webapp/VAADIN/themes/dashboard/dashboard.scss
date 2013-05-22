@@ -1,4 +1,4 @@
-@import "../base/base.scss";
+@import "../runo/runo.scss";
 
 @import "icons/fontello.scss";
 @import "fonts/open-sans.scss";
@@ -13,42 +13,31 @@
 @import "common.scss";
 
 /* TODO move new notification theme to base as the default when they are ready */
+@import "components/window.scss";
 @import "components/notification.scss";
+@import "components/label.scss";
+/*
 @import "components/button.scss";
 @import "components/textfield.scss";
 @import "components/combobox.scss";
 @import "components/tabsheet.scss";
 @import "components/label.scss";
 @import "components/table.scss";
-@import "components/window.scss";
+
 
 @import "views/schedule.scss";
 @import "views/sales.scss";
 @import "views/reports.scss";
 @import "views/transactions.scss";
-
+*/
 
 @mixin dashboard {
 	
-	@include base;
+	@include runo;
 	
 	@include dashboard-loading-indicator;
 	@include dashboard-common;
 	
-	@include dashboard-button;
-	@include dashboard-combobox;
-	@include dashboard-label;
-	@include dashboard-notification;
-	@include dashboard-table;
-	@include dashboard-tabsheet;
-	@include dashboard-textfield;
-	@include dashboard-window;
-	
-	@include dashboard-schedule-view;
-	@include dashboard-sales-view;
-	@include dashboard-reports-view;
-	@include dashboard-transactions-view;
-
 
 	.v-view {
 		overflow: hidden;
@@ -478,6 +467,7 @@
 	
 	
 	.help-overlay {
+	    @include dashboard-window;
 		@include border-radius(2px);
 		@include box-shadow(0 3px 10px rgba(0,0,0,.5));
 		padding: 15px 20px;
@@ -528,6 +518,9 @@
 		
 	}
 	
+    .help-overlay-content {
+    	@include dashboard-label;
+	}
 	
 	
 	.help-overlay.login {

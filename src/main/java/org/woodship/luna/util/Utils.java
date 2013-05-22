@@ -40,7 +40,7 @@ public class Utils {
 	 * @param table
 	 * @param beanClass
 	 */
-	public static void configTableHead(Table table,Class<?> beanClass){
+	public static void setTableDefaultHead(Table table,Class<?> beanClass){
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		//准备数据
 		for(Field f : beanClass.getDeclaredFields()){

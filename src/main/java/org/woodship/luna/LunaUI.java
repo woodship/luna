@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.woodship.luna.core.Resource;
 import org.woodship.luna.core.ResourceType;
+import org.woodship.luna.core.security.User;
 import org.woodship.luna.db.InitData;
 
 import ru.xpoft.vaadin.DiscoveryNavigator;
@@ -113,15 +114,15 @@ public class LunaUI extends UI {
             root.removeAllComponents();
         }
         helpManager.closeAll();
-        HelpOverlay w = helpManager
-                .addOverlay(
-                        "Welcome to the WoodShip Luna",
-                        "<p>该程序是一个真实的，可以直接使用的程序, 基于 <a href=\"http://vaadin.com\">Vaadin framework</a>构建.</p>" +
-                        "<p>用户名:  admin密码:  111 </p>" +
-                        "<p>源代码地址 <a href=\"https://github.com/woodship/luna\">Luna</a>.</p>",
-                        "login");
-        w.center();
-        addWindow(w);
+//        HelpOverlay w = helpManager
+//                .addOverlay(
+//                        "Welcome to the WoodShip Luna",
+//                        "<p>该程序是一个真实的，可以直接使用的程序, 基于 <a href=\"http://vaadin.com\">Vaadin framework</a>构建.</p>" +
+//                        "<p>用户名:  admin密码:  111 </p>" +
+//                        "<p>源代码地址 <a href=\"https://github.com/woodship/luna\">Luna</a>.</p>",
+//                        "login");
+//        w.center();
+//        addWindow(w);
 
         addStyleName("login");
 
@@ -159,10 +160,13 @@ public class LunaUI extends UI {
 
         final TextField username = new TextField("Username");
         username.focus();
+        username.setValue(User.ADMIN_USERNAME);
         fields.addComponent(username);
 
         final PasswordField password = new PasswordField("Password");
+        password.setValue(User.DEFAULT_PASSWORD);
         fields.addComponent(password);
+        
 
         final Button signin = new Button("Sign In");
         signin.addStyleName("default");
@@ -195,7 +199,7 @@ public class LunaUI extends UI {
             				// Authenticate
             				currentUser.login(token);
             				// Store the current user in the service session
-            	            getSession().setAttribute("user", username);
+            	            getSession().setAttribute("user", usernameIn);
             				// Navigate to main view
             	            signin.removeShortcutListener(enter);
                             buildMainView();

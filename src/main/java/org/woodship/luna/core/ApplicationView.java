@@ -31,7 +31,7 @@ public class ApplicationView extends HorizontalLayout implements View {
 		table = new TreeTable("应用管理");
 		table.setContainerDataSource(resContainer);
 		table.setItemCaptionPropertyId("name");
-		Utils.configTableHead(table, Resource.class);
+		Utils.setTableDefaultHead(table, Resource.class);
 		table.setSizeFull();
 		this.addComponent(table);
 	}

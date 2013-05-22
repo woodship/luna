@@ -7,11 +7,11 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.cache.Cache;
-import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
@@ -24,11 +24,23 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	@Autowired
 	private  UserService us;
 
+	private DefaultPasswordService ps = new DefaultPasswordService();
+
 	public ShiroDbRealm() {
 		super();
+		
 		//设置加密算法
-		setCredentialsMatcher(new HashedCredentialsMatcher(Md5Hash.ALGORITHM_NAME));
-		//this.setCredentialsMatcher(new PasswordMatcherEx());
+		setCredentialsMatcher(new HashedCredentialsMatcher() {
+			@Override
+			public boolean doCredentialsMatch(AuthenticationToken authenticationToken,
+					AuthenticationInfo info) {
+				String password = authenticationToken.getCredentials() instanceof char[] ? 
+						String.valueOf((char[]) authenticationToken.getCredentials()) : 
+							String.valueOf(authenticationToken.getCredentials());
+						return ps.passwordsMatch(password, String.valueOf(info.getCredentials()));
+			}
+		});
+
 	}
 
 	/**

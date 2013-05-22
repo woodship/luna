@@ -11,7 +11,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -40,12 +39,11 @@ public class Role extends IdEntity<Role>{
 	@Caption("备注")
 	private String remark;
 	
-	@Caption("功能")
 	@ManyToMany(fetch=FetchType.EAGER)
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	private Set<Resource> resource = new LinkedHashSet<Resource>();
 	
-	@ManyToMany(mappedBy="roles",fetch=FetchType.EAGER)
+	@ManyToMany(fetch=FetchType.EAGER)
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	private Set<User> users = new LinkedHashSet<User>();
 
@@ -112,5 +110,10 @@ public class Role extends IdEntity<Role>{
 		this.sysRole = sysRole;
 	}
 
+	public void addResource(Resource res){
+		if(res != null){
+			this.resource.add(res);
+		}
+	}
 
 }

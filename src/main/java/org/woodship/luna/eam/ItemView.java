@@ -106,7 +106,7 @@ public class ItemView extends HorizontalSplitPanel implements ComponentContainer
             }
         });
 
-        Utils.configTableHead(mainTable, InvItem.class);
+        Utils.setTableDefaultHead(mainTable, InvItem.class);
         
 
         HorizontalLayout toolbar = new HorizontalLayout();

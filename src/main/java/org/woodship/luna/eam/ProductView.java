@@ -114,7 +114,7 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
             }
         });
 
-        Utils.configTableHead(mainTable, Product.class);
+        Utils.setTableDefaultHead(mainTable, Product.class);
         
 
         HorizontalLayout toolbar = new HorizontalLayout();

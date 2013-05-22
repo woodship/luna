@@ -7,6 +7,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
+import org.woodship.luna.core.Resource;
 import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.Utils;
 
@@ -27,7 +28,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.RowHeaderMode;
 import com.vaadin.ui.TextField;
@@ -55,7 +55,9 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
     private Button newButton;
     private Button deleteButton;
     private Button editButton;
-
+    private Button setResButton;
+    private Button setUsersButton;
+    
     private JPAContainer<Role> mainContainer;
 
     private String textFilter;
@@ -71,8 +73,6 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
     }
 
     private void buildMainArea() {
-    	//右侧
-        
         mainTable = new Table(null, mainContainer);
         mainTable.setSelectable(true);
         mainTable.setImmediate(true);
@@ -81,12 +81,27 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
         mainTable.addValueChangeListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(ValueChangeEvent event) {
-                setModificationsEnabled(event.getProperty().getValue() != null);
+            	Object value = event.getProperty().getValue();
+            	if(value != null ){
+            		Role r = mainContainer.getItem(value).getEntity();
+            		if(r.isSysRole()){
+            			 deleteButton.setEnabled(false);
+                         editButton.setEnabled(false);
+                         setResButton.setEnabled(false);
+                         setUsersButton.setEnabled(true);
+                        return;
+            		}else{
+            			setModificationsEnabled( value != null);
+            		}
+            	}
+                setModificationsEnabled( value != null);
             }
 
             private void setModificationsEnabled(boolean b) {
                 deleteButton.setEnabled(b);
                 editButton.setEnabled(b);
+                setResButton.setEnabled(b);
+                setUsersButton.setEnabled(b);
             }
         });
 
@@ -101,7 +116,7 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
             }
         });
 
-        Utils.configTableHead(mainTable, Role.class);
+        Utils.setTableDefaultHead(mainTable, Role.class);
         
 
         HorizontalLayout toolbar = new HorizontalLayout();
@@ -138,6 +153,32 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
             }
         });
         editButton.setEnabled(false);
+        
+        setResButton = new Button("功能设置");
+        setResButton.addClickListener(new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+            	RoleResEditor pe = new RoleResEditor(mainTable.getItem(mainTable.getValue())
+            			                     ,mainContainer,      conu.createJPAHierarchialContainer(Resource.class));
+            	pe.center();
+                UI.getCurrent().addWindow(pe);
+            }
+        });
+        setResButton.setEnabled(false);
+        
+        setUsersButton = new Button("用户设置");
+        setUsersButton.addClickListener(new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+            	RoleUserEditor pe = new RoleUserEditor(mainTable.getItem(mainTable.getValue())
+            			                     ,mainContainer,      conu.createJPAContainer(User.class));
+            	pe.center();
+                UI.getCurrent().addWindow(pe);
+            }
+        });
+        setUsersButton.setEnabled(false);
 
         searchField = new TextField();
         searchField.setInputPrompt("Search by name");
@@ -153,6 +194,8 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
         toolbar.addComponent(newButton);
         toolbar.addComponent(deleteButton);
         toolbar.addComponent(editButton);
+        toolbar.addComponent(setResButton);
+        toolbar.addComponent(setUsersButton);
         toolbar.addComponent(searchField);
         toolbar.setWidth("100%");
         toolbar.setExpandRatio(searchField, 1);

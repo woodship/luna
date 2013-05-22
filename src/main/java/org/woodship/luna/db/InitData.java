@@ -10,7 +10,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
 import org.apache.shiro.authc.credential.DefaultPasswordService;
-import org.apache.shiro.authc.credential.PasswordService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.woodship.luna.base.Organization;
@@ -20,25 +19,25 @@ import org.woodship.luna.core.ApplicationView;
 import org.woodship.luna.core.HomeView;
 import org.woodship.luna.core.Resource;
 import org.woodship.luna.core.ResourceType;
+import org.woodship.luna.core.security.Role;
 import org.woodship.luna.core.security.RoleView;
 import org.woodship.luna.core.security.User;
-import org.woodship.luna.util.MD5Uitls;
 
 
-@SuppressWarnings("serial")
 @Component
 public class InitData{
 
 	@PersistenceContext
 	private  EntityManager entityManager;
-
+	
+	private DefaultPasswordService ps = new DefaultPasswordService();
 	
 	@Transactional
 	public void init(){
 		//有数据则不再初始化
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-		cq.select(cb.count(cq.from(Resource.class)));
+		cq.select(cb.count(cq.from(User.class)));
 		long size = entityManager.createQuery(cq).getSingleResult();
 		if(size>0) return;
 		
@@ -74,10 +73,16 @@ public class InitData{
 //		Resource item = new Resource("库存项目", ResourceType.APPLICATION, eam, "/item", ItemView.class);
 //		entityManager.persist(item);
 		
+		Role radmin = new Role("系统管理员");
+		radmin.setSysRole(true);
+		radmin.addResource(person);
+		entityManager.persist(radmin);
 		
-
+		Role ruser = new Role("一般用户");
+		entityManager.persist(ruser);
+		
 		//增加管理员
-		String pw =  MD5Uitls.getHashString(User.DEFAULT_PASSWORD);
+		String pw =  ps.encryptPassword(User.DEFAULT_PASSWORD);
 		User admin = new User(User.ADMIN_USERNAME,pw,"管理员");
 		entityManager.persist(admin);
 		
@@ -147,10 +152,6 @@ public class InitData{
 					gPersons.add(p);
 					entityManager.persist(p);
 					
-					//增加用户
-//					User user = new User();
-//					user.setPerson(p);
-//					entityManager.persist(user);
 				}
 				group.setParent(geoGroup);
 				group.setPersons(gPersons);

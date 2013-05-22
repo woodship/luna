@@ -77,7 +77,9 @@ public class HelpManager implements Serializable{
     protected HelpOverlay addOverlay(String caption, String text, String style) {
         HelpOverlay o = new HelpOverlay();
         o.setCaption(caption);
-        o.addComponent(new Label(text, ContentMode.HTML));
+        Label label =new Label(text, ContentMode.HTML);
+        label.setPrimaryStyleName("help-overlay-content");
+        o.addComponent(label);
         o.setStyleName(style);
         // ui.addWindow(o);
         overlays.add(o);
