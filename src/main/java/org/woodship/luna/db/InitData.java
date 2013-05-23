@@ -93,7 +93,9 @@ public class InitData{
 		entityManager.persist(radmin);
 		
 		Role ruser = new Role("一般用户");
+		ruser.addResource(home);
 		ruser.addResource(resPerson);
+		ruser.addResource(base);
 		ruser.addUser(u1);
 		entityManager.persist(ruser);
 	}
@@ -166,7 +168,7 @@ public class InitData{
 				//用于普通用户
 				p1 = new Person();
 				p1.setTrueName("张长江");
-				p1.setWorkNum("11245");
+				p1.setWorkNum("user");
 				p1.setOrg(group);
 				entityManager.persist(p1);
 			   

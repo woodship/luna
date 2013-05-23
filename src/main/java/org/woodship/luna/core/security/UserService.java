@@ -24,9 +24,8 @@ public class UserService {
 	 * @return
 	 */
 	public  User getCurrentUser(){
-		Object id =  SecurityUtils.getSubject().getPrincipal();
-		User u = entityManager.find(User.class, id.toString());
-		u.getRoles().iterator().next();
+		Object username =  SecurityUtils.getSubject().getPrincipal();
+		User u =findByUsername((String) username);
 		return u;
 	}
 }

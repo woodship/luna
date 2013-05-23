@@ -31,7 +31,12 @@ public class Person extends IdEntity<Person>{
     @Caption("部门")
     private Organization org;
     
+    public String test;
+    
+    
     public String getTrueName() {
+    	this.test = "";
+    	
 		return trueName;
 	}
 

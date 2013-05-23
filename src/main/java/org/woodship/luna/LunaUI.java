@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -25,7 +26,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.woodship.luna.core.Resource;
 import org.woodship.luna.core.ResourceType;
+import org.woodship.luna.core.Resource_;
+import org.woodship.luna.core.security.Role;
+import org.woodship.luna.core.security.Role_;
 import org.woodship.luna.core.security.User;
+import org.woodship.luna.core.security.UserService;
+import org.woodship.luna.core.security.User_;
 import org.woodship.luna.db.InitData;
 
 import ru.xpoft.vaadin.DiscoveryNavigator;
@@ -91,7 +97,7 @@ public class LunaUI extends UI {
 	EntityProvider<Resource> resourceEntityProvider;
 
 	@Autowired()
-	AuthorizingRealm realm;
+	UserService us;
 	@Override
 	protected void init(VaadinRequest request) {
 		//初始化数据
@@ -245,16 +251,22 @@ public class LunaUI extends UI {
 	private void buildMainView() {
 		resourceEntityProvider.setQueryModifierDelegate(
 				new DefaultQueryModifierDelegate () {
+					@SuppressWarnings("unchecked")
 					@Override
 					public void filtersWillBeAdded(
 							CriteriaBuilder criteriaBuilder,
 							CriteriaQuery<?> query,
 							List<Predicate> predicates) {
-						Root<Resource> fromPerson = (Root<Resource>) query.getRoots().iterator().next();
-//						Join<Resource,Role> join = fromPerson.join()
-						// Add a "WHERE age > 116" expression
-						Path<Integer> age = fromPerson.<Integer>get("age");
-						predicates.add(criteriaBuilder.gt(age, 116));
+						//管理员不加过虑条件
+						User currUser = us.getCurrentUser();
+						if(currUser.isAdmin()){
+							return;
+						}
+						Root<Resource> root = (Root<Resource>) query.getRoots().iterator().next();
+						SetJoin<Resource,Role> rjoin = root.join(Resource_.roles);
+						SetJoin<Role,User> ujoin = rjoin.join(Role_.users);
+						Predicate p = criteriaBuilder.equal(ujoin.get(User_.username), SecurityUtils.getSubject().getPrincipal());
+						predicates.add(p);
 					}
 				}
 		);

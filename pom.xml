@@ -123,7 +123,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<!-- jpacontainer -->
 		<dependency>
 			<groupId>com.vaadin.addon</groupId>
@@ -148,7 +148,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<!-- spring-vaadin-integration -->
 		<dependency>
 			<groupId>ru.xpoft.vaadin</groupId>
@@ -337,19 +337,27 @@
 			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
+				<version>2.4</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
 				</configuration>
+				<dependencies>
+				<!-- 自动生成jpa元数据 -->
+					<dependency>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate-jpamodelgen</artifactId>
+						<version>1.2.0.Final</version>
+					</dependency>
+				</dependencies>
 			</plugin>
-
 
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
