@@ -1,4 +1,4 @@
-package org.woodship.luna.core;
+package org.woodship.luna.base;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -9,6 +9,10 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.woodship.luna.db.IdEntity;
 
+/**
+ * 岗位
+ * @author Administrator
+ */
 @Entity
 @Table(name="POST")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)

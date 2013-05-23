@@ -1,4 +1,4 @@
-package org.woodship.luna.core;
+package org.woodship.luna.core.security;
 
 import javax.annotation.PostConstruct;
 

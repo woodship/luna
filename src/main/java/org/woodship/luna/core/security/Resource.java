@@ -1,4 +1,4 @@
-package org.woodship.luna.core;
+package org.woodship.luna.core.security;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -13,7 +13,6 @@ import javax.persistence.UniqueConstraint;
 import org.h2.util.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.woodship.luna.core.security.Role;
 import org.woodship.luna.db.HierarchialEntity;
 
 import com.vaadin.data.fieldgroup.Caption;

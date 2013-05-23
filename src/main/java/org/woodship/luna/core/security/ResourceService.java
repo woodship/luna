@@ -1,4 +1,4 @@
-package org.woodship.luna.core;
+package org.woodship.luna.core.security;
 
 import java.util.List;
 
@@ -10,8 +10,6 @@ import javax.persistence.criteria.CriteriaQuery;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.woodship.luna.core.security.Role;
-import org.woodship.luna.core.security.User;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.navigator.View;

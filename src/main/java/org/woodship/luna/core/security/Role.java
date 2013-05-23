@@ -15,7 +15,6 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.woodship.luna.core.Resource;
 import org.woodship.luna.db.IdEntity;
 
 import com.vaadin.data.fieldgroup.Caption;

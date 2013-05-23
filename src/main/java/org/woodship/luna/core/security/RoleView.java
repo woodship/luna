@@ -7,7 +7,6 @@ import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
-import org.woodship.luna.core.Resource;
 import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.Utils;
 

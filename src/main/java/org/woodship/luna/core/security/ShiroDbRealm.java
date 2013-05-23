@@ -20,8 +20,6 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.woodship.luna.core.Resource;
-import org.woodship.luna.core.ResourceService;
 /**
  * 自实现用户与权限查询.
  */

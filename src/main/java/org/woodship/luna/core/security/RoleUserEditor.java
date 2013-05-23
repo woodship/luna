@@ -3,7 +3,6 @@ package org.woodship.luna.core.security;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.woodship.luna.core.Resource;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
