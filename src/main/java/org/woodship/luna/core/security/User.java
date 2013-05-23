@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -45,6 +46,7 @@ public class User extends IdEntity<User>{
 	private boolean sysUser;
 
 	@Caption("对应人员")
+	@OneToOne
 	private Person person;
 
 	@ManyToMany(fetch=FetchType.EAGER ,mappedBy="users")

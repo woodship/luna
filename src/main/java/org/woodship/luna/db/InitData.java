@@ -32,6 +32,7 @@ public class InitData{
 	
 	private DefaultPasswordService ps = new DefaultPasswordService();
 	
+	private Person p1;
 	@Transactional
 	public void init(){
 		//有数据则不再初始化
@@ -40,12 +41,11 @@ public class InitData{
 		cq.select(cb.count(cq.from(User.class)));
 		long size = entityManager.createQuery(cq).getSingleResult();
 		if(size>0) return;
+		//增加人员机构用户数据
+		createOrgAndPerson();
 		
 		//增加资源
 		createResource();
-		
-		//增加人员机构数据
-		createOrgAndPerson();
 	}
 	
 	private void createResource(){
@@ -64,8 +64,8 @@ public class InitData{
 		//增加基础应用模块
 		Resource base = new Resource("基础应用", ResourceType.MODULE);
 		entityManager.persist(base);
-		Resource person = new Resource("人员管理", ResourceType.APPLICATION, base, "/person", PersonView.class);
-		entityManager.persist(person);
+		Resource resPerson = new Resource("人员管理", ResourceType.APPLICATION, base, "/person", PersonView.class);
+		entityManager.persist(resPerson);
 		
 		//增加进销存管理模块
 //		Resource eam = new Resource("进销存", ResourceType.MODULE);
@@ -73,19 +73,29 @@ public class InitData{
 //		Resource item = new Resource("库存项目", ResourceType.APPLICATION, eam, "/item", ItemView.class);
 //		entityManager.persist(item);
 		
-		Role radmin = new Role("系统管理员");
-		radmin.setSysRole(true);
-		radmin.addResource(person);
-		entityManager.persist(radmin);
-		
-		Role ruser = new Role("一般用户");
-		entityManager.persist(ruser);
 		
 		//增加管理员
 		String pw =  ps.encryptPassword(User.DEFAULT_PASSWORD);
-		User admin = new User(User.ADMIN_USERNAME,pw,"管理员");
-		entityManager.persist(admin);
+		User userAdmin = new User(User.ADMIN_USERNAME,pw,"管理员");
+		userAdmin.setSysUser(true);
+		entityManager.persist(userAdmin);
 		
+		//增加一个普通用户
+		User u1 = new User();
+		u1.setPerson(p1);
+		u1.setPassword(pw);
+		entityManager.persist(u1);
+		
+		Role radmin = new Role("系统管理员");
+		radmin.setSysRole(true);
+		radmin.addResource(resPerson);
+		radmin.addUser(userAdmin);
+		entityManager.persist(radmin);
+		
+		Role ruser = new Role("一般用户");
+		ruser.addResource(resPerson);
+		ruser.addUser(u1);
+		entityManager.persist(ruser);
 	}
 	
 
@@ -153,6 +163,14 @@ public class InitData{
 					entityManager.persist(p);
 					
 				}
+				//用于普通用户
+				p1 = new Person();
+				p1.setTrueName("张长江");
+				p1.setWorkNum("11245");
+				p1.setOrg(group);
+				entityManager.persist(p1);
+			   
+					
 				group.setParent(geoGroup);
 				group.setPersons(gPersons);
 				entityManager.persist(group);

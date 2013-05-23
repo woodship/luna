@@ -27,7 +27,7 @@ public class RoleUserEditor extends Window  {
 	private Table table;
 	@SuppressWarnings("unchecked")
 	public RoleUserEditor(final Item item,  final JPAContainer<Role> container, final JPAContainer<User> userContainer) {
-		this.setCaption("人员设置");
+		this.setCaption("角色关联用户设置");
 		this.jpaitem = (JPAContainerItem<Role>) item;
 		final VerticalLayout formLayout = new VerticalLayout();
 		formLayout.setMargin(true);

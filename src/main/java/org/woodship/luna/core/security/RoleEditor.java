@@ -15,14 +15,11 @@
  */
 package org.woodship.luna.core.security;
 
-import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.JPAContainerItemFieldGroup;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
-import com.vaadin.addon.jpacontainer.fieldfactory.SingleSelectConverter;
-import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -31,7 +28,6 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -46,6 +42,7 @@ public class RoleEditor extends Window  {
 
 	@SuppressWarnings("unchecked")
 	public RoleEditor(final Item item,  final JPAContainer<Role> persons) {
+		this.setCaption("角色编辑/新增");
 		this.persons = persons;
 		this.jpaitem = (JPAContainerItem<Role>) item;
 		final FormLayout formLayout = new FormLayout();

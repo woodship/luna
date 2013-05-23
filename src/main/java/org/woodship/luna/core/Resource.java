@@ -1,11 +1,19 @@
 package org.woodship.luna.core;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.h2.util.StringUtils;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.woodship.luna.core.security.Role;
 import org.woodship.luna.db.HierarchialEntity;
 
 import com.vaadin.data.fieldgroup.Caption;
@@ -62,6 +70,9 @@ public class Resource extends HierarchialEntity<Resource>{
 	@ManyToOne
 	private Resource parent;
 
+	@ManyToMany(fetch=FetchType.EAGER ,mappedBy="resource")
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE )
+	private Set<Role> roles = new LinkedHashSet<Role>();
 
 	public boolean isLeaf() {
 		if (ResourceType.MODULE.equals(resType)) {

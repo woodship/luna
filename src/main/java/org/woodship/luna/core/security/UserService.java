@@ -3,6 +3,7 @@ package org.woodship.luna.core.security;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,5 +17,16 @@ public class UserService {
 		  return entityManager.createQuery("SELECT o FROM User o where o.username = ?", User.class)
 				  .setParameter(1, username)
 				  .getSingleResult();
+	}
+	
+	/**
+	 * 返回当前登录用户，且该用户为受控Entity
+	 * @return
+	 */
+	public  User getCurrentUser(){
+		Object id =  SecurityUtils.getSubject().getPrincipal();
+		User u = entityManager.find(User.class, id.toString());
+		u.getRoles().iterator().next();
+		return u;
 	}
 }

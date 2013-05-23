@@ -116,4 +116,11 @@ public class Role extends IdEntity<Role>{
 		}
 	}
 
+	public void addUser(User user) {
+		if(user != null){
+			users.add(user);
+		}
+		
+	}
+
 }

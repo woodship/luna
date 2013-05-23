@@ -27,7 +27,7 @@ public class RoleResEditor extends Window  {
 	private TreeTable ttable;
 	@SuppressWarnings("unchecked")
 	public RoleResEditor(final Item item,  final JPAContainer<Role> container, final JPAContainer<Resource> resContainer) {
-		this.setCaption("应用设置");
+		this.setCaption("角色关联功能设置");
 		this.jpaitem = (JPAContainerItem<Role>) item;
 		final VerticalLayout formLayout = new VerticalLayout();
 		formLayout.setMargin(true);
