@@ -4,3 +4,8 @@
  可覆盖TransactionalEntityProvider中的相应方法，增加业务代码。
  
 3. target/generated-sources/annotations 为maven自动生成，如果maven未设置成java resources,请自己设置一下
+
+测试用户：
+admin  
+user
+密码都是111，user可看到部分功能
