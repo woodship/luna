@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.woodship.luna.core.Resource;
+
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.Caption;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -71,4 +73,30 @@ public class Utils {
 			}
 		}
 	}
+	
+	/**
+	 * 根据类获得增加功能按钮的ID
+	 * @param calss
+	 * @return
+	 */
+	public static String getAddActionId(Class<?> calss){
+		return calss.getName()+":ADD";
+	}
+	/**
+	 * 根据类获得删除功能按钮的ID
+	 * @param calss
+	 * @return
+	 */
+	public static String getDelActionId(Class<?> calss){
+		return calss.getName()+":DEL";
+	}
+	/**
+	 * 根据类获得编辑功能按钮的ID
+	 * @param calss
+	 * @return
+	 */
+	public static String getEditActionId(Class<?> calss){
+		return calss.getName()+":EDIT";
+	}
+	
 }

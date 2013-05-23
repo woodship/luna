@@ -249,6 +249,9 @@ public class LunaUI extends UI {
 
 	@SuppressWarnings("serial")
 	private void buildMainView() {
+		final User currUser = us.getCurrentUser();
+		
+		//按权限进行过虑
 		resourceEntityProvider.setQueryModifierDelegate(
 				new DefaultQueryModifierDelegate () {
 					@SuppressWarnings("unchecked")
@@ -258,7 +261,7 @@ public class LunaUI extends UI {
 							CriteriaQuery<?> query,
 							List<Predicate> predicates) {
 						//管理员不加过虑条件
-						User currUser = us.getCurrentUser();
+					
 						if(currUser.isAdmin()){
 							return;
 						}
@@ -341,7 +344,7 @@ public class LunaUI extends UI {
 										new ThemeResource("img/profile-pic.png"));
 								profilePic.setWidth("34px");
 								addComponent(profilePic);
-								Label userName = new Label("张三");
+								Label userName = new Label(currUser.getShowName());
 								userName.setSizeUndefined();
 								addComponent(userName);
 
@@ -370,6 +373,7 @@ public class LunaUI extends UI {
 								exit.addClickListener(new ClickListener() {
 									@Override
 									public void buttonClick(ClickEvent event) {
+										SecurityUtils.getSubject().logout();
 										buildLoginView(true);
 									}
 								});

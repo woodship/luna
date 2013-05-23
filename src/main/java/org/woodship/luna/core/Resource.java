@@ -20,36 +20,43 @@ import com.vaadin.data.fieldgroup.Caption;
 import com.vaadin.navigator.View;
 
 
-
 /**
- * 系统资源，可生成菜单，进行权限控制
+ * 系统资源，用于功能菜单，功能按钮的标识，进行权限控制
  * @author laocui
  */
 @Entity
-@Table(name = "Resource_", uniqueConstraints = { @UniqueConstraint(columnNames = {
-		"name", "path" }) })
-//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Table(name = "Resource_", uniqueConstraints = { @UniqueConstraint(columnNames = {"resKey", "path","resType" }) })
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Resource extends HierarchialEntity<Resource>{
 
 	private static final long serialVersionUID = 1L;
 
-
-	public Resource(String name, ResourceType resType, Resource parent, String path, Class<? extends View> viewClass) {
-		super();
-		this.name = name;
-		this.path = path;
-		this.resType = resType;
-		this.parent = parent;
-		this.viewClass = viewClass;
-	}
-
 	public Resource() {
 	}
 
-	public Resource(String name, ResourceType resType) {
+	public Resource(String resKey, String name,  ResourceType resType) {
+		this.resKey = resKey;
 		this.name = name;
 		this.resType = resType;
 	}
+	
+	public Resource(String resKey,String name, ResourceType resType, Resource parent) {
+		this.resKey = resKey;
+		this.name = name;
+		this.resType = resType;
+		this.setParent(parent);
+	}
+	
+	public Resource(String resKey,String name, ResourceType resType, Resource parent, String path, Class<? extends View> viewClass) {
+		this.resKey = resKey;
+		this.name = name;
+		this.path = path;
+		this.resType = resType;
+		this.setParent(parent);
+		this.viewClass = viewClass;
+	}
+
+	
 	
 	@Caption("名称")
 	private String name;
@@ -57,6 +64,10 @@ public class Resource extends HierarchialEntity<Resource>{
 	@Caption("访问路径")
 	private String path;
 
+	@Caption("上级")
+	@ManyToOne
+	private Resource parent;
+	
 	@Caption("视图类")
 	private Class<? extends View> viewClass;
 
@@ -66,21 +77,33 @@ public class Resource extends HierarchialEntity<Resource>{
 	@Caption("显示图标")
 	private String icon;
 	
-	@Caption("上级")
-	@ManyToOne
-	private Resource parent;
+	@Caption("资源KEY")
+	private String resKey;
 
+//	@Caption("叶子节点")
+	private boolean leaf = true;;
 	@ManyToMany(fetch=FetchType.EAGER ,mappedBy="resource")
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE )
 	private Set<Role> roles = new LinkedHashSet<Role>();
-
-	public boolean isLeaf() {
-		if (ResourceType.MODULE.equals(resType)) {
-			return false;
-		}
-		return true;
-	}
 	
+	
+	
+	public boolean isLeaf() {
+		return leaf;
+	}
+
+	public void setLeaf(boolean leaf) {
+		this.leaf = leaf;
+	}
+
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
+
 	public String getIcon(){
 		if(!StringUtils.isNullOrEmpty(icon)){
 			return "icons/item.png";
@@ -155,6 +178,9 @@ public class Resource extends HierarchialEntity<Resource>{
 	}
 
 	public void setParent(Resource parent) {
+		if(parent != null){
+			parent.setLeaf(false);
+		}
 		this.parent = parent;
 	}
 
@@ -171,4 +197,13 @@ public class Resource extends HierarchialEntity<Resource>{
 		this.id = id;
 	}
 
+	public String getResKey() {
+		return resKey;
+	}
+
+	public void setResKey(String resKey) {
+		this.resKey = resKey;
+	}
+
+	
 }

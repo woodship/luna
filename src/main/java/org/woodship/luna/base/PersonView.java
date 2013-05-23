@@ -4,6 +4,8 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
@@ -41,6 +43,8 @@ import com.vaadin.ui.VerticalLayout;
 @org.springframework.stereotype.Component
 @Scope("prototype")
 public class PersonView extends HorizontalSplitPanel implements ComponentContainer, View{
+	public static final String NAME = "person";
+
 	@Autowired
 	ContainerUtils conu;
 	
@@ -78,9 +82,12 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
         buildMainArea();
 
         setSplitPosition(20);
+        
+        authenticate();
     }
 
-    private void buildMainArea() {
+
+	private void buildMainArea() {
     	//右侧
         VerticalLayout verticalLayout = new VerticalLayout();
         setSecondComponent(verticalLayout);
@@ -227,5 +234,10 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 	public void enter(ViewChangeEvent event) {
 	}
 	
-	
+    private void authenticate() {
+    	Subject user = SecurityUtils.getSubject(); 
+		newButton.setVisible(user.isPermitted(Utils.getAddActionId(PersonView.class)));
+		deleteButton.setVisible(user.isPermitted(Utils.getDelActionId(PersonView.class)));
+		editButton.setVisible(user.isPermitted(Utils.getEditActionId(PersonView.class)));
+	}
 }

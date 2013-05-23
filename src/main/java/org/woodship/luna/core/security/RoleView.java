@@ -38,6 +38,8 @@ import com.vaadin.ui.VerticalLayout;
 @org.springframework.stereotype.Component
 @Scope("prototype")
 public class RoleView extends VerticalLayout implements ComponentContainer, View{
+	public static final String NAME = "role";
+
 	@Autowired
 	ContainerUtils conu;
 	

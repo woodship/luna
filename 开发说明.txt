@@ -3,7 +3,9 @@
 2.TransactionalEntityProvider类相当于是公共DAO,具体实体的EntityProvider实现该类，然后用其生成jpacontainer.增删改如果有其它业务需求，
  可覆盖TransactionalEntityProvider中的相应方法，增加业务代码。
  
-3. target/generated-sources/annotations 为maven自动生成，如果maven未设置成java resources,请自己设置一下
+3. target/generated-sources/annotations 为maven自动生成，如果没有生成请右键项目 Run as>>Maven install，如果maven未设置成java resources,请自己设置一下
+
+4.按钮权限已经实现，请参考PersonView.authenticate();
 
 测试用户：
 admin  

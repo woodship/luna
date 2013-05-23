@@ -18,22 +18,27 @@ import com.vaadin.ui.TreeTable;
 @Scope("prototype")
 public class ApplicationView extends HorizontalLayout implements View {
 	private static final long serialVersionUID = 1L;
+	public static final String NAME = "application";
 
 	@Autowired
 	ContainerUtils conu;
 
-	private JPAContainer<Resource> resContainer;
-	private TreeTable table;
 	@PostConstruct
 	public void PostConstruct(){
 	    this.setSizeFull();
-		resContainer = conu.createJPAHierarchialContainer(Resource.class);
-		table = new TreeTable("应用管理");
-		table.setContainerDataSource(resContainer);
-		table.setItemCaptionPropertyId("name");
-		Utils.setTableDefaultHead(table, Resource.class);
-		table.setSizeFull();
-		this.addComponent(table);
+	    JPAContainer<Resource> resContainer = conu.createJPAHierarchialContainer(Resource.class);
+//	    JPAContainer<Resource> resContainer = conu.createJPAContainer(Resource.class);
+		TreeTable ttable = new TreeTable("应用管理");
+		ttable.setContainerDataSource(resContainer);
+		ttable.setItemCaptionPropertyId("name");
+		Utils.setTableDefaultHead(ttable, Resource.class);
+		ttable.setSizeFull();
+		ttable.setSelectable(true);
+		//展开节点
+		for (Object itemId: ttable.getItemIds()){
+			ttable.setCollapsed(itemId, false);
+		}
+		this.addComponent(ttable);
 	}
 
 	@Override

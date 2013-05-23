@@ -63,7 +63,7 @@ public class Role extends IdEntity<Role>{
 	public List<String> toPermissionNames() {
 		List<String> permissionNameList = new ArrayList<String>();
 		for (Resource res : resource) {
-			permissionNameList.add(res.getName());
+			permissionNameList.add(res.getResKey());
 		}
 		return permissionNameList;
 	}

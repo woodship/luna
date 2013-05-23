@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 public class UserService {
 	
 	@PersistenceContext
-	private  EntityManager entityManager;
+	private  EntityManager em;
 	
 	public User findByUsername(String username) {
 		  if (username == null) return null;
-		  return entityManager.createQuery("SELECT o FROM User o where o.username = ?", User.class)
+		  return em.createQuery("SELECT o FROM User o where o.username = ?", User.class)
 				  .setParameter(1, username)
 				  .getSingleResult();
 	}
@@ -28,4 +28,6 @@ public class UserService {
 		User u =findByUsername((String) username);
 		return u;
 	}
+	
+	
 }

@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
 import org.apache.shiro.authc.credential.DefaultPasswordService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.woodship.luna.base.Organization;
@@ -18,10 +19,12 @@ import org.woodship.luna.base.PersonView;
 import org.woodship.luna.core.ApplicationView;
 import org.woodship.luna.core.HomeView;
 import org.woodship.luna.core.Resource;
+import org.woodship.luna.core.ResourceService;
 import org.woodship.luna.core.ResourceType;
 import org.woodship.luna.core.security.Role;
 import org.woodship.luna.core.security.RoleView;
 import org.woodship.luna.core.security.User;
+import org.woodship.luna.util.Utils;
 
 
 @Component
@@ -29,6 +32,9 @@ public class InitData{
 
 	@PersistenceContext
 	private  EntityManager entityManager;
+	
+	@Autowired
+	private ResourceService resSer;
 	
 	private DefaultPasswordService ps = new DefaultPasswordService();
 	
@@ -41,6 +47,7 @@ public class InitData{
 		cq.select(cb.count(cq.from(User.class)));
 		long size = entityManager.createQuery(cq).getSingleResult();
 		if(size>0) return;
+		
 		//增加人员机构用户数据
 		createOrgAndPerson();
 		
@@ -49,29 +56,25 @@ public class InitData{
 	}
 	
 	private void createResource(){
-		Resource home = new Resource("主页", ResourceType.APPLICATION, null, "", HomeView.class);
+		Resource home = new Resource(HomeView.KEY,"主页", ResourceType.APPLICATION, null,  HomeView.NAME, HomeView.class);
 		entityManager.persist(home);
 		
 		//增加系统管理模块
-		Resource sys = new Resource("系统管理", ResourceType.MODULE);
+		Resource sys = new Resource("SYSTEM_MANAGER", "系统管理", ResourceType.MODULE);
 		entityManager.persist(sys);
-		//建立应用
-		Resource app = new Resource("应用管理", ResourceType.APPLICATION, sys, "/application", ApplicationView.class);
-		entityManager.persist(app);
-		Resource role = new Resource("角色管理", ResourceType.APPLICATION, sys, "/role", RoleView.class);
-		entityManager.persist(role);
+		Resource app = resSer.createApp("应用管理",  sys, ApplicationView.NAME, ApplicationView.class);
+		Resource role =resSer.createCUDApp("角色管理",  sys, RoleView.NAME, RoleView.class);
 		
 		//增加基础应用模块
-		Resource base = new Resource("基础应用", ResourceType.MODULE);
+		Resource base = new Resource("BASE_APPLICATION", "基础应用", ResourceType.MODULE);
 		entityManager.persist(base);
-		Resource resPerson = new Resource("人员管理", ResourceType.APPLICATION, base, "/person", PersonView.class);
-		entityManager.persist(resPerson);
+		Resource resPerson = resSer.createCUDApp("人员管理", base,PersonView.NAME, PersonView.class);
 		
 		//增加进销存管理模块
 //		Resource eam = new Resource("进销存", ResourceType.MODULE);
-//		entityManager.persist(eam);
+//		appContainer.addEntity(eam);
 //		Resource item = new Resource("库存项目", ResourceType.APPLICATION, eam, "/item", ItemView.class);
-//		entityManager.persist(item);
+//		appContainer.addEntity(item);
 		
 		
 		//增加管理员
@@ -92,10 +95,12 @@ public class InitData{
 		radmin.addUser(userAdmin);
 		entityManager.persist(radmin);
 		
+		Resource padd = resSer.getResByKey(Utils.getAddActionId(PersonView.class));
 		Role ruser = new Role("一般用户");
 		ruser.addResource(home);
 		ruser.addResource(resPerson);
 		ruser.addResource(base);
+		ruser.addResource(padd);
 		ruser.addUser(u1);
 		entityManager.persist(ruser);
 	}

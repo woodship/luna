@@ -1,6 +1,10 @@
 package org.woodship.luna.core.security;
 
 import java.io.Serializable;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -16,14 +20,24 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.woodship.luna.core.Resource;
+import org.woodship.luna.core.ResourceService;
 /**
  * 自实现用户与权限查询.
  */
 public class ShiroDbRealm extends AuthorizingRealm {
+	@PersistenceContext
+	private  EntityManager em;
+	
+	@Autowired
+	private  UserService userser;
 
 	@Autowired
-	private  UserService us;
-
+	private  RoleService roleser;
+	
+	@Autowired
+	private  ResourceService resser;
+	
 	private DefaultPasswordService ps = new DefaultPasswordService();
 
 	public ShiroDbRealm() {
@@ -48,7 +62,7 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	 */
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
 		UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
-		User user =  us.findByUsername(token.getUsername());
+		User user =  userser.findByUsername(token.getUsername());
 		if (user != null) {
 			return new SimpleAuthenticationInfo(user.getUsername(), user.getPassword(),getName());
 		} else {
@@ -60,16 +74,30 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	 * 授权查询回调函数, 进行鉴权但缓存中无用户的授权信息时调用.
 	 */
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		ShiroUser shiroUser = (ShiroUser) principals.fromRealm(getName()).iterator().next();
-		User user = us.findByUsername(shiroUser.getLoginName());
+		String username =  (String) principals.fromRealm(getName()).iterator().next();
+		User user = userser.findByUsername(username);
 		if (user != null) {
 			SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-			for (Role group : user.getRoles()) {
-				//基于Permission的权限信息
-				info.addStringPermissions(group.toPermissionNames());
-				//基于role的权限信息
-				info.addRole(group.getName());
+			if(user.isAdmin()){//管理员设置所有权限
+				List<Role> roles = roleser.findAll();
+				List<Resource> ress = resser.findAll();
+				for (Role group : roles) {
+					//基于role的权限信息
+					info.addRole(group.getName());
+				}
+				for(Resource res : ress){
+					//基于Permission的权限信息
+					info.addStringPermission(res.getResKey());
+				}
+			}else{//非管理员设置角色权限
+				for (Role group : user.getRoles()) {
+					//基于Permission的权限信息
+					info.addStringPermissions(group.toPermissionNames());
+					//基于role的权限信息
+					info.addRole(group.getName());
+				}
 			}
+			
 			return info;
 		} else {
 			return null;

@@ -43,6 +43,8 @@ import com.vaadin.ui.Window;
 @Scope("prototype")
 public class HomeView extends VerticalLayout implements View {
 	private static final long serialVersionUID = 1L;
+	public static final String NAME = "";
+	public static final String KEY = "SYS_KEY";
 	Table t;
 
     public HomeView() {
