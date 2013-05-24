@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.woodship.luna.base.AndroidRequestHandler;
+import org.woodship.luna.db.InitData;
 
 import ru.xpoft.vaadin.SpringApplicationContext;
 import ru.xpoft.vaadin.SpringUIProvider;
@@ -99,6 +100,9 @@ public class SpringVaadinServlet extends VaadinServlet
             	event.getSession().addRequestHandler(rh);
             }
         });
+        //初始化系统数据 add by laocui
+        InitData initData = (InitData)applicationContext.getBean("initData");
+        initData.init();
         
         return service;
     }

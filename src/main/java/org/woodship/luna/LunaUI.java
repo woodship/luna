@@ -89,8 +89,6 @@ public class LunaUI extends UI {
 
 	private HelpManager helpManager;
 
-	@Autowired
-	private InitData initData;
 
 	@Autowired()
 	@Qualifier("resourceEntityProvider")
@@ -100,9 +98,6 @@ public class LunaUI extends UI {
 	UserService us;
 	@Override
 	protected void init(VaadinRequest request) {
-		//初始化数据
-		initData.init();
-
 		//TODO setConverterFactory 老崔
 		//getSession().setConverterFactory(new MyConverterFactory());
 
@@ -190,8 +185,7 @@ public class LunaUI extends UI {
 		fields.addComponent(signin);
 		fields.setComponentAlignment(signin, Alignment.BOTTOM_LEFT);
 
-		final ShortcutListener enter = new ShortcutListener("Sign In",
-				KeyCode.ENTER, null) {
+		final ShortcutListener enter = new ShortcutListener("Sign In",KeyCode.ENTER, null) {
 			@Override
 			public void handleAction(Object sender, Object target) {
 				signin.click();
@@ -261,10 +255,10 @@ public class LunaUI extends UI {
 							CriteriaQuery<?> query,
 							List<Predicate> predicates) {
 						//管理员不加过虑条件
-					
 						if(currUser.isAdmin()){
 							return;
 						}
+						//非管理员按角色过虑菜单
 						Root<Resource> root = (Root<Resource>) query.getRoots().iterator().next();
 						SetJoin<Resource,Role> rjoin = root.join(Resource_.roles);
 						SetJoin<Role,User> ujoin = rjoin.join(Role_.users);
@@ -274,7 +268,7 @@ public class LunaUI extends UI {
 				}
 		);
 		
-		nav = new DiscoveryNavigator(this, content);
+		//配制菜单japcontainer
 		JPAContainer<Resource> con = new JPAContainer<Resource>(Resource.class){
 			{
 				setEntityProvider(resourceEntityProvider);
@@ -287,8 +281,10 @@ public class LunaUI extends UI {
 			}
 		};
 
-		final Map<String,Object> viewsId = new HashMap<String,Object> ();//应用ID,用于选择
+		
 		//添加各视图到nav中
+		nav = new DiscoveryNavigator(this, content);
+		final Map<String,Object> viewsId = new HashMap<String,Object> ();//应用ID,用于选择
 		for(Object id : con.getItemIds()){
 			Resource res = con.getItem(id).getEntity();
 			if(ResourceType.APPLICATION.equals(res.getResType())){
@@ -373,8 +369,8 @@ public class LunaUI extends UI {
 								exit.addClickListener(new ClickListener() {
 									@Override
 									public void buttonClick(ClickEvent event) {
-										SecurityUtils.getSubject().logout();
 										buildLoginView(true);
+//										SecurityUtils.getSubject().logout();
 									}
 								});
 							}
