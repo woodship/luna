@@ -35,7 +35,7 @@ public class User extends IdEntity<User>{
 	@Caption("登录名")
 	@NotEmpty
 	private String username;
-	@Caption("密码")
+	
 	private String password;
 
 	@NotEmpty

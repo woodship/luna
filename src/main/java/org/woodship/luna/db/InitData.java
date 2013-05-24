@@ -24,6 +24,7 @@ import org.woodship.luna.core.security.ResourceType;
 import org.woodship.luna.core.security.Role;
 import org.woodship.luna.core.security.RoleView;
 import org.woodship.luna.core.security.User;
+import org.woodship.luna.core.security.UserView;
 import org.woodship.luna.util.Utils;
 
 
@@ -62,8 +63,9 @@ public class InitData{
 		//增加系统管理模块
 		Resource sys = new Resource("SYSTEM_MANAGER", "系统管理", ResourceType.MODULE);
 		entityManager.persist(sys);
-		Resource app = resSer.createApp("应用管理",  sys, ApplicationView.NAME, ApplicationView.class);
-		Resource role =resSer.createCUDApp("角色管理",  sys, RoleView.NAME, RoleView.class);
+		resSer.createApp("应用管理",  sys, ApplicationView.NAME, ApplicationView.class);
+		resSer.createCUDApp("用户管理",  sys, UserView.NAME, UserView.class);
+		resSer.createCUDApp("角色管理",  sys, RoleView.NAME, RoleView.class);
 		
 		//增加基础应用模块
 		Resource base = new Resource("BASE_APPLICATION", "基础应用", ResourceType.MODULE);
