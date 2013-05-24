@@ -36,6 +36,7 @@ public class User extends IdEntity<User>{
 	@NotEmpty
 	private String username;
 	
+	@Caption("密码")
 	private String password;
 
 	@NotEmpty
@@ -45,7 +46,7 @@ public class User extends IdEntity<User>{
 	@Caption("系统用户")
 	private boolean sysUser;
 
-	@Caption("对应人员")
+	@Caption("人员信息")
 	@OneToOne
 	private Person person;
 

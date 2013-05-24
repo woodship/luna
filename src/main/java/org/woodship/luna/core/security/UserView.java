@@ -1,18 +1,16 @@
 package org.woodship.luna.core.security;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
-import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.EntityProvider;
 import com.vaadin.addon.jpacontainer.JPAContainer;
+import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.filter.Like;
@@ -27,6 +25,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.RowHeaderMode;
 import com.vaadin.ui.TextField;
@@ -40,15 +39,16 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
 	public static final String NAME = "user";
 
 	@Autowired
-	ContainerUtils conu;
+	@Qualifier("roleEntityProvider")
+	EntityProvider<Role> roleProvider;
 	
 	@Autowired()
 	@Qualifier("userEntityProvider")
 	EntityProvider<User> mainProvider;
 	
-	@PersistenceContext
-	private  EntityManager entityManager;
-
+	@Autowired()
+	UserService us;
+	
     private Table mainTable;
 
     private TextField searchField;
@@ -58,17 +58,17 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
     private Button editButton;
     private Button fromPersonButton;
     private Button setRolsesButton;
+    private Button changePwButton;
     
-    private JPAContainer<User> mainContainer;
-
+    private JPAContainer<User> mainContainer = new JPAContainer<User>(User.class);
+    private JPAContainer<Role> roleContainer = new JPAContainer<Role>(Role.class);
     private String textFilter;
 
     @PostConstruct
 	public void PostConstruct(){
-        mainContainer = new JPAContainer<User>(User.class);
         mainContainer.setEntityProvider(mainProvider);
+        roleContainer.setEntityProvider(roleProvider);
         
-        mainContainer.getEntityProvider();
         buildMainArea();
 
     }
@@ -88,11 +88,8 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
             		if(r.isSysUser()){
             			 deleteButton.setEnabled(false);
                          editButton.setEnabled(false);
-                         fromPersonButton.setEnabled(false);
                          setRolsesButton.setEnabled(true);
                         return;
-            		}else{
-            			setModificationsEnabled( value != null);
             		}
             	}
                 setModificationsEnabled( value != null);
@@ -103,6 +100,7 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
                 editButton.setEnabled(b);
                 fromPersonButton.setEnabled(b);
                 setRolsesButton.setEnabled(b);
+                changePwButton.setEnabled(b);
             }
         });
 
@@ -117,13 +115,13 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
             }
         });
 
+//        mainTable.setVisibleColumns(new Object[]{"username","showName","sysUser","person.trueName"});
         Utils.setTableDefaultHead(mainTable, User.class);
         
 
         HorizontalLayout toolbar = new HorizontalLayout();
-        newButton = new Button("增加");
+        newButton = new Button("直接增加");
         newButton.addClickListener(new Button.ClickListener() {
-
             @Override
             public void buttonClick(ClickEvent event) {
                 final EntityItem<User> newUserItem = mainContainer.createEntityItem(new User());
@@ -133,9 +131,16 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
             }
         });
 
+        fromPersonButton = new Button("从人员选择");
+        fromPersonButton.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+            	Notification.show("暂未实现");
+            }
+        });
+        
         deleteButton = new Button("删除");
         deleteButton.addClickListener(new Button.ClickListener() {
-
             @Override
             public void buttonClick(ClickEvent event) {
             	mainContainer.removeItem(mainTable.getValue());
@@ -145,7 +150,6 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
 
         editButton = new Button("编辑");
         editButton.addClickListener(new Button.ClickListener() {
-
             @Override
             public void buttonClick(ClickEvent event) {
             	UserEditor pe = new UserEditor(mainTable.getItem(mainTable.getValue()),mainContainer);
@@ -155,31 +159,31 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
         });
         editButton.setEnabled(false);
         
-        fromPersonButton = new Button("从人员选择");
-        fromPersonButton.addClickListener(new Button.ClickListener() {
-
+        
+        setRolsesButton = new Button("角色设置");
+        setRolsesButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-//            	UserResEditor pe = new UserResEditor(mainTable.getItem(mainTable.getValue())
-//            			                     ,mainContainer,      conu.createJPAHierarchialContainer(Resource.class));
+            	Notification.show("暂未实现，请先在角色管理中操作");
+//            	UserRoleEditor pe = new UserRoleEditor(mainTable.getItem(mainTable.getValue()) ,mainContainer, roleContainer);
 //            	pe.center();
 //                UI.getCurrent().addWindow(pe);
             }
         });
-        fromPersonButton.setEnabled(false);
+        setRolsesButton.setEnabled(false);
         
-        setRolsesButton = new Button("角色设置");
-        setRolsesButton.addClickListener(new Button.ClickListener() {
-
-            @Override
+        changePwButton = new Button("修改密码");
+        changePwButton.addClickListener(new Button.ClickListener() {
+            @SuppressWarnings("unchecked")
+			@Override
             public void buttonClick(ClickEvent event) {
-            	UserRoleEditor pe = new UserRoleEditor(mainTable.getItem(mainTable.getValue())
-            			                     ,mainContainer,      conu.createJPAContainer(Role.class));
-            	pe.center();
-                UI.getCurrent().addWindow(pe);
+            	User user = ((JPAContainerItem<User>)mainTable.getItem(mainTable.getValue())).getEntity();
+            	UserChangePWEditor w = new UserChangePWEditor(user ,us,mainContainer);
+            	w.center();
+                UI.getCurrent().addWindow(w);
             }
         });
-        setRolsesButton.setEnabled(false);
+        changePwButton.setEnabled(false);
 
         searchField = new TextField();
         searchField.setInputPrompt("Search by name");
@@ -197,6 +201,7 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
         toolbar.addComponent(editButton);
         toolbar.addComponent(fromPersonButton);
         toolbar.addComponent(setRolsesButton);
+        toolbar.addComponent( changePwButton);
         toolbar.addComponent(searchField);
         toolbar.setWidth("100%");
         toolbar.setExpandRatio(searchField, 1);

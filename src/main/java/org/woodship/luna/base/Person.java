@@ -93,4 +93,8 @@ public class Person extends IdEntity<Person>{
 		this.org = org;
 	}
 
+	@Override
+	public String toString(){
+		return org.getName()+":"+trueName;
+	}
 }

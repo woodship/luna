@@ -21,17 +21,17 @@ import com.vaadin.ui.Window;
 
 @SuppressWarnings("serial")
 public class UserRoleEditor extends Window  {
-	private JPAContainerItem<Role> jpaitem = null;
+	private JPAContainerItem<User> jpaitem = null;
 	private Table table;
 	@SuppressWarnings("unchecked")
 	public UserRoleEditor(final Item item,  final JPAContainer<User> container, final JPAContainer<Role> roleContainer) {
 		this.setCaption("为用户设置角色");
-		this.jpaitem = (JPAContainerItem<Role>) item;
+		this.jpaitem = (JPAContainerItem<User>) item;
 		final VerticalLayout formLayout = new VerticalLayout();
 		formLayout.setMargin(true);
 		table = new Table();
 		table.setContainerDataSource(roleContainer);
-		table.setVisibleColumns(new Object[]{"username","showName"});
+		table.setVisibleColumns(new Object[]{"name","remark"});
 		Utils.setTableCaption(table, User.class);
 		table.setWidth(300, Unit.PIXELS);
 		table.setHeight(400, Unit.PIXELS);
@@ -39,9 +39,9 @@ public class UserRoleEditor extends Window  {
 		table.setSelectable(true);
 		table.setMultiSelectMode(MultiSelectMode.SIMPLE);
 		//设置值
-		Role r = jpaitem.getEntity();
-		for(User u : r.getUsers()){
-			table.select(u.getId());
+		User user = jpaitem.getEntity();
+		for(Role r : user.getRoles()){
+			table.select(r.getId());
 		}
 		
 		
@@ -57,13 +57,12 @@ public class UserRoleEditor extends Window  {
 			@Override
 			public void buttonClick(Button.ClickEvent event) {
 				Set<?> v = (Set<?>) table.getValue();
-				Set<Role> rolses = new LinkedHashSet<Role>();
 				for(Object rid : v){
-					rolses.add(roleContainer.getItem(rid).getEntity() );
+					Role role = roleContainer.getItem(rid).getEntity() ;
+					role.addUser(jpaitem.getEntity());
+					roleContainer.getItem(rid).getItemProperty("users").setValue(role.getUsers());
 				}
-				//TODO 有问题
-				jpaitem.getItemProperty("rolses").setValue(rolses);
-				container.commit();
+				roleContainer.commit();
 				Notification.show("保存成功");
 			}
 		});

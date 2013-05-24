@@ -16,12 +16,10 @@
 package org.woodship.luna.core.security;
 
 import org.woodship.luna.util.JPAContainerItemFieldGroup;
-import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Item;
-import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -49,21 +47,11 @@ public class UserEditor extends Window  {
 		formLayout.setMargin(true);
 		final JPAContainerItemFieldGroup<User> fg = new JPAContainerItemFieldGroup<User>(User.class);
 		fg.setItemDataSource(jpaitem);
-		/*
-		 * 构建Field,在此处理自定义字段
-		 */
-		fg.setFieldFactory(new DefaultFieldGroupFieldFactory() {
-			@SuppressWarnings("rawtypes")
-			@Override
-			public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
-				return super.createField(dataType, fieldType);
-			}
-		});
 		
 		//增加默认字段
-		Utils.buildAndBindFieldGroup(fg, User.class, formLayout);
-//		formLayout.addComponent(fg.buildAndBind("trueName"));
-
+		formLayout.addComponent(fg.buildAndBind("登录名","username"));
+		formLayout.addComponent(fg.buildAndBind("显示名","showName"));
+		
 		final Label error = new Label("", ContentMode.HTML);
 		error.setVisible(false);
 		formLayout.addComponent(error);

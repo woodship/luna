@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
@@ -19,20 +18,18 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
-import org.woodship.luna.core.Resource_;
 import org.woodship.luna.core.security.Resource;
 import org.woodship.luna.core.security.ResourceType;
+import org.woodship.luna.core.security.Resource_;
 import org.woodship.luna.core.security.Role;
 import org.woodship.luna.core.security.Role_;
 import org.woodship.luna.core.security.User;
 import org.woodship.luna.core.security.UserService;
 import org.woodship.luna.core.security.User_;
-import org.woodship.luna.db.InitData;
 
 import ru.xpoft.vaadin.DiscoveryNavigator;
 
