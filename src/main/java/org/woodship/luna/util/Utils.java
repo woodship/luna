@@ -11,6 +11,7 @@ import org.woodship.luna.core.security.Resource;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.Caption;
 import com.vaadin.data.fieldgroup.FieldGroup;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Table;
 
@@ -69,7 +70,12 @@ public class Utils {
 		for(Field f : beanClass.getDeclaredFields()){
 			Caption caption = f.getAnnotation(Caption.class);
 			if(caption != null){
-				layout.addComponent(fieldGroup.buildAndBind(f.getName()));
+				Class<?> type = f.getType();
+				 if (Enum.class.isAssignableFrom(type)){
+					 layout.addComponent(fieldGroup.buildAndBind(caption.value(),f.getName(),ComboBox.class));
+				 }else{
+					 layout.addComponent(fieldGroup.buildAndBind(f.getName()));
+				 }
 			}
 		}
 	}

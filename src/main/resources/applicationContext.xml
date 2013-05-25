@@ -14,6 +14,7 @@
 		<property name="basename" value="classpath*:messages" />
 		<property name="fallbackToSystemLocale" value="false" />
 	</bean>
+	<bean class="ru.xpoft.vaadin.VaadinMessageSource" />
 	
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
 	    <property name="driverClass" value="${jdbc.driverClass}" />

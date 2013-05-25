@@ -15,67 +15,42 @@
  */
 package org.woodship.luna.eam;
 
-import org.woodship.luna.base.Organization;
-import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.JPAContainerItemFieldGroup;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
-import com.vaadin.addon.jpacontainer.fieldfactory.SingleSelectConverter;
-import com.vaadin.data.Container;
 import com.vaadin.data.Item;
-import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
 
 @SuppressWarnings("serial")
-public class ProductEditor extends Window  {
-	JPAContainer<Product> persons = null;
-	JPAContainerItem<Product> jpaitem = null;
+public class CustomerEditor extends Window  {
+	JPAContainer<Customer> mainContainer = null;
+	JPAContainerItem<Customer> jpaitem = null;
 
 	@SuppressWarnings("unchecked")
-	public ProductEditor(final Item item,  final JPAContainer<Product> persons) {
-		this.persons = persons;
-		this.jpaitem = (JPAContainerItem<Product>) item;
+	public CustomerEditor(final Item item,  final JPAContainer<Customer> mainContainer) {
+		this.setCaption("客户编辑/新增");
+		this.mainContainer = mainContainer;
+		this.jpaitem = (JPAContainerItem<Customer>) item;
 		final FormLayout formLayout = new FormLayout();
 		formLayout.setMargin(true);
-		final JPAContainerItemFieldGroup<Product> fg = new JPAContainerItemFieldGroup<Product>(Product.class);
+		final JPAContainerItemFieldGroup<Customer> fg = new JPAContainerItemFieldGroup<Customer>(Customer.class);
 		fg.setItemDataSource(jpaitem);
-		/*
-		 * 构建Field,在此处理自定义字段
-		 */
-		fg.setFieldFactory(new DefaultFieldGroupFieldFactory() {
-			@SuppressWarnings("rawtypes")
-			@Override
-			public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
-				if (dataType.isAssignableFrom(Organization.class)) {
-					ComboBox cb = new ComboBox();
-					Container container = ContainerUtils.getInstance().createJPAContainer(Organization.class);
-					cb.setContainerDataSource(container);
-					cb.setItemCaptionMode(ItemCaptionMode.ITEM);
-					cb.setConverter(new SingleSelectConverter<Object>(cb));
-					return (T) cb;
-				}
-				return super.createField(dataType, fieldType);
-			}
-		});
 		
 		//增加默认字段
-		Utils.buildAndBindFieldGroup(fg, Product.class, formLayout);
-//		formLayout.addComponent(fg.buildAndBind("trueName"));
+		Utils.buildAndBindFieldGroup(fg, Customer.class, formLayout);
 
 		final Label error = new Label("", ContentMode.HTML);
 		error.setVisible(false);
@@ -94,12 +69,12 @@ public class ProductEditor extends Window  {
 					fg.commit();
 					//新增的需要单独处理
 					if(jpaitem.getEntity().getId() == null){
-						Product p =fg.getItemDataSource().getEntity();
-						persons.addEntity(p);
+						Customer p =fg.getItemDataSource().getEntity();
+						mainContainer.addEntity(p);
 					}
 					Notification.show("保存成功");
 //					error.setVisible(false);
-					ProductEditor.this.close();//关闭，防止再点击，重复增加
+					CustomerEditor.this.close();//关闭，防止再点击，重复增加
 				} catch (FieldGroup.CommitException e) {
 					for (Field<?> field: fg.getFields()) {
 						ErrorMessage errMsg = ((AbstractField<?>)field).getErrorMessage();

@@ -13,8 +13,8 @@ import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.woodship.luna.base.OrganizationView;
 import org.woodship.luna.base.Organization;
+import org.woodship.luna.base.OrganizationView;
 import org.woodship.luna.base.Person;
 import org.woodship.luna.base.PersonView;
 import org.woodship.luna.core.HomeView;
@@ -26,8 +26,11 @@ import org.woodship.luna.core.security.Role;
 import org.woodship.luna.core.security.RoleView;
 import org.woodship.luna.core.security.User;
 import org.woodship.luna.core.security.UserView;
+import org.woodship.luna.eam.Customer;
+import org.woodship.luna.eam.CustomerView;
 import org.woodship.luna.eam.InvItem;
 import org.woodship.luna.eam.InvItemView;
+import org.woodship.luna.eam.ProductView;
 import org.woodship.luna.util.Utils;
 
 
@@ -64,14 +67,29 @@ public class InitData{
 	
 
 	private void createBusinessData() {
+
+		//菜单
+		Resource bus = new Resource("BUSI_MODULE", "业务管理", ResourceType.MODULE);
+		entityManager.persist(bus);
+		resSer.createCUDApp("型号维护", bus,InvItemView.NAME, InvItemView.class);
+		resSer.createCUDApp("客户维护", bus,CustomerView.NAME, CustomerView.class);
+		resSer.createCUDApp("产品管理", bus,ProductView.NAME, ProductView.class);
+		
+		//型号
 		InvItem ia = new InvItem("WG7893",1000f,null);
 		entityManager.persist(ia);
 		InvItem ib = new InvItem("XX8888",1500f,null);
 		entityManager.persist(ib);
+		//客户
+		Customer ca = new Customer("CKY11", "开元物业", null);
+		Customer cb = new Customer("CTHYY", "天华制造", null);
+		entityManager.persist(ca);
+		entityManager.persist(cb);
+		//产品
 	}
 
 
-	final static String[] groupsNames = { "一班","二班", "三班" };
+	final static String[] groupsNames = { "甲班","已班", "丙班" };
 	final static String[] officeNames = { "拉丝车间","镀锌车间", "绞线车间"};
 	final static String[] fnames = { "赵", "钱", "孙", "李",
 			"周","吴","郑","王","冯","陈","褚",
@@ -173,11 +191,6 @@ public class InitData{
 		entityManager.persist(base);
 		resSer.createCUDApp("机构管理", base,OrganizationView.NAME, OrganizationView.class);
 		Resource resPerson = resSer.createCUDApp("人员管理", base,PersonView.NAME, PersonView.class);
-		
-		//增加进销存管理模块
-		Resource bus = new Resource("BUSI_MODULE", "业务管理", ResourceType.MODULE);
-		entityManager.persist(bus);
-		resSer.createCUDApp("型号维护", bus,InvItemView.NAME, InvItemView.class);
 		
 		
 		
