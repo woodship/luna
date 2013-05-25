@@ -13,6 +13,7 @@ import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.woodship.luna.base.OrgType;
 import org.woodship.luna.base.Organization;
 import org.woodship.luna.base.OrganizationView;
 import org.woodship.luna.base.Person;
@@ -23,6 +24,7 @@ import org.woodship.luna.core.security.Resource;
 import org.woodship.luna.core.security.ResourceService;
 import org.woodship.luna.core.security.ResourceType;
 import org.woodship.luna.core.security.Role;
+import org.woodship.luna.core.security.RoleDataScore;
 import org.woodship.luna.core.security.RoleView;
 import org.woodship.luna.core.security.User;
 import org.woodship.luna.core.security.UserView;
@@ -124,15 +126,18 @@ public class InitData{
 		
 		Random r = new Random(0);
 		Organization orgRoot = new Organization();
-		orgRoot.setName("XXX集团");
+		orgRoot.setName("天星制造有限公司");
+		orgRoot.setOrgType(OrgType.单位);
 		entityManager.persist(orgRoot);
 		for (String o : officeNames) {
 			Organization geoGroup = new Organization();
 			geoGroup.setName(o);
 			geoGroup.setParent(orgRoot);
+			geoGroup.setOrgType(OrgType.顶级部门);
 			for (String g : groupsNames) {
 				Organization group = new Organization();
 				group.setName(g);
+				group.setOrgType(OrgType.班组);
 				entityManager.persist(group);
 				Set<Person> gPersons = new HashSet<Person>();
 				
@@ -210,10 +215,12 @@ public class InitData{
 		radmin.setSysRole(true);
 		radmin.addResource(resPerson);
 		radmin.addUser(userAdmin);
+		radmin.setDataScore(RoleDataScore.全部数据);
 		entityManager.persist(radmin);
 		
 		Resource padd = resSer.getResByKey(Utils.getAddActionId(PersonView.class));
-		Role ruser = new Role("一般用户");
+		Role ruser = new Role("部门管理员");
+		ruser.setDataScore(RoleDataScore.本部门);
 		ruser.addResource(home);
 		ruser.addResource(resPerson);
 		ruser.addResource(base);

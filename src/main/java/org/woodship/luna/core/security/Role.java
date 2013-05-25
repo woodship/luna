@@ -11,6 +11,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -31,7 +32,11 @@ public class Role extends IdEntity<Role>{
 	@NotEmpty
 	@Caption("角色名称")
 	private String name;
-
+	
+	@Caption("数据范围")
+	@NotNull
+	private RoleDataScore dataScore;
+	
 	@Caption("内置角色")
 	private boolean sysRole;
 	
@@ -120,6 +125,14 @@ public class Role extends IdEntity<Role>{
 			users.add(user);
 		}
 		
+	}
+
+	public RoleDataScore getDataScore() {
+		return dataScore;
+	}
+
+	public void setDataScore(RoleDataScore dataScore) {
+		this.dataScore = dataScore;
 	}
 
 }

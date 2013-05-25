@@ -21,6 +21,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.woodship.luna.db.HierarchialEntity;
@@ -34,6 +35,10 @@ public class Organization  extends HierarchialEntity<Organization>{
 	@Caption("机构名称")
 	@NotEmpty
     private String name;
+	
+	@Caption("机构类型")
+	@NotNull
+	private OrgType orgType;
 
     @OneToMany(mappedBy = "org")
     private Set<Person> persons;
@@ -92,5 +97,14 @@ public class Organization  extends HierarchialEntity<Organization>{
 		this.leaf = leaf;
 	}
 
+	public OrgType getOrgType() {
+		return orgType;
+	}
+
+	public void setOrgType(OrgType orgType) {
+		this.orgType = orgType;
+	}
+
+	
 
 }
