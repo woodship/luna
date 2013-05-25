@@ -22,24 +22,29 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.woodship.luna.db.HierarchialEntity;
+
+import com.vaadin.data.fieldgroup.Caption;
 
 @SuppressWarnings("serial")
 @Entity
 public class Organization  extends HierarchialEntity<Organization>{
 
+	@Caption("机构名称")
+	@NotEmpty
     private String name;
 
     @OneToMany(mappedBy = "org")
     private Set<Person> persons;
 
-    @Transient
-    private Boolean leaf;
+    private boolean leaf = true;
 
+    @Caption("上级机构")
     @ManyToOne
     private Organization parent;
 
-
+    
     public String getName() {
         return name;
     }
@@ -61,13 +66,10 @@ public class Organization  extends HierarchialEntity<Organization>{
     }
 
     public void setParent(Organization parent) {
+    	parent.setLeaf(false);
         this.parent = parent;
     }
 
-    @Override
-    public boolean isLeaf() {
-        return false;
-    }
 
     @Transient
     public String getHierarchicalName() {
@@ -81,5 +83,14 @@ public class Organization  extends HierarchialEntity<Organization>{
     public String toString() {
         return getHierarchicalName();
     }
+
+	public boolean isLeaf() {
+		return leaf;
+	}
+
+	public void setLeaf(boolean leaf) {
+		this.leaf = leaf;
+	}
+
 
 }

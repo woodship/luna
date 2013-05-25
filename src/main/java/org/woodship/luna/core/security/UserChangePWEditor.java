@@ -32,7 +32,7 @@ import com.vaadin.ui.Window;
 public class UserChangePWEditor extends Window  {
 	private PasswordField pwa = new PasswordField("新密码");
 	private PasswordField pwb = new PasswordField("确认");
-	public UserChangePWEditor(final User user,  final UserService us ,final JPAContainer<User> mainContainer) {
+	public UserChangePWEditor(final User user,  final UserService us) {
 		this.setCaption("重置密码");
 		final FormLayout formLayout = new FormLayout();
 		formLayout.setMargin(true);
@@ -51,7 +51,6 @@ public class UserChangePWEditor extends Window  {
 		saveButton.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(Button.ClickEvent event) {
-				//编辑的直接提交即可
 				if(StringUtils.isEmpty(pwa.getValue())){
 					error.setValue("<div style='color:red'>密码不能为空</div>");
 					error.setVisible(true);
@@ -59,10 +58,11 @@ public class UserChangePWEditor extends Window  {
 					error.setValue("<div style='color:red'>两次输入不一致</div>");
 					error.setVisible(true);
 				}else{
+					user.setPassword(pwa.getValue());
 					us.changePassword(user);
-					mainContainer.refreshItem(user.getId());
 					error.setVisible(false);
 					Notification.show("密码修改成功");
+					UserChangePWEditor.this.close();
 				}
 			}
 		});

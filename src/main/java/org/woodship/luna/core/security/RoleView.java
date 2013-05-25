@@ -214,7 +214,7 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
         mainContainer.setApplyFiltersImmediately(false);
         mainContainer.removeAllContainerFilters();
         if (textFilter != null && !textFilter.equals("")) {
-            Like like =new Like("trueName", textFilter + "%", false);
+            Like like =new Like("name", textFilter + "%", false);
             mainContainer.addContainerFilter(like);
         }
         mainContainer.applyFilters();

@@ -29,6 +29,7 @@ import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.AbstractField;
+import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
@@ -63,7 +64,7 @@ public class PersonEditor extends Window  {
 					ComboBox cb = new ComboBox();
 					Container container = ContainerUtils.getInstance().createJPAContainer(Organization.class);
 					cb.setContainerDataSource(container);
-					cb.setItemCaptionPropertyId("name");
+					cb.setItemCaptionMode(ItemCaptionMode.ITEM);
 					cb.setConverter(new SingleSelectConverter<Object>(cb));
 					return (T) cb;
 				}

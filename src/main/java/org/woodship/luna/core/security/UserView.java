@@ -178,7 +178,7 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
 			@Override
             public void buttonClick(ClickEvent event) {
             	User user = ((JPAContainerItem<User>)mainTable.getItem(mainTable.getValue())).getEntity();
-            	UserChangePWEditor w = new UserChangePWEditor(user ,us,mainContainer);
+            	UserChangePWEditor w = new UserChangePWEditor(user ,us);
             	w.center();
                 UI.getCurrent().addWindow(w);
             }
@@ -219,7 +219,7 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
         mainContainer.setApplyFiltersImmediately(false);
         mainContainer.removeAllContainerFilters();
         if (textFilter != null && !textFilter.equals("")) {
-            Like like =new Like("trueName", textFilter + "%", false);
+            Like like =new Like("showName", textFilter + "%", false);
             mainContainer.addContainerFilter(like);
         }
         mainContainer.applyFilters();

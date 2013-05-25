@@ -13,6 +13,7 @@ import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.woodship.luna.base.OrganizationView;
 import org.woodship.luna.base.Organization;
 import org.woodship.luna.base.Person;
 import org.woodship.luna.base.PersonView;
@@ -70,6 +71,7 @@ public class InitData{
 		//增加基础应用模块
 		Resource base = new Resource("BASE_APPLICATION", "基础应用", ResourceType.MODULE);
 		entityManager.persist(base);
+		resSer.createCUDApp("机构管理", base,OrganizationView.NAME, OrganizationView.class);
 		Resource resPerson = resSer.createCUDApp("人员管理", base,PersonView.NAME, PersonView.class);
 		
 		//增加进销存管理模块
@@ -108,11 +110,8 @@ public class InitData{
 	}
 	
 
-	final static String[] groupsNames = { "Corporate Development",
-			"Human Resources", "Legal", "Environment", "Quality Assurance",
-			"Research and Development", "Production", "Sales", "Marketing" };
-	final static String[] officeNames = { "London",
-		"New York", "Tokyo", "Turku"};
+	final static String[] groupsNames = { "一班","二班", "三班" };
+	final static String[] officeNames = { "拉丝车间","镀锌车间", "绞线车间"};
 	final static String[] fnames = { "赵", "钱", "孙", "李",
 			"周","吴","郑","王","冯","陈","褚",
 			"卫","蒋","沈"};
@@ -145,9 +144,13 @@ public class InitData{
 	public  void createOrgAndPerson() {
 		
 		Random r = new Random(0);
+		Organization orgRoot = new Organization();
+		orgRoot.setName("XXX集团");
+		entityManager.persist(orgRoot);
 		for (String o : officeNames) {
 			Organization geoGroup = new Organization();
 			geoGroup.setName(o);
+			geoGroup.setParent(orgRoot);
 			for (String g : groupsNames) {
 				Organization group = new Organization();
 				group.setName(g);

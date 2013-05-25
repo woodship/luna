@@ -28,6 +28,7 @@ import org.woodship.luna.core.security.Resource_;
 import org.woodship.luna.core.security.Role;
 import org.woodship.luna.core.security.Role_;
 import org.woodship.luna.core.security.User;
+import org.woodship.luna.core.security.UserChangePWEditor;
 import org.woodship.luna.core.security.UserService;
 import org.woodship.luna.core.security.User_;
 
@@ -332,9 +333,7 @@ public class LunaUI extends UI {
 							{
 								setSizeUndefined();
 								addStyleName("user");
-								Image profilePic = new Image(
-										null,
-										new ThemeResource("img/profile-pic.png"));
+								Image profilePic = new Image(null,new ThemeResource("img/profile-pic.png"));
 								profilePic.setWidth("34px");
 								addComponent(profilePic);
 								Label userName = new Label(currUser.getShowName());
@@ -343,20 +342,26 @@ public class LunaUI extends UI {
 
 								Command cmd = new Command() {
 									@Override
-									public void menuSelected(
-											MenuItem selectedItem) {
-										Notification
-										.show("Not implemented in this demo");
+									public void menuSelected(MenuItem selectedItem) {
+										//TODO 验证原密码
+										UserChangePWEditor w = new UserChangePWEditor(currUser, us);
+										w.center();
+										UI.getCurrent().addWindow(w);
 									}
 								};
 								MenuBar settings = new MenuBar();
 								MenuItem settingsMenu = settings.addItem("",
 										null);
 								settingsMenu.setStyleName("icon-cog");
-								settingsMenu.addItem("Settings", cmd);
-								settingsMenu.addItem("Preferences", cmd);
+								settingsMenu.addItem("修改密码", cmd);
+//								settingsMenu.addItem("Preferences", cmd);
 								settingsMenu.addSeparator();
-								settingsMenu.addItem("My Account", cmd);
+								settingsMenu.addItem("设置", new Command() {
+									@Override
+									public void menuSelected(MenuItem selectedItem) {
+										Notification.show("暂未实现");
+									}
+								});
 								addComponent(settings);
 
 								Button exit = new NativeButton("Exit");
