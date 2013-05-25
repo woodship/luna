@@ -21,7 +21,6 @@ import org.woodship.luna.util.Utils;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Item;
-import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -36,32 +35,22 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Window;
 
 @SuppressWarnings("serial")
-public class ItemEditor extends Window  {
-	JPAContainer<Item> persons = null;
-	JPAContainerItem<Item> jpaitem = null;
+public class InvItemEditor extends Window  {
+	JPAContainer<InvItem> mainContainer = null;
+	JPAContainerItem<InvItem> jpaitem = null;
 
 	@SuppressWarnings("unchecked")
-	public ItemEditor(final Item item,  final JPAContainer<Item> persons) {
-		this.persons = persons;
-		this.jpaitem = (JPAContainerItem<Item>) item;
+	public InvItemEditor(final Item item,  final JPAContainer<InvItem> mainContainer) {
+		this.setCaption("型号编辑/新增");
+		this.mainContainer = mainContainer;
+		this.jpaitem = (JPAContainerItem<InvItem>) item;
 		final FormLayout formLayout = new FormLayout();
 		formLayout.setMargin(true);
-		final JPAContainerItemFieldGroup<Item> fg = new JPAContainerItemFieldGroup<Item>(Item.class);
+		final JPAContainerItemFieldGroup<InvItem> fg = new JPAContainerItemFieldGroup<InvItem>(InvItem.class);
 		fg.setItemDataSource(jpaitem);
-		/*
-		 * 构建Field,在此处理自定义字段
-		 */
-		fg.setFieldFactory(new DefaultFieldGroupFieldFactory() {
-			@SuppressWarnings("rawtypes")
-			@Override
-			public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
-				return super.createField(dataType, fieldType);
-			}
-		});
 		
 		//增加默认字段
-		Utils.buildAndBindFieldGroup(fg, Item.class, formLayout);
-//		formLayout.addComponent(fg.buildAndBind("trueName"));
+		Utils.buildAndBindFieldGroup(fg, InvItem.class, formLayout);
 
 		final Label error = new Label("", ContentMode.HTML);
 		error.setVisible(false);
@@ -79,13 +68,13 @@ public class ItemEditor extends Window  {
 					//编辑的直接提交即可
 					fg.commit();
 					//新增的需要单独处理
-					if(jpaitem.getEntity() == null){
-						Item p =fg.getItemDataSource().getEntity();
-						persons.addEntity(p);
+					if(jpaitem.getEntity().getId() == null){
+						InvItem p =fg.getItemDataSource().getEntity();
+						mainContainer.addEntity(p);
 					}
 					Notification.show("保存成功");
 //					error.setVisible(false);
-					ItemEditor.this.close();//关闭，防止再点击，重复增加
+					InvItemEditor.this.close();//关闭，防止再点击，重复增加
 				} catch (FieldGroup.CommitException e) {
 					for (Field<?> field: fg.getFields()) {
 						ErrorMessage errMsg = ((AbstractField<?>)field).getErrorMessage();

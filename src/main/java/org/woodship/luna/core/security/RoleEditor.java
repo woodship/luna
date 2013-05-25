@@ -49,16 +49,6 @@ public class RoleEditor extends Window  {
 		formLayout.setMargin(true);
 		final JPAContainerItemFieldGroup<Role> fg = new JPAContainerItemFieldGroup<Role>(Role.class);
 		fg.setItemDataSource(jpaitem);
-		/*
-		 * 构建Field,在此处理自定义字段
-		 */
-		fg.setFieldFactory(new DefaultFieldGroupFieldFactory() {
-			@SuppressWarnings("rawtypes")
-			@Override
-			public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
-				return super.createField(dataType, fieldType);
-			}
-		});
 		
 		//增加默认字段
 		Utils.buildAndBindFieldGroup(fg, Role.class, formLayout);

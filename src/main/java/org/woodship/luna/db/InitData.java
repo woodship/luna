@@ -26,6 +26,8 @@ import org.woodship.luna.core.security.Role;
 import org.woodship.luna.core.security.RoleView;
 import org.woodship.luna.core.security.User;
 import org.woodship.luna.core.security.UserView;
+import org.woodship.luna.eam.InvItem;
+import org.woodship.luna.eam.InvItemView;
 import org.woodship.luna.util.Utils;
 
 
@@ -55,60 +57,19 @@ public class InitData{
 		
 		//增加资源
 		createResource();
+		
+		//增加业务数据
+		createBusinessData();
 	}
 	
-	private void createResource(){
-		Resource home = new Resource(HomeView.KEY,"主页", ResourceType.APPLICATION, null,  HomeView.NAME, HomeView.class);
-		entityManager.persist(home);
-		
-		//增加系统管理模块
-		Resource sys = new Resource("SYSTEM_MANAGER", "系统管理", ResourceType.MODULE);
-		entityManager.persist(sys);
-		resSer.createApp("应用管理",  sys, ApplicationView.NAME, ApplicationView.class);
-		resSer.createCUDApp("用户管理",  sys, UserView.NAME, UserView.class);
-		resSer.createCUDApp("角色管理",  sys, RoleView.NAME, RoleView.class);
-		
-		//增加基础应用模块
-		Resource base = new Resource("BASE_APPLICATION", "基础应用", ResourceType.MODULE);
-		entityManager.persist(base);
-		resSer.createCUDApp("机构管理", base,OrganizationView.NAME, OrganizationView.class);
-		Resource resPerson = resSer.createCUDApp("人员管理", base,PersonView.NAME, PersonView.class);
-		
-		//增加进销存管理模块
-//		Resource eam = new Resource("进销存", ResourceType.MODULE);
-//		appContainer.addEntity(eam);
-//		Resource item = new Resource("库存项目", ResourceType.APPLICATION, eam, "/item", ItemView.class);
-//		appContainer.addEntity(item);
-		
-		
-		//增加管理员
-		String pw =  ps.encryptPassword(User.DEFAULT_PASSWORD);
-		User userAdmin = new User(User.ADMIN_USERNAME,pw,"管理员");
-		userAdmin.setSysUser(true);
-		entityManager.persist(userAdmin);
-		
-		//增加一个普通用户
-		User u1 = new User();
-		u1.setPerson(p1);
-		u1.setPassword(pw);
-		entityManager.persist(u1);
-		
-		Role radmin = new Role("系统管理员");
-		radmin.setSysRole(true);
-		radmin.addResource(resPerson);
-		radmin.addUser(userAdmin);
-		entityManager.persist(radmin);
-		
-		Resource padd = resSer.getResByKey(Utils.getAddActionId(PersonView.class));
-		Role ruser = new Role("一般用户");
-		ruser.addResource(home);
-		ruser.addResource(resPerson);
-		ruser.addResource(base);
-		ruser.addResource(padd);
-		ruser.addUser(u1);
-		entityManager.persist(ruser);
+
+	private void createBusinessData() {
+		InvItem ia = new InvItem("WG7893",1000f,null);
+		entityManager.persist(ia);
+		InvItem ib = new InvItem("XX8888",1500f,null);
+		entityManager.persist(ib);
 	}
-	
+
 
 	final static String[] groupsNames = { "一班","二班", "三班" };
 	final static String[] officeNames = { "拉丝车间","镀锌车间", "绞线车间"};
@@ -176,11 +137,13 @@ public class InitData{
 					
 				}
 				//用于普通用户
-				p1 = new Person();
-				p1.setTrueName("张长江");
-				p1.setWorkNum("user");
-				p1.setOrg(group);
-				entityManager.persist(p1);
+				if(p1 == null){
+					p1 = new Person();
+					p1.setTrueName("张长江");
+					p1.setWorkNum("user");
+					p1.setOrg(group);
+					entityManager.persist(p1);
+				}
 			   
 					
 				group.setParent(geoGroup);
@@ -190,6 +153,60 @@ public class InitData{
 			entityManager.persist(geoGroup);
 		}
 
+	}
+	
+	
+
+	private void createResource(){
+		Resource home = new Resource(HomeView.KEY,"主页", ResourceType.APPLICATION, null,  HomeView.NAME, HomeView.class);
+		entityManager.persist(home);
+		
+		//增加系统管理模块
+		Resource sys = new Resource("SYSTEM_MODULE", "系统管理", ResourceType.MODULE);
+		entityManager.persist(sys);
+		resSer.createApp("应用管理",  sys, ApplicationView.NAME, ApplicationView.class);
+		resSer.createCUDApp("用户管理",  sys, UserView.NAME, UserView.class);
+		resSer.createCUDApp("角色管理",  sys, RoleView.NAME, RoleView.class);
+		
+		//增加基础应用模块
+		Resource base = new Resource("BASE_MODULE", "基础应用", ResourceType.MODULE);
+		entityManager.persist(base);
+		resSer.createCUDApp("机构管理", base,OrganizationView.NAME, OrganizationView.class);
+		Resource resPerson = resSer.createCUDApp("人员管理", base,PersonView.NAME, PersonView.class);
+		
+		//增加进销存管理模块
+		Resource bus = new Resource("BUSI_MODULE", "业务管理", ResourceType.MODULE);
+		entityManager.persist(bus);
+		resSer.createCUDApp("型号维护", bus,InvItemView.NAME, InvItemView.class);
+		
+		
+		
+		//增加管理员
+		String pw =  ps.encryptPassword(User.DEFAULT_PASSWORD);
+		User userAdmin = new User(User.ADMIN_USERNAME,pw,"管理员");
+		userAdmin.setSysUser(true);
+		entityManager.persist(userAdmin);
+		
+		//增加一个普通用户
+		User u1 = new User();
+		u1.setPerson(p1);
+		u1.setPassword(pw);
+		entityManager.persist(u1);
+		
+		Role radmin = new Role("系统管理员");
+		radmin.setSysRole(true);
+		radmin.addResource(resPerson);
+		radmin.addUser(userAdmin);
+		entityManager.persist(radmin);
+		
+		Resource padd = resSer.getResByKey(Utils.getAddActionId(PersonView.class));
+		Role ruser = new Role("一般用户");
+		ruser.addResource(home);
+		ruser.addResource(resPerson);
+		ruser.addResource(base);
+		ruser.addResource(padd);
+		ruser.addUser(u1);
+		entityManager.persist(ruser);
 	}
 	
 	
