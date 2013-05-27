@@ -78,8 +78,8 @@ public class Organization  extends HierarchialEntity<Organization>{
 
     @Transient
     public String getHierarchicalName() {
-        if (parent != null) {
-            return parent.toString() + " : " + name;
+        if (parent != null && parent.orgType != OrgType.单位) {
+            return parent.toString() + " /" + name;
         }
         return name;
     }
@@ -105,6 +105,5 @@ public class Organization  extends HierarchialEntity<Organization>{
 		this.orgType = orgType;
 	}
 
-	
 
 }

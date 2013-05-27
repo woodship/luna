@@ -131,6 +131,8 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
             @Override
             public void buttonClick(ClickEvent event) {
                 final EntityItem<Product> newProductItem = tableContainer.createEntityItem(new Product());
+                if(treeFilter != null)
+                	newProductItem.getEntity().setOrg(treeFilter);
                 ProductEditor organizationEditor = new ProductEditor(newProductItem,tableContainer);
                 organizationEditor.center();
                 UI.getCurrent().addWindow(organizationEditor);

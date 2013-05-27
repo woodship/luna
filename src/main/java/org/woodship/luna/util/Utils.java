@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Entity;
+
 import org.woodship.luna.core.security.Resource;
 
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
@@ -64,14 +66,15 @@ public class Utils {
 	 * 为指定{@link BeanFieldGroup}绑定默认字段。(根据{@link Caption},beanClass的字段上有该注解则绑定 )
 	 * @param fieldGroup
 	 * @param beanClass 要绑定到{@link BeanFieldGroup}上的beanClass
-	 * @return 最终绑定的字段
+	 * @return 
 	 */
 	public static void buildAndBindFieldGroup(FieldGroup fieldGroup, Class<?> beanClass,ComponentContainer layout){
 		for(Field f : beanClass.getDeclaredFields()){
 			Caption caption = f.getAnnotation(Caption.class);
 			if(caption != null){
 				Class<?> type = f.getType();
-				 if (Enum.class.isAssignableFrom(type)){
+				 Entity e = type.getAnnotation(Entity.class);
+				 if (e != null || Enum.class.isAssignableFrom(type)){//实体、enum类型自动生成下拉框
 					 layout.addComponent(fieldGroup.buildAndBind(caption.value(),f.getName(),ComboBox.class));
 				 }else{
 					 layout.addComponent(fieldGroup.buildAndBind(f.getName()));

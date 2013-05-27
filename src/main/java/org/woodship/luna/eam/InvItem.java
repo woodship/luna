@@ -56,5 +56,9 @@ public class InvItem extends IdEntity<InvItem>{
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
+	@Override
+	public String toString() {
+		return model + (quota==null?"": ":" + quota.toString());
+	}
 	
 }

@@ -91,7 +91,7 @@ public class InitData{
 	}
 
 
-	final static String[] groupsNames = { "甲班","已班", "丙班" };
+	final static String[] groupsNames = { "甲班","乙班", "丙班" };
 	final static String[] officeNames = { "拉丝车间","镀锌车间", "绞线车间"};
 	final static String[] fnames = { "赵", "钱", "孙", "李",
 			"周","吴","郑","王","冯","陈","褚",

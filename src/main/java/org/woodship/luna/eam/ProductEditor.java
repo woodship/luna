@@ -54,25 +54,6 @@ public class ProductEditor extends Window  {
 		formLayout.setMargin(true);
 		final JPAContainerItemFieldGroup<Product> fg = new JPAContainerItemFieldGroup<Product>(Product.class);
 		fg.setItemDataSource(jpaitem);
-		/*
-		 * 构建Field,在此处理自定义字段
-		 */
-		fg.setFieldFactory(new DefaultFieldGroupFieldFactory() {
-			@SuppressWarnings("rawtypes")
-			@Override
-			public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
-				if (dataType.isAssignableFrom(Organization.class)) {
-					ComboBox cb = new ComboBox();
-					Container container = ContainerUtils.getInstance().createJPAContainer(Organization.class);
-					cb.setContainerDataSource(container);
-					cb.setItemCaptionMode(ItemCaptionMode.ITEM);
-					cb.setConverter(new SingleSelectConverter<Object>(cb));
-					return (T) cb;
-				}
-				return super.createField(dataType, fieldType);
-			}
-		});
-		
 		//增加默认字段
 		Utils.buildAndBindFieldGroup(fg, Product.class, formLayout);
 //		formLayout.addComponent(fg.buildAndBind("trueName"));

@@ -56,5 +56,8 @@ public class Customer extends IdEntity<Customer>{
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-	
+	@Override
+	public String toString() {
+		return cusNum +  (name==null?"":":"+name);
+	}
 }

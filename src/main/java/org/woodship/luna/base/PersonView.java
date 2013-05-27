@@ -131,6 +131,8 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
             @Override
             public void buttonClick(ClickEvent event) {
                 final EntityItem<Person> newPersonItem = persons.createEntityItem(new Person());
+                if(treeFilter != null)
+                	newPersonItem.getEntity().setOrg(treeFilter);
                 PersonEditor personEditor = new PersonEditor(newPersonItem,persons);
                 personEditor.center();
                 UI.getCurrent().addWindow(personEditor);

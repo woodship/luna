@@ -11,6 +11,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.Caption;
+import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.validator.BeanValidator;
 import com.vaadin.ui.Field;
@@ -30,6 +31,7 @@ public class JPAContainerItemFieldGroup<T> extends FieldGroup {
     private static Boolean beanValidationImplementationAvailable = null;
     private List<java.lang.reflect.Field> fields = null;
     public JPAContainerItemFieldGroup(Class<T> beanType) {
+    	this.setFieldFactory(new EntityFieldGroupFieldFactory());
         this.beanType = beanType;
         this.fields = super.getFieldsInDeclareOrder(beanType);
     }

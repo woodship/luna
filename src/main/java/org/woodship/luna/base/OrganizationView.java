@@ -130,6 +130,8 @@ public class OrganizationView extends HorizontalSplitPanel implements ComponentC
             @Override
             public void buttonClick(ClickEvent event) {
                 final EntityItem<Organization> newOrganizationItem = tableContainer.createEntityItem(new Organization());
+                if(treeFilter != null)
+                	newOrganizationItem.getEntity().setParent(treeFilter);
                 OrganizationEditor organizationEditor = new OrganizationEditor(newOrganizationItem,tableContainer);
                 organizationEditor.center();
                 UI.getCurrent().addWindow(organizationEditor);
