@@ -15,6 +15,7 @@ import com.vaadin.data.fieldgroup.Caption;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.ComponentContainer;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.Table;
 
 public class Utils {
@@ -76,7 +77,8 @@ public class Utils {
 				 Entity e = type.getAnnotation(Entity.class);
 				 if (e != null || Enum.class.isAssignableFrom(type)){//实体、enum类型自动生成下拉框
 					 layout.addComponent(fieldGroup.buildAndBind(caption.value(),f.getName(),ComboBox.class));
-				 }else{
+				 }
+				 else{
 					 layout.addComponent(fieldGroup.buildAndBind(f.getName()));
 				 }
 			}

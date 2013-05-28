@@ -1,16 +1,22 @@
 package org.woodship.luna.eam;
 
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import org.woodship.luna.base.Organization;
+import org.woodship.luna.base.Person;
+import org.woodship.luna.core.security.User;
 import org.woodship.luna.db.IdEntity;
 import org.woodship.luna.eam.enums.Classes;
 import org.woodship.luna.eam.enums.Inunction;
 import org.woodship.luna.eam.enums.LayDirection;
 import org.woodship.luna.eam.enums.Pack;
+import org.woodship.luna.eam.enums.Weld;
 import org.woodship.luna.eam.enums.Winding;
 
 import com.vaadin.data.fieldgroup.Caption;
@@ -20,13 +26,14 @@ public class Product extends IdEntity<Product>{
 	private static final long serialVersionUID = 1L;
 	
 	@Caption("生产日期")
-	private String produceDate;
+	private Date produceDate;
 	
 	@Caption("班次")
 	private Classes classes;
 	
 	@Caption("工号")
-	private String workNum;
+	@OneToOne
+	private Person person;
 	
 	@Caption("车台号")
 	private String carNum;
@@ -49,7 +56,7 @@ public class Product extends IdEntity<Product>{
     private String twistLength;
 	
     @Caption("长度")
-    private String lenght;
+    private String length;
     
     @Caption("排线")
     private Winding winding;
@@ -60,19 +67,24 @@ public class Product extends IdEntity<Product>{
     @Caption("包装")
     private Pack pack;
     
+    @Caption("焊接")
+    private Weld weld;
+    
     @Caption("原料型号")
     private String materialModel;
     
     @NotNull
     @ManyToOne
-    @Caption("部门")
     private Organization org;
 
-	public String getProduceDate() {
+    private java.util.Date createDate = new java.util.Date();
+    private User createBy;
+    
+	public Date getProduceDate() {
 		return produceDate;
 	}
 
-	public void setProduceDate(String produceDate) {
+	public void setProduceDate(Date produceDate) {
 		this.produceDate = produceDate;
 	}
 
@@ -84,12 +96,13 @@ public class Product extends IdEntity<Product>{
 		this.classes = classes;
 	}
 
-	public String getWorkNum() {
-		return workNum;
+	public Person getPerson() {
+		return person;
 	}
 
-	public void setWorkNum(String workNum) {
-		this.workNum = workNum;
+	public void setPerson(Person workNum) {
+		this.person = workNum;
+		this.org = workNum.getOrg();
 	}
 
 	public String getCarNum() {
@@ -140,12 +153,12 @@ public class Product extends IdEntity<Product>{
 		this.twistLength = twistLength;
 	}
 
-	public String getLenght() {
-		return lenght;
+	public String getLength() {
+		return length;
 	}
 
-	public void setLenght(String lenght) {
-		this.lenght = lenght;
+	public void setLength(String length) {
+		this.length = length;
 	}
 
 	public Winding getWinding() {
@@ -187,6 +200,31 @@ public class Product extends IdEntity<Product>{
 	public void setOrg(Organization org) {
 		this.org = org;
 	}
+
+	public java.util.Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(java.util.Date createDate) {
+		this.createDate = createDate;
+	}
+
+	public User getCreateBy() {
+		return createBy;
+	}
+
+	public void setCreateBy(User createBy) {
+		this.createBy = createBy;
+	}
+
+	public Weld getWeld() {
+		return weld;
+	}
+
+	public void setWeld(Weld weld) {
+		this.weld = weld;
+	}
     
+	
     
 }

@@ -2,8 +2,9 @@ package org.woodship.luna.base;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.woodship.luna.db.IdEntity;
@@ -12,6 +13,7 @@ import com.vaadin.data.fieldgroup.Caption;
 
 @SuppressWarnings("serial")
 @Entity
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = {"workNum"})})
 public class Person extends IdEntity<Person>{
 
 	@NotEmpty
@@ -31,12 +33,8 @@ public class Person extends IdEntity<Person>{
     @Caption("部门")
     private Organization org;
     
-    public String test;
-    
     
     public String getTrueName() {
-    	this.test = "";
-    	
 		return trueName;
 	}
 

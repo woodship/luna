@@ -15,21 +15,17 @@
  */
 package org.woodship.luna.eam;
 
-import org.woodship.luna.base.Organization;
-import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.JPAContainerItemFieldGroup;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
-import com.vaadin.addon.jpacontainer.fieldfactory.SingleSelectConverter;
-import com.vaadin.data.Container;
 import com.vaadin.data.Item;
-import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.AbstractField;
+import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
@@ -39,7 +35,6 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
 
 @SuppressWarnings("serial")
 public class ProductEditor extends Window  {
@@ -56,8 +51,12 @@ public class ProductEditor extends Window  {
 		fg.setItemDataSource(jpaitem);
 		//增加默认字段
 		Utils.buildAndBindFieldGroup(fg, Product.class, formLayout);
-//		formLayout.addComponent(fg.buildAndBind("trueName"));
-
+		
+		//配制工号
+		ComboBox cb = (ComboBox) fg.getField("person");
+		cb.setItemCaptionMode(ItemCaptionMode.PROPERTY);
+		cb.setItemCaptionPropertyId("workNum");
+		
 		final Label error = new Label("", ContentMode.HTML);
 		error.setVisible(false);
 		formLayout.addComponent(error);

@@ -162,7 +162,7 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
         editButton.setEnabled(false);
 
         searchField = new TextField();
-        searchField.setInputPrompt("Search by name");
+        searchField.setInputPrompt("输入型号搜索");
         searchField.addTextChangeListener(new TextChangeListener() {
 
             @Override
@@ -228,7 +228,7 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
             } 
         }
         if (textFilter != null && !textFilter.equals("")) {
-            Like like =new Like("name", textFilter + "%", false);
+            Like like =new Like("produceModel.model", "%"+textFilter + "%", false);
             tableContainer.addContainerFilter(like);
         }
         tableContainer.applyFilters();

@@ -1,5 +1,7 @@
 package org.woodship.luna.core.security;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -19,9 +21,20 @@ public class UserService {
 	
 	public User findByUsername(String username) {
 		  if (username == null) return null;
-		  return em.createQuery("SELECT o FROM User o where o.username = ?", User.class)
-				  .setParameter(1, username)
-				  .getSingleResult();
+		  List<User> users =  em.createQuery("SELECT o FROM User o where o.username = ?", User.class)
+				  .setParameter(1, username).getResultList();
+		  if(users .size() > 0){
+			 return users.get(0);
+		  }
+		  return null;
+	}
+	
+	public boolean validate(String username, String password){
+		User user = findByUsername(username);
+		if(user != null){
+			return ps.passwordsMatch(password, user.getPassword());
+		}
+		return false;
 	}
 	
 	/**
