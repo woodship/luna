@@ -150,13 +150,13 @@ public class LunaUI extends UI {
 		labels.addStyleName("labels");
 		loginPanel.addComponent(labels);
 
-		Label welcome = new Label("Welcome");
+		Label welcome = new Label("欢迎使用");
 		welcome.setSizeUndefined();
 		welcome.addStyleName("h4");
 		labels.addComponent(welcome);
 		labels.setComponentAlignment(welcome, Alignment.MIDDLE_LEFT);
 
-		Label title = new Label("WoodShip Luna");
+		Label title = new Label("华泰信息技术");
 		title.setSizeUndefined();
 		title.addStyleName("h2");
 		title.addStyleName("light");
@@ -168,12 +168,12 @@ public class LunaUI extends UI {
 		fields.setMargin(true);
 		fields.addStyleName("fields");
 
-		final TextField username = new TextField("Username");
+		final TextField username = new TextField("工号");
 		username.focus();
 		username.setValue(User.ADMIN_USERNAME);
 		fields.addComponent(username);
 
-		final PasswordField password = new PasswordField("Password");
+		final PasswordField password = new PasswordField("密码");
 		password.setValue(User.DEFAULT_PASSWORD);
 		fields.addComponent(password);
 
@@ -314,7 +314,7 @@ public class LunaUI extends UI {
 							{
 								addStyleName("branding");
 								Label logo = new Label(
-										"<span>WoodShip</span> Luna",
+										"<span>恒星科技</span><br>产品统计",
 										ContentMode.HTML);
 								logo.setSizeUndefined();
 								addComponent(logo);

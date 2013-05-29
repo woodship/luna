@@ -16,6 +16,7 @@ import org.woodship.luna.util.Utils;
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.EntityProvider;
 import com.vaadin.addon.jpacontainer.JPAContainer;
+import com.vaadin.addon.tableexport.ExcelExport;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.filter.Compare.Equal;
@@ -45,7 +46,7 @@ import com.vaadin.ui.VerticalLayout;
 @Scope("prototype")
 public class ProductView extends HorizontalSplitPanel implements ComponentContainer, View{
 	public static final String NAME = "product";
-
+	public static final String EXCEL_ACTION_KEY ="ProductView:EXCEL";
 	@Autowired
 	ContainerUtils conu;
 	
@@ -65,6 +66,7 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
     private Button newButton;
     private Button deleteButton;
     private Button editButton;
+    private Button excelButton;
 
     private JPAContainer<Organization> treeContainer;
     private JPAContainer<Product> tableContainer;
@@ -104,7 +106,6 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
             public void valueChange(ValueChangeEvent event) {
                 setModificationsEnabled(event.getProperty().getValue() != null);
             }
-
             private void setModificationsEnabled(boolean b) {
                 deleteButton.setEnabled(b);
                 editButton.setEnabled(b);
@@ -141,7 +142,6 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
 
         deleteButton = new Button("删除");
         deleteButton.addClickListener(new Button.ClickListener() {
-
             @Override
             public void buttonClick(ClickEvent event) {
             	tableContainer.removeItem(mainTable.getValue());
@@ -160,6 +160,18 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
             }
         });
         editButton.setEnabled(false);
+        
+        excelButton = new Button("导出EXCEL");
+        excelButton.addClickListener(new Button.ClickListener() {
+        	private ExcelExport ee;
+            @Override
+            public void buttonClick(ClickEvent event) {
+            	ee = new ExcelExport(mainTable);
+            	ee.excludeCollapsedColumns();
+            	ee.setReportTitle("产品统计");
+            	ee.export();
+            }
+        });
 
         searchField = new TextField();
         searchField.setInputPrompt("输入型号搜索");
@@ -175,6 +187,7 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
         toolbar.addComponent(newButton);
         toolbar.addComponent(deleteButton);
         toolbar.addComponent(editButton);
+        toolbar.addComponent(excelButton);
         toolbar.addComponent(searchField);
         toolbar.setWidth("100%");
         toolbar.setExpandRatio(searchField, 1);
@@ -243,6 +256,7 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
 		newButton.setVisible(user.isPermitted(Utils.getAddActionId(ProductView.class)));
 		deleteButton.setVisible(user.isPermitted(Utils.getDelActionId(ProductView.class)));
 		editButton.setVisible(user.isPermitted(Utils.getEditActionId(ProductView.class)));
+		excelButton.setVisible(user.isPermitted(ProductView.EXCEL_ACTION_KEY));
 	}
 	
 	

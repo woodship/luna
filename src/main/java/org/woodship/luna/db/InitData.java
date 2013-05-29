@@ -32,7 +32,9 @@ import org.woodship.luna.eam.Customer;
 import org.woodship.luna.eam.CustomerView;
 import org.woodship.luna.eam.InvItem;
 import org.woodship.luna.eam.InvItemView;
+import org.woodship.luna.eam.Product;
 import org.woodship.luna.eam.ProductView;
+import org.woodship.luna.eam.enums.Classes;
 import org.woodship.luna.util.Utils;
 
 
@@ -40,7 +42,7 @@ import org.woodship.luna.util.Utils;
 public class InitData{
 
 	@PersistenceContext
-	private  EntityManager entityManager;
+	private  EntityManager em;
 	
 	@Autowired
 	private ResourceService resSer;
@@ -48,13 +50,15 @@ public class InitData{
 	private DefaultPasswordService ps = new DefaultPasswordService();
 	
 	private Person p1;
+	
+	private User userAdmin;
 	@Transactional
 	public void init(){
 		//有数据则不再初始化
-		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
 		cq.select(cb.count(cq.from(User.class)));
-		long size = entityManager.createQuery(cq).getSingleResult();
+		long size = em.createQuery(cq).getSingleResult();
 		if(size>0) return;
 		
 		//增加人员机构用户数据
@@ -72,22 +76,31 @@ public class InitData{
 
 		//菜单
 		Resource bus = new Resource("BUSI_MODULE", "业务管理", ResourceType.MODULE);
-		entityManager.persist(bus);
+		em.persist(bus);
 		resSer.createCUDApp("型号维护", bus,InvItemView.NAME, InvItemView.class);
 		resSer.createCUDApp("客户维护", bus,CustomerView.NAME, CustomerView.class);
-		resSer.createCUDApp("产品管理", bus,ProductView.NAME, ProductView.class);
+		Resource resPro = resSer.createCUDApp("产品管理", bus,ProductView.NAME, ProductView.class);
+		resSer.createAction(ProductView.EXCEL_ACTION_KEY, "导出EXCEL", resPro);
 		
 		//型号
 		InvItem ia = new InvItem("WG7893",1000f,null);
-		entityManager.persist(ia);
+		em.persist(ia);
 		InvItem ib = new InvItem("XX8888",1500f,null);
-		entityManager.persist(ib);
+		em.persist(ib);
 		//客户
 		Customer ca = new Customer("CKY11", "开元物业", null);
 		Customer cb = new Customer("CTHYY", "天华制造", null);
-		entityManager.persist(ca);
-		entityManager.persist(cb);
+		em.persist(ca);
+		em.persist(cb);
+		
 		//产品
+		Product pro = new Product();
+		pro.setClasses(Classes.乙);
+		pro.setCarNum("CAR111");
+		pro.setCreateBy(userAdmin);
+		pro.setCustomerNum(ca);
+		pro.setPerson(p1);
+		em.persist(pro);
 	}
 
 
@@ -99,9 +112,9 @@ public class InitData{
 	final static String[] lnames = { "万全", "心社", "彭勇", "建国",
 			"定之", "洁敏", "正", "长赋", "焕成", "伏瞻",
 			"卫", "继伟", "振华", "益民", "名照" };
-	final static String cities[] = { "Amsterdam", "Berlin", "Helsinki",
-			"Hong Kong", "London", "Luxemburg", "New York", "Oslo", "Paris",
-			"Rome", "Stockholm", "Tokyo", "Turku" };
+	final static String cities[] = { "北京", "上海", "深圳",
+			"广州", "杭州", "南京", "沈阳", "成都", "哈尔滨",
+			"大连", "西安", "郑州", "洛阳" };
 	final static String streets[] = { "4215 Blandit Av.", "452-8121 Sem Ave",
 			"279-4475 Tellus Road", "4062 Libero. Av.", "7081 Pede. Ave",
 			"6800 Aliquet St.", "P.O. Box 298, 9401 Mauris St.",
@@ -126,9 +139,9 @@ public class InitData{
 		
 		Random r = new Random(0);
 		Organization orgRoot = new Organization();
-		orgRoot.setName("天星制造有限公司");
+		orgRoot.setName("恒星集团");
 		orgRoot.setOrgType(OrgType.单位);
-		entityManager.persist(orgRoot);
+		em.persist(orgRoot);
 		for (String o : officeNames) {
 			Organization geoGroup = new Organization();
 			geoGroup.setName(o);
@@ -138,7 +151,7 @@ public class InitData{
 				Organization group = new Organization();
 				group.setName(g);
 				group.setOrgType(OrgType.班组);
-				entityManager.persist(group);
+				em.persist(group);
 				Set<Person> gPersons = new HashSet<Person>();
 				
 				int amount = r.nextInt(15) + 1;
@@ -156,7 +169,7 @@ public class InitData{
 					p.setStreet(streets[r.nextInt(streets.length)]);
 					p.setOrg(group);
 					gPersons.add(p);
-					entityManager.persist(p);
+					em.persist(p);
 					
 				}
 				//用于普通用户
@@ -165,15 +178,15 @@ public class InitData{
 					p1.setTrueName("张长江");
 					p1.setWorkNum("user");
 					p1.setOrg(group);
-					entityManager.persist(p1);
+					em.persist(p1);
 				}
 			   
 					
 				group.setParent(geoGroup);
 				group.setPersons(gPersons);
-				entityManager.persist(group);
+				em.persist(group);
 			}
-			entityManager.persist(geoGroup);
+			em.persist(geoGroup);
 		}
 
 	}
@@ -182,18 +195,18 @@ public class InitData{
 
 	private void createResource(){
 		Resource home = new Resource(HomeView.KEY,"主页", ResourceType.APPLICATION, null,  HomeView.NAME, HomeView.class);
-		entityManager.persist(home);
+		em.persist(home);
 		
 		//增加系统管理模块
 		Resource sys = new Resource("SYSTEM_MODULE", "系统管理", ResourceType.MODULE);
-		entityManager.persist(sys);
+		em.persist(sys);
 		resSer.createApp("应用管理",  sys, ApplicationView.NAME, ApplicationView.class);
 		resSer.createCUDApp("用户管理",  sys, UserView.NAME, UserView.class);
 		resSer.createCUDApp("角色管理",  sys, RoleView.NAME, RoleView.class);
 		
 		//增加基础应用模块
 		Resource base = new Resource("BASE_MODULE", "基础应用", ResourceType.MODULE);
-		entityManager.persist(base);
+		em.persist(base);
 		resSer.createCUDApp("机构管理", base,OrganizationView.NAME, OrganizationView.class);
 		Resource resPerson = resSer.createCUDApp("人员管理", base,PersonView.NAME, PersonView.class);
 		
@@ -201,22 +214,22 @@ public class InitData{
 		
 		//增加管理员
 		String pw =  ps.encryptPassword(User.DEFAULT_PASSWORD);
-		User userAdmin = new User(User.ADMIN_USERNAME,pw,"管理员");
+		userAdmin = new User(User.ADMIN_USERNAME,pw,"管理员");
 		userAdmin.setSysUser(true);
-		entityManager.persist(userAdmin);
+		em.persist(userAdmin);
 		
 		//增加一个普通用户
 		User u1 = new User();
 		u1.setPerson(p1);
 		u1.setPassword(pw);
-		entityManager.persist(u1);
+		em.persist(u1);
 		
 		Role radmin = new Role("系统管理员");
 		radmin.setSysRole(true);
 		radmin.addResource(resPerson);
 		radmin.addUser(userAdmin);
 		radmin.setDataScore(RoleDataScore.全部数据);
-		entityManager.persist(radmin);
+		em.persist(radmin);
 		
 		Resource padd = resSer.getResByKey(Utils.getAddActionId(PersonView.class));
 		Role ruser = new Role("部门管理员");
@@ -226,11 +239,9 @@ public class InitData{
 		ruser.addResource(base);
 		ruser.addResource(padd);
 		ruser.addUser(u1);
-		entityManager.persist(ruser);
+		em.persist(ruser);
 	}
 	
-	
-
 
 
 }

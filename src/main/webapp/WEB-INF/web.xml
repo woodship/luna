@@ -74,4 +74,7 @@
         <servlet-name>Luna</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
+	 <session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
 </web-app>

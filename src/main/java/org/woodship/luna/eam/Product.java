@@ -78,6 +78,8 @@ public class Product extends IdEntity<Product>{
     private Organization org;
 
     private java.util.Date createDate = new java.util.Date();
+    
+    @ManyToOne
     private User createBy;
     
 	public Date getProduceDate() {

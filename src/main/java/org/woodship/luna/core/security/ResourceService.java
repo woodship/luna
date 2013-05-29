@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaQuery;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.woodship.luna.eam.ProductView;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.navigator.View;
@@ -69,5 +70,18 @@ public class ResourceService {
 		c.from(Resource.class);
 		TypedQuery<Resource> q = em.createQuery(c); 
 		return q.getResultList();
+	}
+	
+	/**
+	 * 创建按钮
+	 * @param key
+	 * @param name
+	 * @param parent
+	 * @return
+	 */
+	public Resource createAction(String key, String name ,Resource parent){
+		Resource action = new Resource(key, name, ResourceType.ACTION, parent);
+		em.persist(action);
+		return action;
 	}
 }

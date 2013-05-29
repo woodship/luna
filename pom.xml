@@ -330,6 +330,17 @@
 			<artifactId>h2</artifactId>
 			<version>1.3.171</version>
 		</dependency>
+		<!-- 	tableexport -->
+		<dependency>
+		   <groupId>org.vaadin.addons</groupId>
+		   <artifactId>tableexport</artifactId>
+		   <version>1.4.0</version>
+		</dependency>
+		<dependency>
+		   <groupId>org.apache.poi</groupId>
+		   <artifactId>poi</artifactId>
+		   <version>3.9</version>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.servlet</groupId>

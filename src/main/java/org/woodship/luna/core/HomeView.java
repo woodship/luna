@@ -56,7 +56,7 @@ public class HomeView extends VerticalLayout implements View {
         top.setSpacing(true);
         top.addStyleName("toolbar");
         addComponent(top);
-        final Label title = new Label("My Dashboard");
+        final Label title = new Label("主页");
         title.setSizeUndefined();
         title.addStyleName("h1");
         top.addComponent(title);
@@ -64,7 +64,7 @@ public class HomeView extends VerticalLayout implements View {
         top.setExpandRatio(title, 1);
 
         Button notify = new Button("2");
-        notify.setDescription("Notifications (2 unread)");
+        notify.setDescription("公告 (2 未读)");
         // notify.addStyleName("borderless");
         notify.addStyleName("notifications");
         notify.addStyleName("unread");
@@ -74,7 +74,7 @@ public class HomeView extends VerticalLayout implements View {
             @Override
             public void buttonClick(ClickEvent event) {
                 event.getButton().removeStyleName("unread");
-                event.getButton().setDescription("Notifications");
+                event.getButton().setDescription("公告");
 
                 if (notifications != null && notifications.getUI() != null)
                     notifications.close();
@@ -98,79 +98,6 @@ public class HomeView extends VerticalLayout implements View {
         top.addComponent(notify);
         top.setComponentAlignment(notify, Alignment.MIDDLE_LEFT);
 
-        Button edit = new Button();
-        edit.addStyleName("icon-edit");
-        edit.addStyleName("icon-only");
-        top.addComponent(edit);
-        edit.setDescription("Edit Dashboard");
-        edit.addClickListener(new ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                final Window w = new Window("Edit Dashboard");
-
-                w.setModal(true);
-                w.setClosable(false);
-                w.setResizable(false);
-                w.addStyleName("edit-dashboard");
-
-                getUI().addWindow(w);
-
-                w.setContent(new VerticalLayout() {
-                    TextField name = new TextField("Dashboard Name");
-                    {
-                        addComponent(new FormLayout() {
-                            {
-                                setSizeUndefined();
-                                setMargin(true);
-                                name.setValue(title.getValue());
-                                addComponent(name);
-                                name.focus();
-                                name.selectAll();
-                            }
-                        });
-
-                        addComponent(new HorizontalLayout() {
-                            {
-                                setMargin(true);
-                                setSpacing(true);
-                                addStyleName("footer");
-                                setWidth("100%");
-
-                                Button cancel = new Button("Cancel");
-                                cancel.addClickListener(new ClickListener() {
-                                    @Override
-                                    public void buttonClick(ClickEvent event) {
-                                        w.close();
-                                    }
-                                });
-                                cancel.setClickShortcut(KeyCode.ESCAPE, null);
-                                addComponent(cancel);
-                                setExpandRatio(cancel, 1);
-                                setComponentAlignment(cancel,
-                                        Alignment.TOP_RIGHT);
-
-                                Button ok = new Button("Save");
-                                ok.addStyleName("wide");
-                                ok.addStyleName("default");
-                                ok.addClickListener(new ClickListener() {
-                                    @Override
-                                    public void buttonClick(ClickEvent event) {
-                                        title.setValue(name.getValue());
-                                        w.close();
-                                    }
-                                });
-                                ok.setClickShortcut(KeyCode.ENTER, null);
-                                addComponent(ok);
-                            }
-                        });
-
-                    }
-                });
-
-            }
-        });
-        top.setComponentAlignment(edit, Alignment.MIDDLE_LEFT);
-
         HorizontalLayout row = new HorizontalLayout();
         row.setSizeFull();
         row.setMargin(new MarginInfo(true, true, false, true));
@@ -179,8 +106,12 @@ public class HomeView extends VerticalLayout implements View {
         setExpandRatio(row, 1.5f);
 
 
-        TextArea notes = new TextArea("Notes");
-        notes.setValue("Remember to:\n· Zoom in and out in the Sales view\n· Filter the transactions and drag a set of them to the Reports tab\n· Create a new report\n· Change the schedule of the movie theater");
+        TextArea notes = new TextArea("记事本");
+        notes.setValue("帮助:\n" +
+        		"· 人员管理用于管理公司全部人员，其中的人并不一定都能登录本系统，只有用户管理中的用户才可以登录本系统\n" +
+        		"· 增加人员时同时会默认会增加一个用户，如果不需要可以在用户管理中删除该用户，使其不能登录\n" +
+        		"· 应用管理中为系统内置功能，暂时只能查看，不能修改\n" +
+        		"· 产品管理中会引用人员管理、客户维护、型号维护中的数据，请先将这三个应用中的数据完善");
         notes.setSizeFull();
         CssLayout panel = createPanel(notes);
         panel.addStyleName("notes");
@@ -209,7 +140,7 @@ public class HomeView extends VerticalLayout implements View {
                 return super.formatPropertyValue(rowId, colId, property);
             }
         };
-        t.setCaption("Top 10 Titles by Revenue");
+        t.setCaption("产品分部门统计");
 
         t.setWidth("100%");
         t.setPageLength(0);
@@ -255,7 +186,7 @@ public class HomeView extends VerticalLayout implements View {
     Window notifications;
 
     private void buildNotifications(ClickEvent event) {
-        notifications = new Window("Notifications");
+        notifications = new Window("公告");
         VerticalLayout l = new VerticalLayout();
         l.setMargin(true);
         l.setSpacing(true);
