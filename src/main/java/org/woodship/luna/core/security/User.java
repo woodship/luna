@@ -21,7 +21,7 @@ import com.vaadin.data.fieldgroup.Caption;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User extends IdEntity<User>{
 	private static final long serialVersionUID = 1L;
-	public static final String ADMIN_USERNAME = "admin";
+	public static final String SUPER_ADMIN_USERNAME = "admin";
 	public static final String DEFAULT_PASSWORD = "111";
 	public User(){
 	}
@@ -102,10 +102,6 @@ public class User extends IdEntity<User>{
 		this.showName = person.getTrueName();
 	}
 
-	public boolean isAdmin(){
-		//TODO 只要是管理员角色都应该返回true
-		return User.ADMIN_USERNAME.equals(this.getUsername());
-	}
 
 	public boolean isSysUser() {
 		return sysUser;

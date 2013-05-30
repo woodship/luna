@@ -44,6 +44,7 @@ public class UserService {
 	public  User getCurrentUser(){
 		Object username =  SecurityUtils.getSubject().getPrincipal();
 		User u =findByUsername((String) username);
+		u.getRoles().iterator().next();
 		return u;
 	}
 	

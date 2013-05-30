@@ -211,10 +211,9 @@ public class InitData{
 		Resource resPerson = resSer.createCUDApp("人员管理", base,PersonView.NAME, PersonView.class);
 		
 		
-		
 		//增加管理员
 		String pw =  ps.encryptPassword(User.DEFAULT_PASSWORD);
-		userAdmin = new User(User.ADMIN_USERNAME,pw,"管理员");
+		userAdmin = new User(User.SUPER_ADMIN_USERNAME,pw,"管理员");
 		userAdmin.setSysUser(true);
 		em.persist(userAdmin);
 		
@@ -224,9 +223,8 @@ public class InitData{
 		u1.setPassword(pw);
 		em.persist(u1);
 		
-		Role radmin = new Role("系统管理员");
+		Role radmin = new Role(Role.SUPER_ADMIN_ROLE_NAME);
 		radmin.setSysRole(true);
-		radmin.addResource(resPerson);
 		radmin.addUser(userAdmin);
 		radmin.setDataScore(RoleDataScore.全部数据);
 		em.persist(radmin);

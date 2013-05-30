@@ -170,7 +170,7 @@ public class LunaUI extends UI {
 
 		final TextField username = new TextField("工号");
 		username.focus();
-		username.setValue(User.ADMIN_USERNAME);
+		username.setValue(User.SUPER_ADMIN_USERNAME);
 		fields.addComponent(username);
 
 		final PasswordField password = new PasswordField("密码");
@@ -241,7 +241,8 @@ public class LunaUI extends UI {
 
 	@SuppressWarnings("serial")
 	private void buildMainView() {
-		final User currUser = us.getCurrentUser();
+		final Subject subject =  SecurityUtils.getSubject();
+		final User currUser = us.findByUsername(subject.getPrincipal().toString());
 		
 		//按权限进行过虑
 		resourceEntityProvider.setQueryModifierDelegate(
@@ -253,10 +254,11 @@ public class LunaUI extends UI {
 							CriteriaQuery<?> query,
 							List<Predicate> predicates) {
 						//管理员不加过虑条件
-						if(currUser.isAdmin()){
+						if(subject.hasRole(Role.SUPER_ADMIN_ROLE_NAME)){
 							return;
 						}
 						//非管理员按角色过虑菜单
+						query.distinct(true);//过虑重复记录
 						Root<Resource> root = (Root<Resource>) query.getRoots().iterator().next();
 						SetJoin<Resource,Role> rjoin = root.join(Resource_.roles);
 						SetJoin<Role,User> ujoin = rjoin.join(Role_.users);

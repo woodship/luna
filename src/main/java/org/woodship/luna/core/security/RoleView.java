@@ -45,9 +45,6 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
 	@Autowired()
 	@Qualifier("roleEntityProvider")
 	EntityProvider<Role> mainProvider;
-	
-	@PersistenceContext
-	private  EntityManager entityManager;
 
     private Table mainTable;
 

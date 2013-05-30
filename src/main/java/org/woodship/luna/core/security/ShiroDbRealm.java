@@ -74,9 +74,18 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		String username =  (String) principals.fromRealm(getName()).iterator().next();
 		User user = userser.findByUsername(username);
+		List<Role> userRoles = roleser.findRoleByUsername(username);
 		if (user != null) {
 			SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-			if(user.isAdmin()){//管理员设置所有权限
+			boolean isAdmin = false;
+			for(Role role : userRoles){
+				if(Role.SUPER_ADMIN_ROLE_NAME.equals(role.getName())){
+					isAdmin = true;
+					break;
+				}
+			}
+			if(isAdmin){
+				//管理员设置所有权限				
 				List<Role> roles = roleser.findAll();
 				List<Resource> ress = resser.findAll();
 				for (Role group : roles) {
@@ -87,8 +96,9 @@ public class ShiroDbRealm extends AuthorizingRealm {
 					//基于Permission的权限信息
 					info.addStringPermission(res.getResKey());
 				}
-			}else{//非管理员设置角色权限
-				for (Role group : user.getRoles()) {
+			}else{
+			//非管理员设置角色权限
+				for (Role group : userRoles) {
 					//基于Permission的权限信息
 					info.addStringPermissions(group.toPermissionNames());
 					//基于role的权限信息

@@ -17,8 +17,8 @@ public class UserEntityProvider  extends TransactionalEntityProvider<User> {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void removeEntity(final Object entityId) {
-		User r = this.getEntity(getJPAContainer(), entityId);
-		if(r.isAdmin()){
+		User user = this.getEntity(getJPAContainer(), entityId);
+		if(User.SUPER_ADMIN_USERNAME.equals(user.getUsername())){
 			Notification.show("禁止删除管理员！");
 			return;
 		}

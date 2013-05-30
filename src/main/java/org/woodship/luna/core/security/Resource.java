@@ -76,6 +76,9 @@ public class Resource extends HierarchialEntity<Resource>{
 	@Caption("显示图标")
 	private String icon;
 	
+	/**
+	 * 权限识别标识
+	 */
 	@Caption("资源KEY")
 	private String resKey;
 

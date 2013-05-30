@@ -1,5 +1,7 @@
 package org.woodship.luna.core.security;
 
+import org.apache.shiro.realm.Realm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +11,9 @@ import com.vaadin.ui.Notification;
 
 @Component
 public class RoleEntityProvider  extends TransactionalEntityProvider<Role> {
-
+	@Autowired
+	Realm realm;
+	
 	public RoleEntityProvider() {
 		super(Role.class);
 	}
@@ -24,5 +28,16 @@ public class RoleEntityProvider  extends TransactionalEntityProvider<Role> {
 		}
 		super.removeEntity(entityId);
 	}
+
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	protected void runInTransaction(Runnable operation) {
+		((ShiroDbRealm)realm).clearAllCachedAuthorizationInfo();
+		super.runInTransaction(operation);
+	}
+
+	
+	
 
 }

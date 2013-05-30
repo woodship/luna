@@ -90,6 +90,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 	private void buildMainArea() {
     	//右侧
         VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.setSizeFull();
         setSecondComponent(verticalLayout);
 
         
