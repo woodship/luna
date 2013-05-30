@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.woodship.luna.base.AndroidRequestHandler;
 import org.woodship.luna.db.InitData;
 
 import ru.xpoft.vaadin.SpringApplicationContext;

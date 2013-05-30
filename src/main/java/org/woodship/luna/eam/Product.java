@@ -8,8 +8,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
-import org.woodship.luna.base.Organization;
-import org.woodship.luna.base.Person;
+import org.woodship.luna.core.person.Organization;
+import org.woodship.luna.core.person.Person;
 import org.woodship.luna.core.security.User;
 import org.woodship.luna.db.IdEntity;
 import org.woodship.luna.eam.enums.Classes;

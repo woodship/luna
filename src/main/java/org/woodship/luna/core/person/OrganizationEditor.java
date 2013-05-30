@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.woodship.luna.base;
+package org.woodship.luna.core.person;
 
 import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.JPAContainerItemFieldGroup;

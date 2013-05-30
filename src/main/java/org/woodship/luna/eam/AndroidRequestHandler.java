@@ -1,4 +1,4 @@
-package org.woodship.luna.base;
+package org.woodship.luna.eam;
 
 import java.io.IOException;
 import java.util.Map;
@@ -14,8 +14,6 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.woodship.luna.core.security.UserService;
-import org.woodship.luna.eam.Product;
-import org.woodship.luna.eam.ProductService;
 
 import com.vaadin.server.RequestHandler;
 import com.vaadin.server.VaadinRequest;

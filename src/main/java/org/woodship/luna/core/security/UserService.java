@@ -9,7 +9,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.woodship.luna.base.Person;
+import org.woodship.luna.core.person.Person;
 
 @Service
 public class UserService {

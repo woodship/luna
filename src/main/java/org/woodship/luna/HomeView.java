@@ -8,7 +8,7 @@
  * 
  */
 
-package org.woodship.luna.core;
+package org.woodship.luna;
 
 import java.text.DecimalFormat;
 

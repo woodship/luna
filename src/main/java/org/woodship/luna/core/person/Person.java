@@ -1,4 +1,4 @@
-package org.woodship.luna.base;
+package org.woodship.luna.core.person;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;

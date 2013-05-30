@@ -1,4 +1,4 @@
-package org.woodship.luna.base;
+package org.woodship.luna.core.person;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -42,15 +42,15 @@ import com.vaadin.ui.VerticalLayout;
 @SuppressWarnings("serial")
 @org.springframework.stereotype.Component
 @Scope("prototype")
-public class PersonView extends HorizontalSplitPanel implements ComponentContainer, View{
-	public static final String NAME = "person";
+public class OrganizationView extends HorizontalSplitPanel implements ComponentContainer, View{
+	public static final String NAME = "organization";
 
 	@Autowired
 	ContainerUtils conu;
 	
 	@Autowired()
-	@Qualifier("personEntityProvider")
-	EntityProvider<Person> personProvider;
+	@Qualifier("organizationEntityProvider")
+	EntityProvider<Organization> organizationProvider;
 	
 	@PersistenceContext
 	private  EntityManager entityManager;
@@ -65,19 +65,19 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
     private Button deleteButton;
     private Button editButton;
 
-    private JPAContainer<Organization> departments;
-    private JPAContainer<Person> persons;
+    private JPAContainer<Organization> treeContainer;
+    private JPAContainer<Organization> tableContainer;
 
     private Organization treeFilter;
     private String textFilter;
 
     @PostConstruct
 	public void PostConstruct(){
-        departments = conu.createJPAHierarchialContainer(Organization.class);
-        persons = new JPAContainer<Person>(Person.class);
-        persons.setEntityProvider(personProvider);
+        treeContainer = conu.createJPAHierarchialContainer(Organization.class);
+        tableContainer = new JPAContainer<Organization>(Organization.class);
+        tableContainer.setEntityProvider(organizationProvider);
         
-        persons.getEntityProvider();
+        tableContainer.getEntityProvider();
         buildTree();
         buildMainArea();
 
@@ -90,11 +90,10 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 	private void buildMainArea() {
     	//右侧
         VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.setSizeFull();
         setSecondComponent(verticalLayout);
 
         
-        mainTable = new Table(null, persons);
+        mainTable = new Table(null, tableContainer);
         mainTable.setSelectable(true);
         mainTable.setImmediate(true);
         mainTable.setRowHeaderMode(RowHeaderMode.INDEX);
@@ -112,7 +111,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
         });
 
         mainTable.setSizeFull();
-        // personTable.setSelectable(true);
+        // organizationTable.setSelectable(true);
         mainTable.addItemClickListener(new ItemClickListener() {
             @Override
             public void itemClick(ItemClickEvent event) {
@@ -122,21 +121,20 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
             }
         });
 
-        Utils.setTableDefaultHead(mainTable, Person.class);
+        Utils.setTableDefaultHead(mainTable, Organization.class);
         
 
         HorizontalLayout toolbar = new HorizontalLayout();
         newButton = new Button("增加");
         newButton.addClickListener(new Button.ClickListener() {
-
             @Override
             public void buttonClick(ClickEvent event) {
-                final EntityItem<Person> newPersonItem = persons.createEntityItem(new Person());
+                final EntityItem<Organization> newOrganizationItem = tableContainer.createEntityItem(new Organization());
                 if(treeFilter != null)
-                	newPersonItem.getEntity().setOrg(treeFilter);
-                PersonEditor personEditor = new PersonEditor(newPersonItem,persons);
-                personEditor.center();
-                UI.getCurrent().addWindow(personEditor);
+                	newOrganizationItem.getEntity().setParent(treeFilter);
+                OrganizationEditor organizationEditor = new OrganizationEditor(newOrganizationItem,tableContainer);
+                organizationEditor.center();
+                UI.getCurrent().addWindow(organizationEditor);
             }
         });
 
@@ -145,7 +143,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 
             @Override
             public void buttonClick(ClickEvent event) {
-            	persons.removeItem(mainTable.getValue());
+            	tableContainer.removeItem(mainTable.getValue());
             }
         });
         deleteButton.setEnabled(false);
@@ -155,7 +153,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 
             @Override
             public void buttonClick(ClickEvent event) {
-            	PersonEditor pe = new PersonEditor(mainTable.getItem(mainTable.getValue()),persons);
+            	OrganizationEditor pe = new OrganizationEditor(mainTable.getItem(mainTable.getValue()),tableContainer);
             	pe.center();
                 UI.getCurrent().addWindow(pe);
             }
@@ -163,7 +161,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
         editButton.setEnabled(false);
 
         searchField = new TextField();
-        searchField.setInputPrompt("姓名/工号");
+        searchField.setInputPrompt("Search by name");
         searchField.addTextChangeListener(new TextChangeListener() {
 
             @Override
@@ -190,18 +188,20 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
     }
 
     private void buildTree() {
-        groupTree = new Tree(null, departments);
+        groupTree = new Tree(null, treeContainer);
         groupTree.setItemCaptionPropertyId("name");
 
         groupTree.setImmediate(true);
         groupTree.setSelectable(true);
+        for(Object id : groupTree.getItemIds()){
+        	groupTree.expandItem(id);
+        }
         groupTree.addItemClickListener(new ItemClickListener() {
-			
 			@Override
 			public void itemClick(ItemClickEvent event) {
 				Object id = event.getItemId();
                 if (id != null) {
-                    Organization entity = departments.getItem(id).getEntity();
+                    Organization entity = treeContainer.getItem(id).getEntity();
                     treeFilter = entity;
                 } else if (treeFilter != null) {
                     treeFilter = null;
@@ -210,33 +210,27 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 				
 			}
 		});
-        //展开所有节点
-        for(Object id : groupTree.getItemIds()){
-        	groupTree.expandItem(id);
-        }
         setFirstComponent(groupTree);
     }
 
     private void updateFilters() {
-        persons.setApplyFiltersImmediately(false);
-        persons.removeAllContainerFilters();
+        tableContainer.setApplyFiltersImmediately(false);
+        tableContainer.removeAllContainerFilters();
         if (treeFilter != null) {
-        	//TODO 更多级的级联
+            //TODO 多级查询
             if (treeFilter.getParent() != null) {
-            	Equal ea = new Equal("org",treeFilter);
-            	Equal eb = new Equal("org.parent",treeFilter);
-            	Equal ec = new Equal("org.parent.parent",treeFilter);
+            	Equal ea = new Equal("id",treeFilter.getId());
+            	Equal eb = new Equal("parent",treeFilter);
+            	Equal ec = new Equal("parent.parent",treeFilter);
             	Or or = new Or(ea,eb,ec);
-            	persons.addContainerFilter(or);
+                tableContainer.addContainerFilter(or);
             } 
         }
         if (textFilter != null && !textFilter.equals("")) {
-            Like likea =new Like("trueName","%"+ textFilter + "%", false);
-            Like likeb =new Like("workNum","%"+ textFilter + "%", false);
-            Or or = new Or(likea,likeb);
-            persons.addContainerFilter(or);
+            Like like =new Like("name", textFilter + "%", false);
+            tableContainer.addContainerFilter(like);
         }
-        persons.applyFilters();
+        tableContainer.applyFilters();
     }
 
 	@Override
@@ -245,8 +239,8 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 	
     private void authenticate() {
     	Subject user = SecurityUtils.getSubject(); 
-		newButton.setVisible(user.isPermitted(Utils.getAddActionId(PersonView.class)));
-		deleteButton.setVisible(user.isPermitted(Utils.getDelActionId(PersonView.class)));
-		editButton.setVisible(user.isPermitted(Utils.getEditActionId(PersonView.class)));
+		newButton.setVisible(user.isPermitted(Utils.getAddActionId(OrganizationView.class)));
+		deleteButton.setVisible(user.isPermitted(Utils.getDelActionId(OrganizationView.class)));
+		editButton.setVisible(user.isPermitted(Utils.getEditActionId(OrganizationView.class)));
 	}
 }
