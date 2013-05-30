@@ -7,7 +7,10 @@ import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
+import com.vaadin.data.Buffered.SourceException;
 import com.vaadin.data.Item;
+import com.vaadin.data.Property.ReadOnlyException;
+import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.shared.ui.MultiSelectMode;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
@@ -57,14 +60,18 @@ public class RoleUserEditor extends Window  {
 		saveButton.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(Button.ClickEvent event) {
-				Set<?> v = (Set<?>) table.getValue();
-				Set<User> users = new LinkedHashSet<User>();
-				for(Object rid : v){
-					users.add(userContainer.getItem(rid).getEntity() );
+				try {
+					Set<?> v = (Set<?>) table.getValue();
+					Set<User> users = new LinkedHashSet<User>();
+					for(Object rid : v){
+						users.add(userContainer.getItem(rid).getEntity() );
+					}
+					jpaitem.getItemProperty("users").setValue(users);
+					container.commit();
+					Notification.show("保存成功");
+				} catch (RemoveAdminUserException e) {
+					Notification.show("内置系统管理员不能移除");
 				}
-				jpaitem.getItemProperty("users").setValue(users);
-				container.commit();
-				Notification.show("保存成功");
 			}
 		});
 		
