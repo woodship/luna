@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.woodship.luna.LunaException;
 import org.woodship.luna.db.TransactionalEntityProvider;
-
-import com.vaadin.ui.Notification;
 
 @Component
 public class RoleEntityProvider  extends TransactionalEntityProvider<Role> {
@@ -25,8 +24,7 @@ public class RoleEntityProvider  extends TransactionalEntityProvider<Role> {
 	public void removeEntity(final Object entityId) {
 		Role r = this.getEntity(getJPAContainer(), entityId);
 		if(r.isSysRole()){
-			Notification.show("系统内置角色，禁止删除！");
-			return;
+			throw new LunaException("系统内置角色，禁止删除！");
 		}
 		super.removeEntity(entityId);
 	}
@@ -57,7 +55,7 @@ public class RoleEntityProvider  extends TransactionalEntityProvider<Role> {
 					}
 				}
 				if(removedAdmin){
-					throw new RemoveAdminUserException();
+					throw new LunaException("管理员禁止移除");
 				}
 			}
 		}

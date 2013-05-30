@@ -60,7 +60,6 @@ public class RoleUserEditor extends Window  {
 		saveButton.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(Button.ClickEvent event) {
-				try {
 					Set<?> v = (Set<?>) table.getValue();
 					Set<User> users = new LinkedHashSet<User>();
 					for(Object rid : v){
@@ -69,9 +68,6 @@ public class RoleUserEditor extends Window  {
 					jpaitem.getItemProperty("users").setValue(users);
 					container.commit();
 					Notification.show("保存成功");
-				} catch (RemoveAdminUserException e) {
-					Notification.show("内置系统管理员不能移除");
-				}
 			}
 		});
 		

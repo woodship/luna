@@ -98,7 +98,8 @@ public class LunaUI extends UI {
 	protected void init(VaadinRequest request) {
 		//TODO setConverterFactory 老崔
 		//getSession().setConverterFactory(new MyConverterFactory());
-
+		getSession().setErrorHandler(new LunaErrorHandler());
+		
 		helpManager = new HelpManager(this);
 
 		setLocale(Locale.CHINESE);
