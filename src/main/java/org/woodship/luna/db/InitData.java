@@ -48,8 +48,6 @@ public class InitData{
 	@Autowired
 	private ResourceService resSer;
 	
-	private DefaultPasswordService ps = new DefaultPasswordService();
-	
 	private Person p1;
 	
 	private User userAdmin;
@@ -216,15 +214,13 @@ public class InitData{
 		
 		
 		//增加管理员
-		String pw =  ps.encryptPassword(User.DEFAULT_PASSWORD);
-		userAdmin = new User(User.SUPER_ADMIN_USERNAME,pw,"管理员");
+		userAdmin = new User(User.SUPER_ADMIN_USERNAME,"管理员");
 		userAdmin.setSysUser(true);
 		em.persist(userAdmin);
 		
 		//增加一个普通用户
 		User u1 = new User();
 		u1.setPerson(p1);
-		u1.setPassword(pw);
 		em.persist(u1);
 		
 		Role radmin = new Role(Role.SUPER_ADMIN_ROLE_NAME);

@@ -9,6 +9,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -20,15 +21,17 @@ import com.vaadin.data.fieldgroup.Caption;
 @Table(name="USER_")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User extends IdEntity<User>{
+	private static final DefaultPasswordService ps = new DefaultPasswordService();
 	private static final long serialVersionUID = 1L;
 	public static final String SUPER_ADMIN_USERNAME = "admin";
 	public static final String DEFAULT_PASSWORD = "111";
 	public User(){
+		this.password = ps.encryptPassword(DEFAULT_PASSWORD);
 	}
 
-	public User(String username, String password,  String showName ) {
+	public User(String username, String showName ) {
 		this.username = username;
-		this.password = password;
+		this.password = ps.encryptPassword(DEFAULT_PASSWORD);;
 		this.showName = showName;
 	}
 

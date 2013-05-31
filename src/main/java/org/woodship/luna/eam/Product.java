@@ -5,7 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.woodship.luna.core.person.Organization;
@@ -33,10 +34,33 @@ public class Product extends IdEntity<Product>{
 	@NotNull
 	private Classes classes;
 	
-	@Caption("工号")
-	@OneToOne
+	@Caption("操作员")
+	@ManyToOne
 	@NotNull
 	private Person person;
+	
+	@Caption("得分")
+	@Max(10)
+	@Min(0)
+	private Integer score;
+	
+	@Caption("操作员2")
+	@ManyToOne
+	private Person person2;
+	
+	@Caption("得分")
+	@Max(10)
+	@Min(0)
+	private Integer score2;
+	
+	@Caption("操作员3")
+	@ManyToOne
+	private Person person3;
+	
+	@Caption("得分")
+	@Max(10)
+	@Min(0)
+	private Integer score3;
 	
 	@Caption("车台号")
 	private String carNum;
@@ -76,6 +100,15 @@ public class Product extends IdEntity<Product>{
     @Caption("原料型号")
     private String materialModel;
     
+	@Caption("接米长")
+	@ManyToOne
+	private Person jieMiZhan;
+	
+	@Caption("交米长")
+	@ManyToOne
+	private Person jiaoMiZhan;
+    
+	@Caption("车间")
     @NotNull
     @ManyToOne
     private Organization org;
@@ -228,6 +261,62 @@ public class Product extends IdEntity<Product>{
 
 	public void setWeld(Weld weld) {
 		this.weld = weld;
+	}
+
+	public Integer getScore() {
+		return score;
+	}
+
+	public void setScore(Integer score) {
+		this.score = score;
+	}
+
+	public Person getPerson2() {
+		return person2;
+	}
+
+	public void setPerson2(Person person2) {
+		this.person2 = person2;
+	}
+
+	public Integer getScore2() {
+		return score2;
+	}
+
+	public void setScore2(Integer score2) {
+		this.score2 = score2;
+	}
+
+	public Person getPerson3() {
+		return person3;
+	}
+
+	public void setPerson3(Person person3) {
+		this.person3 = person3;
+	}
+
+	public Integer getScore3() {
+		return score3;
+	}
+
+	public void setScore3(Integer score3) {
+		this.score3 = score3;
+	}
+
+	public Person getJieMiZhan() {
+		return jieMiZhan;
+	}
+
+	public void setJieMiZhan(Person jieMiZhan) {
+		this.jieMiZhan = jieMiZhan;
+	}
+
+	public Person getJiaoMiZhan() {
+		return jiaoMiZhan;
+	}
+
+	public void setJiaoMiZhan(Person jiaoMiZhan) {
+		this.jiaoMiZhan = jiaoMiZhan;
 	}
     
 	

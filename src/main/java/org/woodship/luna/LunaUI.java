@@ -173,7 +173,7 @@ public class LunaUI extends UI {
 		fields.setMargin(true);
 		fields.addStyleName("fields");
 
-		final TextField username = new TextField(messageSource.getMessage("luna.login.usernme", "Username"));
+		final TextField username = new TextField(messageSource.getMessage("luna.login.username", "Username"));
 		username.focus();
 		username.setValue(User.SUPER_ADMIN_USERNAME);
 		fields.addComponent(username);
