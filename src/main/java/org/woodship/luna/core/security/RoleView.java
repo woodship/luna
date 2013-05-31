@@ -7,6 +7,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
+import org.vaadin.dialogs.ConfirmDialog;
 import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.Utils;
 
@@ -132,10 +133,17 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
 
         deleteButton = new Button("删除");
         deleteButton.addClickListener(new Button.ClickListener() {
-
             @Override
             public void buttonClick(ClickEvent event) {
-            	mainContainer.removeItem(mainTable.getValue());
+            	ConfirmDialog.show(UI.getCurrent(),"警告","确定要删除吗？删除后将不能恢复！","是","否",
+           			 new ConfirmDialog.Listener() {
+					@Override
+					public void onClose(ConfirmDialog dialog) {
+						if(dialog.isConfirmed()){
+							mainContainer.removeItem(mainTable.getValue());
+						}
+					}
+				});
             }
         });
         deleteButton.setEnabled(false);

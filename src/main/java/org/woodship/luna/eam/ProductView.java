@@ -12,6 +12,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
+import org.vaadin.dialogs.ConfirmDialog;
 import org.woodship.luna.core.person.Organization;
 import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.Utils;
@@ -157,7 +158,15 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
         deleteButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-            	tableContainer.removeItem(mainTable.getValue());
+            	ConfirmDialog.show(UI.getCurrent(),"警告","确定要删除吗？删除后将不能恢复！","是","否",
+            			 new ConfirmDialog.Listener() {
+					@Override
+					public void onClose(ConfirmDialog dialog) {
+						if(dialog.isConfirmed()){
+							tableContainer.removeItem(mainTable.getValue());
+						}
+					}
+				});
             }
         });
         deleteButton.setEnabled(false);
