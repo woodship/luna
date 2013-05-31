@@ -1,5 +1,8 @@
 package org.woodship.luna.eam;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -45,6 +48,7 @@ import com.vaadin.ui.VerticalLayout;
 @org.springframework.stereotype.Component
 @Scope("prototype")
 public class ProductView extends HorizontalSplitPanel implements ComponentContainer, View{
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	public static final String NAME = "product";
 	public static final String EXCEL_ACTION_KEY ="ProductView:EXCEL";
 	@Autowired
@@ -96,7 +100,16 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
         setSecondComponent(verticalLayout);
 
         
-        mainTable = new Table(null, tableContainer);
+        mainTable = new Table(null, tableContainer){
+			@Override
+			protected String formatPropertyValue(Object rowId, Object colId, Property<?> property) {
+				if(Product_.produceDate.getName().equals(colId) && property != null && property.getValue() != null){
+					Date date = (Date) property.getValue();
+					return sdf.format(date);
+				}
+				return super.formatPropertyValue(rowId, colId, property);
+			}
+        };
         mainTable.setSelectable(true);
         mainTable.setImmediate(true);
         mainTable.setRowHeaderMode(RowHeaderMode.INDEX);

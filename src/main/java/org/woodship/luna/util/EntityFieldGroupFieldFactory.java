@@ -24,7 +24,7 @@ public class EntityFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 	@Override
 	public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
 		Entity e = dataType.getAnnotation(Entity.class);
-		if(e != null & AbstractSelect.class.isAssignableFrom(fieldType)){
+		if(e != null & AbstractSelect.class.isAssignableFrom(fieldType)){//实体类型生成下拉框
 			return  createEntityField(dataType, fieldType);
 		}
 		if (Date.class.isAssignableFrom(dataType)) {

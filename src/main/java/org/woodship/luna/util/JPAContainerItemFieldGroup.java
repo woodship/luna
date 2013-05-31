@@ -10,7 +10,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Item;
-import com.vaadin.data.fieldgroup.Caption;
 import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.validator.BeanValidator;
@@ -137,11 +136,6 @@ public class JPAContainerItemFieldGroup<T> extends FieldGroup {
     	
 		for(java.lang.reflect.Field f : fields){
 			if(f.getName().equals(pid)){
-				//设置默认caption
-				Caption captionAnnotation = f.getAnnotation(Caption.class);
-		        if (captionAnnotation != null) {
-		            field.setCaption(captionAnnotation.value());
-		        }
 		        //设置字段必填标识*
 		        NotNull notNullAnnotation = f.getAnnotation(NotNull.class);
 		        Size sizeAnnotation = f.getAnnotation(Size.class);

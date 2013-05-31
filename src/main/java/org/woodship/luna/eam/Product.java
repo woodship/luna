@@ -26,13 +26,16 @@ public class Product extends IdEntity<Product>{
 	private static final long serialVersionUID = 1L;
 	
 	@Caption("生产日期")
+	@NotNull
 	private Date produceDate;
 	
 	@Caption("班次")
+	@NotNull
 	private Classes classes;
 	
 	@Caption("工号")
 	@OneToOne
+	@NotNull
 	private Person person;
 	
 	@Caption("车台号")

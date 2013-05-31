@@ -73,6 +73,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 
     @PostConstruct
 	public void PostConstruct(){
+    	this.setSizeFull();
         departments = conu.createJPAHierarchialContainer(Organization.class);
         persons = new JPAContainer<Person>(Person.class);
         persons.setEntityProvider(personProvider);
@@ -90,7 +91,6 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 	private void buildMainArea() {
     	//右侧
         VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.setSizeFull();
         setSecondComponent(verticalLayout);
 
         

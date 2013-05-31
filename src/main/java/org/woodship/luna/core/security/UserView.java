@@ -27,6 +27,7 @@ import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Table.RowHeaderMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -164,7 +165,7 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
         setRolsesButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-            	Notification.show("暂未实现，请先在角色管理中操作");
+            	Notification.show("暂未实现，请先在角色管理中操作",Type.WARNING_MESSAGE);
 //            	UserRoleEditor pe = new UserRoleEditor(mainTable.getItem(mainTable.getValue()) ,mainContainer, roleContainer);
 //            	pe.center();
 //                UI.getCurrent().addWindow(pe);

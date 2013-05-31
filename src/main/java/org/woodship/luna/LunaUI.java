@@ -33,6 +33,7 @@ import org.woodship.luna.core.security.UserService;
 import org.woodship.luna.core.security.User_;
 
 import ru.xpoft.vaadin.DiscoveryNavigator;
+import ru.xpoft.vaadin.VaadinMessageSource;
 
 import com.vaadin.addon.jpacontainer.EntityProvider;
 import com.vaadin.addon.jpacontainer.JPAContainer;
@@ -69,11 +70,11 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 @Theme("dashboard")
-@Title("luna")
 @org.springframework.stereotype.Component
 @Scope("request")
 @PreserveOnRefresh//支持F5刷新
 public class LunaUI extends UI {
+	
 	private static final long serialVersionUID = 1L;
 
 	CssLayout root = new CssLayout();
@@ -87,6 +88,8 @@ public class LunaUI extends UI {
 
 	private HelpManager helpManager;
 
+    @Autowired
+    private VaadinMessageSource messageSource;
 
 	@Autowired()
 	@Qualifier("resourceEntityProvider")
@@ -96,6 +99,7 @@ public class LunaUI extends UI {
 	UserService us;
 	@Override
 	protected void init(VaadinRequest request) {
+		Page.getCurrent().setTitle(messageSource.getMessage("luna.app.name", "Luna"));
 		//TODO setConverterFactory 老崔
 		//getSession().setConverterFactory(new MyConverterFactory());
 		getSession().setErrorHandler(new LunaErrorHandler());
@@ -151,13 +155,13 @@ public class LunaUI extends UI {
 		labels.addStyleName("labels");
 		loginPanel.addComponent(labels);
 
-		Label welcome = new Label("欢迎使用");
+		Label welcome = new Label(messageSource.getMessage("luna.login.left", "Welcome"));
 		welcome.setSizeUndefined();
 		welcome.addStyleName("h4");
 		labels.addComponent(welcome);
 		labels.setComponentAlignment(welcome, Alignment.MIDDLE_LEFT);
 
-		Label title = new Label("华泰信息技术");
+		Label title = new Label(messageSource.getMessage("luna.login.right", "WoodShip Luna"));
 		title.setSizeUndefined();
 		title.addStyleName("h2");
 		title.addStyleName("light");
@@ -169,12 +173,12 @@ public class LunaUI extends UI {
 		fields.setMargin(true);
 		fields.addStyleName("fields");
 
-		final TextField username = new TextField("工号");
+		final TextField username = new TextField(messageSource.getMessage("luna.login.usernme", "Username"));
 		username.focus();
 		username.setValue(User.SUPER_ADMIN_USERNAME);
 		fields.addComponent(username);
 
-		final PasswordField password = new PasswordField("密码");
+		final PasswordField password = new PasswordField(messageSource.getMessage("luna.login.password", "Password"));
 		password.setValue(User.DEFAULT_PASSWORD);
 		fields.addComponent(password);
 
@@ -317,7 +321,8 @@ public class LunaUI extends UI {
 							{
 								addStyleName("branding");
 								Label logo = new Label(
-										"<span>恒星科技</span><br>产品统计",
+										"<span>"+messageSource.getMessage("luna.company.name", "WoodShip")
+										+"</span><br>"+messageSource.getMessage("luna.app.name", "Luna"),
 										ContentMode.HTML);
 								logo.setSizeUndefined();
 								addComponent(logo);

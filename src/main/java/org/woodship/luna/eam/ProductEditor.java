@@ -31,6 +31,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
@@ -38,14 +39,18 @@ import com.vaadin.ui.Window;
 
 @SuppressWarnings("serial")
 public class ProductEditor extends Window  {
-	JPAContainer<Product> persons = null;
+	JPAContainer<Product> products = null;
 	JPAContainerItem<Product> jpaitem = null;
 
 	@SuppressWarnings("unchecked")
 	public ProductEditor(final Item item,  final JPAContainer<Product> persons) {
-		this.persons = persons;
+		this.setCaption("产品编辑/增加");
+		this.setWidth(600, Unit.PIXELS);
+		this.setHeight(400,Unit.PIXELS);
+		this.products = persons;
 		this.jpaitem = (JPAContainerItem<Product>) item;
-		final FormLayout formLayout = new FormLayout();
+		final GridLayout formLayout = new GridLayout(3,7);
+		formLayout.setSizeFull();
 		formLayout.setMargin(true);
 		final JPAContainerItemFieldGroup<Product> fg = new JPAContainerItemFieldGroup<Product>(Product.class);
 		fg.setItemDataSource(jpaitem);
@@ -59,7 +64,8 @@ public class ProductEditor extends Window  {
 		
 		final Label error = new Label("", ContentMode.HTML);
 		error.setVisible(false);
-		formLayout.addComponent(error);
+//		formLayout.addComponent(error, 0, 1, 0, row2)addComponent(error);
+		
 
 		// Buffer the form content
 		fg.setBuffered(true);

@@ -1,5 +1,6 @@
 package org.woodship.luna.db;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -85,8 +86,10 @@ public class InitData{
 		//型号
 		InvItem ia = new InvItem("WG7893",1000f,null);
 		em.persist(ia);
-		InvItem ib = new InvItem("XX8888",1500f,null);
-		em.persist(ib);
+		for(int i = 1000; i<1200 ; i++){
+			InvItem ib = new InvItem("XX"+i,1500f,null);
+			em.persist(ib);
+		}
 		//客户
 		Customer ca = new Customer("CKY11", "开元物业", null);
 		Customer cb = new Customer("CTHYY", "天华制造", null);
@@ -95,6 +98,7 @@ public class InitData{
 		
 		//产品
 		Product pro = new Product();
+		pro.setProduceDate(new Date());
 		pro.setClasses(Classes.乙);
 		pro.setCarNum("CAR111");
 		pro.setCreateBy(userAdmin);

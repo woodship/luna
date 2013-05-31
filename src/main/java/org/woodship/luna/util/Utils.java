@@ -64,7 +64,8 @@ public class Utils {
 	}
 	
 	/**
-	 * 为指定{@link BeanFieldGroup}绑定默认字段。(根据{@link Caption},beanClass的字段上有该注解则绑定 )
+	 * 为指定{@link BeanFieldGroup}绑定默认字段。(根据{@link Caption}，beanClass的字段上有该注解则绑定 ) </p>
+	 * 该方法只负责确定生成哪些字段，生成Caption，，创建字段
 	 * @param fieldGroup
 	 * @param beanClass 要绑定到{@link BeanFieldGroup}上的beanClass
 	 * @return 
@@ -79,7 +80,7 @@ public class Utils {
 					 layout.addComponent(fieldGroup.buildAndBind(caption.value(),f.getName(),ComboBox.class));
 				 }
 				 else{
-					 layout.addComponent(fieldGroup.buildAndBind(f.getName()));
+					 layout.addComponent(fieldGroup.buildAndBind(caption.value(),f.getName()));
 				 }
 			}
 		}
