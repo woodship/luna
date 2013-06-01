@@ -10,6 +10,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.woodship.luna.LunaException;
 
 @SuppressWarnings("serial")
 @MappedSuperclass
@@ -71,21 +72,51 @@ public abstract class HierarchialEntity<E extends HierarchialEntity<E>> implemen
 	 * @param parent
 	 */
 	public  void setParent(E parent) {
-		if(this.getAncestors() == null){
-			return;
-		}
-		this.getAncestors().clear();
-		this.getAncestors().add((E) this);
 		if(parent == null){
+			if(this.getAncestors() != null){
+				this.getAncestors().clear();
+			}
 			return;
 		}
+		if(parent.equals(this)){
+			throw new LunaException("上级不能选择自已！");
+		}
+		parent.setLeaf(false);
+		this.getAncestors().add((E) this);
 		E p = parent;
-		p.setLeaf(false);
 		//增加祖先
 		while(p != null){
 			getAncestors().add((E) p);
 			p =p.getParent();
 		}
 	}
+
+	
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		HierarchialEntity other = (HierarchialEntity) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
 	
 }

@@ -35,7 +35,7 @@
 	</bean>
 
 
-	<tx:annotation-driven transaction-manager="transactionManager" />
+	<tx:annotation-driven transaction-manager="transactionManager"  proxy-target-class="true"/>
 
 	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basename" value="classpath:message" />

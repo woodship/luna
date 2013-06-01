@@ -153,6 +153,7 @@ public class InitData{
 			Organization geoGroup = new Organization(orgRoot);
 			geoGroup.setName(o);
 			geoGroup.setOrgType(OrgType.顶级部门);
+			em.persist(geoGroup);
 			for (String g : groupsNames) {
 				Organization group = new Organization(geoGroup);
 				group.setName(g);
@@ -186,12 +187,9 @@ public class InitData{
 					p1.setOrg(group);
 					em.persist(p1);
 				}
-
-
 				group.setPersons(gPersons);
-				em.persist(group);
 			}
-			em.persist(geoGroup);
+			
 		}
 
 	}

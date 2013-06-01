@@ -15,6 +15,7 @@
  */
 package org.woodship.luna.core.person;
 
+import org.woodship.luna.LunaException;
 import org.woodship.luna.util.JPAContainerItemFieldGroup;
 import org.woodship.luna.util.Utils;
 
@@ -33,6 +34,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.Notification.Type;
 
 @SuppressWarnings("serial")
 public class OrganizationEditor extends Window  {
@@ -73,11 +75,17 @@ public class OrganizationEditor extends Window  {
 //					error.setVisible(false);
 					OrganizationEditor.this.close();//关闭，防止再点击，重复增加
 				} catch (FieldGroup.CommitException e) {
-					e.printStackTrace();
 					for (Field<?> field: fg.getFields()) {
 						ErrorMessage errMsg = ((AbstractField<?>)field).getErrorMessage();
 						if (errMsg != null) {
-							error.setValue("<div style='color:red'> " + field.getCaption() + ": " +  errMsg.getFormattedHtmlMessage() + "</div>");
+							String msg = errMsg.getFormattedHtmlMessage();
+							for(Throwable t = e.getCause(); t != null; t = t.getCause()){
+								if(t instanceof LunaException){
+									msg = t.getMessage();
+									break;
+								}
+							}
+							error.setValue("<div style='color:red'> " + field.getCaption() + ": " +  msg + "</div>");
 							error.setVisible(true);
 							break;
 						}

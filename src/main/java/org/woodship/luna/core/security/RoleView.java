@@ -57,7 +57,7 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
     @PostConstruct
 	public void PostConstruct(){
         mainContainer = Utils.getJPAContainer(Role.class);
-        resContainer =Utils.getJPAContainer(Resource.class);
+        resContainer =Utils.getHierarchialJPAContainer(Resource.class);
         userContainer = Utils.getJPAContainer(User.class);
         
         buildMainArea();

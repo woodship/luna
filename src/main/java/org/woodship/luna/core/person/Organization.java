@@ -86,7 +86,7 @@ public class Organization  extends HierarchialEntity<Organization>{
 
     @Override
     public String toString() {
-        return name;
+        return getHierarchicalName();
     }
 
 
