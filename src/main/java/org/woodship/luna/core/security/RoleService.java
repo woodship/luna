@@ -1,5 +1,6 @@
 package org.woodship.luna.core.security;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -14,8 +15,9 @@ import javax.persistence.criteria.SetJoin;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Service;
 
+@SuppressWarnings("serial")
 @Service
-public class RoleService {
+public class RoleService implements Serializable{
 	@PersistenceContext
 	private  EntityManager em;
 	

@@ -1,5 +1,6 @@
 package org.woodship.luna.core.security;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -16,7 +17,11 @@ import org.woodship.luna.util.Utils;
 import com.vaadin.navigator.View;
 
 @Service
-public class ResourceService {
+public class ResourceService implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2416370618448117352L;
 	@PersistenceContext
 	private  EntityManager em;
 	

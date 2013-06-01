@@ -1,5 +1,6 @@
 package org.woodship.luna.core.security;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +20,9 @@ import org.woodship.luna.core.person.OrgType;
 import org.woodship.luna.core.person.Organization;
 import org.woodship.luna.core.person.Person;
 
+@SuppressWarnings("serial")
 @Service
-public class UserService {
+public class UserService implements Serializable{
 
 	@PersistenceContext
 	private  EntityManager em;

@@ -1,5 +1,6 @@
 package org.woodship.luna.db;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Random;
@@ -42,7 +43,8 @@ import ru.xpoft.vaadin.VaadinMessageSource;
 
 
 @Component
-public class InitData{
+public class InitData implements Serializable{
+	private static final long serialVersionUID = 6644623096240101511L;
 
 	@PersistenceContext
 	private  EntityManager em;

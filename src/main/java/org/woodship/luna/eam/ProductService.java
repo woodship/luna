@@ -1,5 +1,6 @@
 package org.woodship.luna.eam;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -23,7 +24,9 @@ import org.woodship.luna.eam.enums.Weld;
 import org.woodship.luna.eam.enums.Winding;
 
 @Service
-public class ProductService {
+public class ProductService implements Serializable{
+	private static final long serialVersionUID = -2307602987532561520L;
+
 	@PersistenceContext
 	private  EntityManager em;
 
