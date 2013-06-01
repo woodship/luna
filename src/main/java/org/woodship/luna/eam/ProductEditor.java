@@ -15,6 +15,8 @@
  */
 package org.woodship.luna.eam;
 
+import org.woodship.luna.core.person.Organization;
+import org.woodship.luna.core.security.User;
 import org.woodship.luna.util.JPAContainerItemFieldGroup;
 import org.woodship.luna.util.Utils;
 
@@ -25,12 +27,10 @@ import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
-import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -39,15 +39,13 @@ import com.vaadin.ui.Window;
 
 @SuppressWarnings("serial")
 public class ProductEditor extends Window  {
-	JPAContainer<Product> products = null;
 	JPAContainerItem<Product> jpaitem = null;
 
 	@SuppressWarnings("unchecked")
-	public ProductEditor(final Item item,  final JPAContainer<Product> persons) {
+	public ProductEditor(final Item item,  final JPAContainer<Product> products, User user) {
 		this.setCaption("产品编辑/增加");
 		this.setWidth(600, Unit.PIXELS);
 		this.setHeight(500,Unit.PIXELS);
-		this.products = persons;
 		this.jpaitem = (JPAContainerItem<Product>) item;
 		final GridLayout formLayout = new GridLayout(3,7);
 		formLayout.setSizeFull();
@@ -57,10 +55,10 @@ public class ProductEditor extends Window  {
 		//增加默认字段
 		Utils.buildAndBindFieldGroup(fg, Product.class, formLayout);
 		
-		//配制工号
-		ComboBox cb = (ComboBox) fg.getField("person");
-		cb.setItemCaptionMode(ItemCaptionMode.PROPERTY);
-		cb.setItemCaptionPropertyId("workNum");
+		//配制车间可选择项目
+		ComboBox cb = (ComboBox) fg.getField(Product_.org.getName());
+		JPAContainer<Organization> orgcon = (JPAContainer<Organization>) cb.getContainerDataSource();
+		
 		
 		final Label error = new Label("", ContentMode.HTML);
 		error.setVisible(false);
@@ -81,7 +79,7 @@ public class ProductEditor extends Window  {
 					//新增的需要单独处理
 					if(jpaitem.getEntity().getId() == null){
 						Product p =fg.getItemDataSource().getEntity();
-						persons.addEntity(p);
+						products.addEntity(p);
 					}
 					Notification.show("保存成功");
 //					error.setVisible(false);

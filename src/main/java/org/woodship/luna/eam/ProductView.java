@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.vaadin.dialogs.ConfirmDialog;
 import org.woodship.luna.core.person.Organization;
+import org.woodship.luna.core.security.UserService;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.EntityItem;
@@ -68,6 +69,9 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
 
     private Organization treeFilter;
     private String textFilter;
+    
+    @Autowired
+    UserService us;
 
     @PostConstruct
 	public void PostConstruct(){
@@ -89,7 +93,16 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
         setSecondComponent(verticalLayout);
 
         
-        mainTable = new Table(null, tableContainer);
+        mainTable = new Table(null, tableContainer){
+        	@Override
+			protected String formatPropertyValue(Object rowId, Object colId, Property<?> property) {
+				if(Product_.produceDate.getName().equals(colId) && property != null && property.getValue() != null){
+					Date date = (Date) property.getValue();
+					return sdf.format(date);
+				}
+				return super.formatPropertyValue(rowId, colId, property);
+			}
+        };
         mainTable.setSelectable(true);
         mainTable.setImmediate(true);
         mainTable.setRowHeaderMode(RowHeaderMode.INDEX);
@@ -127,7 +140,7 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
                 final EntityItem<Product> newProductItem = tableContainer.createEntityItem(new Product());
                 if(treeFilter != null)
                 	newProductItem.getEntity().setOrg(treeFilter);
-                ProductEditor organizationEditor = new ProductEditor(newProductItem,tableContainer);
+                ProductEditor organizationEditor = new ProductEditor(newProductItem,tableContainer,us.getCurrentUser());
                 organizationEditor.center();
                 UI.getCurrent().addWindow(organizationEditor);
             }
@@ -155,7 +168,7 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
 
             @Override
             public void buttonClick(ClickEvent event) {
-            	ProductEditor pe = new ProductEditor(mainTable.getItem(mainTable.getValue()),tableContainer);
+            	ProductEditor pe = new ProductEditor(mainTable.getItem(mainTable.getValue()),tableContainer,us.getCurrentUser());
             	pe.center();
                 UI.getCurrent().addWindow(pe);
             }
