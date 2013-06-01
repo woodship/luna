@@ -15,24 +15,18 @@
  */
 package org.woodship.luna.core.person;
 
-import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.JPAContainerItemFieldGroup;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
-import com.vaadin.addon.jpacontainer.fieldfactory.SingleSelectConverter;
-import com.vaadin.data.Container;
 import com.vaadin.data.Item;
-import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -42,35 +36,19 @@ import com.vaadin.ui.Window;
 
 @SuppressWarnings("serial")
 public class PersonEditor extends Window  {
+	
 	JPAContainer<Person> persons = null;
 	JPAContainerItem<Person> jpaitem = null;
 
 	@SuppressWarnings("unchecked")
 	public PersonEditor(final Item item,  final JPAContainer<Person> persons) {
+		this.setCaption("人员增加/编辑");
 		this.persons = persons;
 		this.jpaitem = (JPAContainerItem<Person>) item;
 		final FormLayout formLayout = new FormLayout();
 		formLayout.setMargin(true);
 		final JPAContainerItemFieldGroup<Person> fg = new JPAContainerItemFieldGroup<Person>(Person.class);
 		fg.setItemDataSource(jpaitem);
-		/*
-		 * 构建Field,在此处理自定义字段
-		 */
-		fg.setFieldFactory(new DefaultFieldGroupFieldFactory() {
-			@SuppressWarnings("rawtypes")
-			@Override
-			public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
-				if (dataType.isAssignableFrom(Organization.class)) {
-					ComboBox cb = new ComboBox();
-					Container container = ContainerUtils.getInstance().createJPAContainer(Organization.class);
-					cb.setContainerDataSource(container);
-					cb.setItemCaptionMode(ItemCaptionMode.ITEM);
-					cb.setConverter(new SingleSelectConverter<Object>(cb));
-					return (T) cb;
-				}
-				return super.createField(dataType, fieldType);
-			}
-		});
 		
 		//增加默认字段
 		Utils.buildAndBindFieldGroup(fg, Person.class, formLayout);

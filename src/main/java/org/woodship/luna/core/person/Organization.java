@@ -15,9 +15,12 @@
  */
 package org.woodship.luna.core.person;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
@@ -42,13 +45,13 @@ public class Organization  extends HierarchialEntity<Organization>{
 
     @OneToMany(mappedBy = "org")
     private Set<Person> persons;
-
-    private boolean leaf = true;
-
+    
     @Caption("上级机构")
     @ManyToOne
     private Organization parent;
-
+    
+	 @ManyToMany
+	 private List<Organization> ancestors = new ArrayList<Organization>();
     
     public String getName() {
         return name;
@@ -66,20 +69,10 @@ public class Organization  extends HierarchialEntity<Organization>{
         this.persons = persons;
     }
 
-    public Organization getParent() {
-        return parent;
-    }
-
-    public void setParent(Organization parent) {
-    	parent.setLeaf(false);
-        this.parent = parent;
-    }
-
-
     @Transient
     public String getHierarchicalName() {
-        if (parent != null && parent.orgType != OrgType.单位) {
-            return parent.toString() + " /" + name;
+        if (getParent() != null && getParent().orgType != OrgType.单位) {
+            return getParent().toString() + " /" + name;
         }
         return name;
     }
@@ -89,13 +82,6 @@ public class Organization  extends HierarchialEntity<Organization>{
         return getHierarchicalName();
     }
 
-	public boolean isLeaf() {
-		return leaf;
-	}
-
-	public void setLeaf(boolean leaf) {
-		this.leaf = leaf;
-	}
 
 	public OrgType getOrgType() {
 		return orgType;
@@ -105,5 +91,27 @@ public class Organization  extends HierarchialEntity<Organization>{
 		this.orgType = orgType;
 	}
 
+	@Override
+	public Organization getParent() {
+		return this.parent;
+	}
+
+	@Override
+	public void setParent(Organization parent) {
+		this.parent = parent;
+		if(parent != null){
+			parent.setLeaf(false);
+		}
+	}
+
+	@Override
+	public List<Organization> getAncestors() {
+		return ancestors;
+	}
+
+	@Override
+	public void setAncestors(List<Organization> ancestors) {
+		this.ancestors = ancestors;
+	}
 
 }

@@ -42,5 +42,5 @@
 		<property name="fallbackToSystemLocale" value="false" />
 	</bean>
 
-	<bean class="ru.xpoft.vaadin.VaadinMessageSource" />
+	<bean class="org.woodship.luna.VaadinMessageSource" />
 </beans>

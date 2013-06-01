@@ -15,62 +15,35 @@
  */
 package org.woodship.luna.core.person;
 
-import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.JPAContainerItemFieldGroup;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
-import com.vaadin.addon.jpacontainer.fieldfactory.SingleSelectConverter;
-import com.vaadin.data.Container;
 import com.vaadin.data.Item;
-import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
 
 @SuppressWarnings("serial")
 public class OrganizationEditor extends Window  {
-	JPAContainer<Organization> persons = null;
-	JPAContainerItem<Organization> jpaitem = null;
 
-	@SuppressWarnings("unchecked")
-	public OrganizationEditor(final Item item,  final JPAContainer<Organization> persons) {
-		this.persons = persons;
-		this.jpaitem = (JPAContainerItem<Organization>) item;
+	public OrganizationEditor(final JPAContainerItem<Organization> item, 
+			final JPAContainer<Organization> tableContainer) {
+		this.setCaption("机构增加/编辑");
 		final FormLayout formLayout = new FormLayout();
 		formLayout.setMargin(true);
 		final JPAContainerItemFieldGroup<Organization> fg = new JPAContainerItemFieldGroup<Organization>(Organization.class);
-		fg.setItemDataSource(jpaitem);
-		/*
-		 * 构建Field,在此处理自定义字段
-		 */
-		fg.setFieldFactory(new DefaultFieldGroupFieldFactory() {
-			@SuppressWarnings("rawtypes")
-			@Override
-			public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
-				if (dataType.isAssignableFrom(Organization.class)) {
-					ComboBox cb = new ComboBox();
-					Container container = ContainerUtils.getInstance().createJPAContainer(Organization.class);
-					cb.setContainerDataSource(container);
-					cb.setItemCaptionMode(ItemCaptionMode.ITEM);
-					cb.setConverter(new SingleSelectConverter<Object>(cb));
-					return (T) cb;
-				}
-				return super.createField(dataType, fieldType);
-			}
-		});
+		fg.setItemDataSource(item);
 		
 		//增加默认字段
 		Utils.buildAndBindFieldGroup(fg, Organization.class, formLayout);
@@ -92,9 +65,9 @@ public class OrganizationEditor extends Window  {
 					//编辑的直接提交即可
 					fg.commit();
 					//新增的需要单独处理
-					if(jpaitem.getEntity().getId() == null){
+					if(item.getEntity().getId() == null){
 						Organization p =fg.getItemDataSource().getEntity();
-						persons.addEntity(p);
+						tableContainer.addEntity(p);
 					}
 					Notification.show("保存成功");
 //					error.setVisible(false);

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.vaadin.dialogs.ConfirmDialog;
-import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.EntityItem;
@@ -45,13 +44,6 @@ import com.vaadin.ui.VerticalLayout;
 @Scope("prototype")
 public class PersonView extends HorizontalSplitPanel implements ComponentContainer, View{
 	public static final String NAME = "person";
-
-	@Autowired
-	ContainerUtils conu;
-	
-	@Autowired()
-	@Qualifier("personEntityProvider")
-	EntityProvider<Person> personProvider;
 	
 	@PersistenceContext
 	private  EntityManager entityManager;
@@ -75,9 +67,8 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
     @PostConstruct
 	public void PostConstruct(){
     	this.setSizeFull();
-        departments = conu.createJPAHierarchialContainer(Organization.class);
-        persons = new JPAContainer<Person>(Person.class);
-        persons.setEntityProvider(personProvider);
+        departments = Utils.getHierarchialJPAContainer(Organization.class);
+        persons =  Utils.getJPAContainer(Person.class);
         
         persons.getEntityProvider();
         buildTree();

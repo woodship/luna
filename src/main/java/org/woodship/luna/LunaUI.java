@@ -101,7 +101,7 @@ public class LunaUI extends UI {
 	@Override
 	protected void init(VaadinRequest request) {
 		Page.getCurrent().setTitle(messageSource.getMessage("luna.app.name", "Luna"));
-//		getSession().setConverterFactory(new LunaConverterFactory());
+		getSession().setConverterFactory(new LunaConverterFactory());
 		getSession().setErrorHandler(new LunaErrorHandler());
 		
 		helpManager = new HelpManager(this);

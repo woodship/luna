@@ -1,35 +1,44 @@
 package org.woodship.luna;
 
-import com.vaadin.server.VaadinSession;
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 
-import java.io.Serializable;
-import java.util.Locale;
+import com.vaadin.server.VaadinSession;
 
 /**
- * @author xpoft
+ * 修改获得Locale方式，使其可在非Session环境中使用
+ * @author 老崔
  */
-public class VaadinMessageSource implements Serializable
+public class VaadinMessageSource extends ru.xpoft.vaadin.VaadinMessageSource
 {
     @Autowired
     private transient MessageSource messageSource;
 
     public String getMessage(String code)
     {
-        Locale locale = VaadinSession.getCurrent().getLocale();
+        Locale locale = getLocale();
         return messageSource.getMessage(code, null, locale);
     }
 
     public String getMessage(String code, String defaultMessage)
     {
-        Locale locale = VaadinSession.getCurrent().getLocale();
+        Locale locale = getLocale();
         return messageSource.getMessage(code, null, defaultMessage, locale);
     }
 
     public String getMessage(String code, Object[] args)
     {
-        Locale locale = VaadinSession.getCurrent().getLocale();
+        Locale locale = getLocale();
         return messageSource.getMessage(code, args, locale);
+    }
+    
+    private Locale getLocale(){
+    	if(VaadinSession.getCurrent() != null){
+    		return VaadinSession.getCurrent().getLocale();
+    	}else {
+    		return Locale.getDefault();
+    	}
     }
 }

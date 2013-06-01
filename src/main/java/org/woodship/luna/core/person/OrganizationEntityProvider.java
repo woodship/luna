@@ -9,6 +9,5 @@ public class OrganizationEntityProvider  extends TransactionalEntityProvider<Org
 	    public OrganizationEntityProvider() {
 	        super(Organization.class);
 	    }
-
 	    
 }

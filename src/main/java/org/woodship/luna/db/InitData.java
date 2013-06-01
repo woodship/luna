@@ -38,17 +38,23 @@ import org.woodship.luna.eam.ProductView;
 import org.woodship.luna.eam.enums.Classes;
 import org.woodship.luna.util.Utils;
 
+import ru.xpoft.vaadin.VaadinMessageSource;
+
 
 @Component
 public class InitData{
 
 	@PersistenceContext
 	private  EntityManager em;
-	
+
 	@Autowired
 	private ResourceService resSer;
+
+	@Autowired
+	private VaadinMessageSource messageSource;
+
 	private Person p1;
-	
+
 	private User userAdmin;
 	@Transactional
 	public void init(){
@@ -58,17 +64,17 @@ public class InitData{
 		cq.select(cb.count(cq.from(User.class)));
 		long size = em.createQuery(cq).getSingleResult();
 		if(size>0) return;
-		
+
 		//增加人员机构用户数据
 		createOrgAndPerson();
-		
+
 		//增加资源
 		createResource();
-		
+
 		//增加业务数据
 		createBusinessData();
 	}
-	
+
 
 	private void createBusinessData() {
 
@@ -79,20 +85,20 @@ public class InitData{
 		resSer.createCUDApp("客户维护", bus,CustomerView.NAME, CustomerView.class);
 		Resource resPro = resSer.createCUDApp("产品管理", bus,ProductView.NAME, ProductView.class);
 		resSer.createAction(ProductView.EXCEL_ACTION_KEY, "导出EXCEL", resPro);
-		
+
 		//型号
 		InvItem ia = new InvItem("WG7893",1000f,null);
 		em.persist(ia);
-//		for(int i = 1000; i<1200 ; i++){
-//			InvItem ib = new InvItem("XX"+i,1500f,null);
-//			em.persist(ib);
-//		}
+		for(int i = 1000; i<1200 ; i++){
+			InvItem ib = new InvItem("XX"+i,1500f,null);
+			em.persist(ib);
+		}
 		//客户
 		Customer ca = new Customer("CKY11", "开元物业", null);
 		Customer cb = new Customer("CTHYY", "天华制造", null);
 		em.persist(ca);
 		em.persist(cb);
-		
+
 		//产品
 		Product pro = new Product();
 		pro.setProduceDate(new Date());
@@ -108,39 +114,39 @@ public class InitData{
 	final static String[] groupsNames = { "甲班","乙班", "丙班" };
 	final static String[] officeNames = { "拉丝车间","镀锌车间", "绞线车间"};
 	final static String[] fnames = { "赵", "钱", "孙", "李",
-			"周","吴","郑","王","冯","陈","褚",
-			"卫","蒋","沈"};
+		"周","吴","郑","王","冯","陈","褚",
+		"卫","蒋","沈"};
 	final static String[] lnames = { "万全", "心社", "彭勇", "建国",
-			"定之", "洁敏", "正", "长赋", "焕成", "伏瞻",
-			"卫", "继伟", "振华", "益民", "名照" };
+		"定之", "洁敏", "正", "长赋", "焕成", "伏瞻",
+		"卫", "继伟", "振华", "益民", "名照" };
 	final static String cities[] = { "北京", "上海", "深圳",
-			"广州", "杭州", "南京", "沈阳", "成都", "哈尔滨",
-			"大连", "西安", "郑州", "洛阳" };
+		"广州", "杭州", "南京", "沈阳", "成都", "哈尔滨",
+		"大连", "西安", "郑州", "洛阳" };
 	final static String streets[] = { "4215 Blandit Av.", "452-8121 Sem Ave",
-			"279-4475 Tellus Road", "4062 Libero. Av.", "7081 Pede. Ave",
-			"6800 Aliquet St.", "P.O. Box 298, 9401 Mauris St.",
-			"161-7279 Augue Ave", "P.O. Box 496, 1390 Sagittis. Rd.",
-			"448-8295 Mi Avenue", "6419 Non Av.", "659-2538 Elementum Street",
-			"2205 Quis St.", "252-5213 Tincidunt St.",
-			"P.O. Box 175, 4049 Adipiscing Rd.", "3217 Nam Ave",
-			"P.O. Box 859, 7661 Auctor St.", "2873 Nonummy Av.",
-			"7342 Mi, Avenue", "539-3914 Dignissim. Rd.",
-			"539-3675 Magna Avenue", "Ap #357-5640 Pharetra Avenue",
-			"416-2983 Posuere Rd.", "141-1287 Adipiscing Avenue",
-			"Ap #781-3145 Gravida St.", "6897 Suscipit Rd.",
-			"8336 Purus Avenue", "2603 Bibendum. Av.", "2870 Vestibulum St.",
-			"Ap #722 Aenean Avenue", "446-968 Augue Ave",
-			"1141 Ultricies Street", "Ap #992-5769 Nunc Street",
-			"6690 Porttitor Avenue", "Ap #105-1700 Risus Street",
-			"P.O. Box 532, 3225 Lacus. Avenue", "736 Metus Street",
-			"414-1417 Fringilla Street", "Ap #183-928 Scelerisque Road",
-			"561-9262 Iaculis Avenue" };
+		"279-4475 Tellus Road", "4062 Libero. Av.", "7081 Pede. Ave",
+		"6800 Aliquet St.", "P.O. Box 298, 9401 Mauris St.",
+		"161-7279 Augue Ave", "P.O. Box 496, 1390 Sagittis. Rd.",
+		"448-8295 Mi Avenue", "6419 Non Av.", "659-2538 Elementum Street",
+		"2205 Quis St.", "252-5213 Tincidunt St.",
+		"P.O. Box 175, 4049 Adipiscing Rd.", "3217 Nam Ave",
+		"P.O. Box 859, 7661 Auctor St.", "2873 Nonummy Av.",
+		"7342 Mi, Avenue", "539-3914 Dignissim. Rd.",
+		"539-3675 Magna Avenue", "Ap #357-5640 Pharetra Avenue",
+		"416-2983 Posuere Rd.", "141-1287 Adipiscing Avenue",
+		"Ap #781-3145 Gravida St.", "6897 Suscipit Rd.",
+		"8336 Purus Avenue", "2603 Bibendum. Av.", "2870 Vestibulum St.",
+		"Ap #722 Aenean Avenue", "446-968 Augue Ave",
+		"1141 Ultricies Street", "Ap #992-5769 Nunc Street",
+		"6690 Porttitor Avenue", "Ap #105-1700 Risus Street",
+		"P.O. Box 532, 3225 Lacus. Avenue", "736 Metus Street",
+		"414-1417 Fringilla Street", "Ap #183-928 Scelerisque Road",
+	"561-9262 Iaculis Avenue" };
 
 	public  void createOrgAndPerson() {
-		
+
 		Random r = new Random(0);
 		Organization orgRoot = new Organization();
-		orgRoot.setName("恒星集团");
+		orgRoot.setName(messageSource.getMessage("luna.company.name", "WoodShip"));
 		orgRoot.setOrgType(OrgType.单位);
 		em.persist(orgRoot);
 		for (String o : officeNames) {
@@ -154,7 +160,7 @@ public class InitData{
 				group.setOrgType(OrgType.班组);
 				em.persist(group);
 				Set<Person> gPersons = new HashSet<Person>();
-				
+
 				int amount = r.nextInt(15) + 1;
 				for (int i = 0; i < amount; i++) {
 					Person p = new Person();
@@ -171,7 +177,7 @@ public class InitData{
 					p.setOrg(group);
 					gPersons.add(p);
 					em.persist(p);
-					
+
 				}
 				//用于普通用户
 				if(p1 == null){
@@ -181,8 +187,8 @@ public class InitData{
 					p1.setOrg(group);
 					em.persist(p1);
 				}
-			   
-					
+
+
 				group.setParent(geoGroup);
 				group.setPersons(gPersons);
 				em.persist(group);
@@ -191,46 +197,46 @@ public class InitData{
 		}
 
 	}
-	
-	
+
+
 
 	private void createResource(){
 		Resource home = new Resource(HomeView.KEY,"主页", ResourceType.APPLICATION, null,  HomeView.NAME, HomeView.class);
 		em.persist(home);
-		
+
 		//增加系统管理模块
 		Resource sys = new Resource("SYSTEM_MODULE", "系统管理", ResourceType.MODULE);
 		em.persist(sys);
 		resSer.createApp("应用管理",  sys, ApplicationView.NAME, ApplicationView.class);
 		resSer.createCUDApp("用户管理",  sys, UserView.NAME, UserView.class);
 		resSer.createCUDApp("角色管理",  sys, RoleView.NAME, RoleView.class);
-		
+
 		//增加基础应用模块
 		Resource base = new Resource("BASE_MODULE", "基础应用", ResourceType.MODULE);
 		em.persist(base);
 		resSer.createCUDApp("机构管理", base,OrganizationView.NAME, OrganizationView.class);
 		Resource resPerson = resSer.createCUDApp("人员管理", base,PersonView.NAME, PersonView.class);
-		
-		
+
+
 		//增加管理员
 		//增加管理员
 		String pw =  User.DEFAULT_PASSWORD;
 		userAdmin = new User(User.SUPER_ADMIN_USERNAME,pw,"管理员");
 		userAdmin.setSysUser(true);
 		em.persist(userAdmin);
-		
+
 		//增加一个普通用户
 		User u1 = new User();
 		u1.setPassword(pw);
 		u1.setPerson(p1);
 		em.persist(u1);
-		
+
 		Role radmin = new Role(Role.SUPER_ADMIN_ROLE_NAME);
 		radmin.setSysRole(true);
 		radmin.addUser(userAdmin);
 		radmin.setDataScore(RoleDataScope.全部数据);
 		em.persist(radmin);
-		
+
 		Resource padd = resSer.getResByKey(Utils.getAddActionId(PersonView.class));
 		Role ruser = new Role("部门管理员");
 		ruser.setDataScore(RoleDataScope.本部门);
@@ -240,12 +246,12 @@ public class InitData{
 		ruser.addResource(padd);
 		ruser.addUser(u1);
 		em.persist(ruser);
-		
+
 		//增加一个无任何权限的用户
 		User uno = new User("no", pw, "无权限");
 		em.persist(uno);
 	}
-	
+
 
 
 }

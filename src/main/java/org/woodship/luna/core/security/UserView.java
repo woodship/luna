@@ -3,13 +3,11 @@ package org.woodship.luna.core.security;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.vaadin.dialogs.ConfirmDialog;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.EntityItem;
-import com.vaadin.addon.jpacontainer.EntityProvider;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Property;
@@ -27,8 +25,8 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.RowHeaderMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -39,14 +37,6 @@ import com.vaadin.ui.VerticalLayout;
 @Scope("prototype")
 public class UserView extends VerticalLayout implements ComponentContainer, View{
 	public static final String NAME = "user";
-
-	@Autowired
-	@Qualifier("roleEntityProvider")
-	EntityProvider<Role> roleProvider;
-	
-	@Autowired()
-	@Qualifier("userEntityProvider")
-	EntityProvider<User> mainProvider;
 	
 	@Autowired()
 	UserService us;
@@ -62,14 +52,14 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
     private Button setRolsesButton;
     private Button changePwButton;
     
-    private JPAContainer<User> mainContainer = new JPAContainer<User>(User.class);
-    private JPAContainer<Role> roleContainer = new JPAContainer<Role>(Role.class);
+    private JPAContainer<User> mainContainer ;
+    private JPAContainer<Role> roleContainer ;
     private String textFilter;
 
     @PostConstruct
 	public void PostConstruct(){
-        mainContainer.setEntityProvider(mainProvider);
-        roleContainer.setEntityProvider(roleProvider);
+        mainContainer= Utils.getJPAContainer(User.class);
+        roleContainer=Utils.getJPAContainer(Role.class);
         
         buildMainArea();
 

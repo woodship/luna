@@ -1,6 +1,8 @@
 package org.woodship.luna.core.security;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -63,9 +65,6 @@ public class Resource extends HierarchialEntity<Resource>{
 	@Caption("访问路径")
 	private String path;
 
-	@Caption("上级")
-	@ManyToOne
-	private Resource parent;
 	
 	@Caption("视图类")
 	private Class<? extends View> viewClass;
@@ -82,21 +81,16 @@ public class Resource extends HierarchialEntity<Resource>{
 	@Caption("资源KEY")
 	private String resKey;
 
-//	@Caption("叶子节点")
-	private boolean leaf = true;;
 	@ManyToMany(fetch=FetchType.EAGER ,mappedBy="resource")
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE )
 	private Set<Role> roles = new LinkedHashSet<Role>();
 	
+    @ManyToOne
+    private Resource parent;
+    
+	 @ManyToMany
+	 private List<Resource> ancestors = new ArrayList<Resource>();
 	
-	
-	public boolean isLeaf() {
-		return leaf;
-	}
-
-	public void setLeaf(boolean leaf) {
-		this.leaf = leaf;
-	}
 
 	public Set<Role> getRoles() {
 		return roles;
@@ -175,16 +169,6 @@ public class Resource extends HierarchialEntity<Resource>{
 		this.resType = resType;
 	}
 
-	public Resource getParent() {
-		return parent;
-	}
-
-	public void setParent(Resource parent) {
-		if(parent != null){
-			parent.setLeaf(false);
-		}
-		this.parent = parent;
-	}
 
 	public void setIcon(String icon) {
 		this.icon = icon;
@@ -205,6 +189,29 @@ public class Resource extends HierarchialEntity<Resource>{
 
 	public void setResKey(String resKey) {
 		this.resKey = resKey;
+	}
+
+	@Override
+	public Resource getParent() {
+		return parent;
+	}
+
+	@Override
+	public void setParent(Resource parent) {
+		this.parent = parent;
+		if(parent != null){
+			parent.setLeaf(true);
+		}
+	}
+
+	@Override
+	public List<Resource> getAncestors() {
+		return ancestors;
+	}
+
+	@Override
+	public void setAncestors(List<Resource> ancestors) {
+		this.ancestors = ancestors;
 	}
 
 	

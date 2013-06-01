@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.vaadin.dialogs.ConfirmDialog;
 import org.woodship.luna.core.person.Organization;
-import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.EntityItem;
@@ -52,15 +51,6 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	public static final String NAME = "product";
 	public static final String EXCEL_ACTION_KEY ="ProductView:EXCEL";
-	@Autowired
-	ContainerUtils conu;
-	
-	@Autowired()
-	@Qualifier("productEntityProvider")
-	EntityProvider<Product> mainProvider;
-	
-	@PersistenceContext
-	private  EntityManager entityManager;
 	
     private Tree groupTree;
 
@@ -81,11 +71,9 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
 
     @PostConstruct
 	public void PostConstruct(){
-        treeContainer = conu.createJPAHierarchialContainer(Organization.class);
-        tableContainer = new JPAContainer<Product>(Product.class);
-        tableContainer.setEntityProvider(mainProvider);
+        treeContainer = Utils.getHierarchialJPAContainer(Organization.class);
+        tableContainer =Utils.getJPAContainer(Product.class);
         
-        tableContainer.getEntityProvider();
         buildTree();
         buildMainArea();
 
@@ -101,16 +89,7 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
         setSecondComponent(verticalLayout);
 
         
-        mainTable = new Table(null, tableContainer){
-			@Override
-			protected String formatPropertyValue(Object rowId, Object colId, Property<?> property) {
-				if(Product_.produceDate.getName().equals(colId) && property != null && property.getValue() != null){
-					Date date = (Date) property.getValue();
-					return sdf.format(date);
-				}
-				return super.formatPropertyValue(rowId, colId, property);
-			}
-        };
+        mainTable = new Table(null, tableContainer);
         mainTable.setSelectable(true);
         mainTable.setImmediate(true);
         mainTable.setRowHeaderMode(RowHeaderMode.INDEX);

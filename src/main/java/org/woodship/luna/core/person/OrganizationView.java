@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.vaadin.dialogs.ConfirmDialog;
-import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.EntityProvider;
 import com.vaadin.addon.jpacontainer.JPAContainer;
+import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.filter.Compare.Equal;
@@ -45,13 +45,6 @@ import com.vaadin.ui.VerticalLayout;
 @Scope("prototype")
 public class OrganizationView extends HorizontalSplitPanel implements ComponentContainer, View{
 	public static final String NAME = "organization";
-
-	@Autowired
-	ContainerUtils conu;
-	
-	@Autowired()
-	@Qualifier("organizationEntityProvider")
-	EntityProvider<Organization> organizationProvider;
 	
 	@PersistenceContext
 	private  EntityManager entityManager;
@@ -74,11 +67,9 @@ public class OrganizationView extends HorizontalSplitPanel implements ComponentC
 
     @PostConstruct
 	public void PostConstruct(){
-        treeContainer = conu.createJPAHierarchialContainer(Organization.class);
-        tableContainer = new JPAContainer<Organization>(Organization.class);
-        tableContainer.setEntityProvider(organizationProvider);
+        tableContainer = Utils.getJPAContainer(Organization.class);
+        treeContainer = Utils.getHierarchialJPAContainer(Organization.class);
         
-        tableContainer.getEntityProvider();
         buildTree();
         buildMainArea();
 
@@ -92,7 +83,6 @@ public class OrganizationView extends HorizontalSplitPanel implements ComponentC
     	//右侧
         VerticalLayout verticalLayout = new VerticalLayout();
         setSecondComponent(verticalLayout);
-
         
         mainTable = new Table(null, tableContainer);
         mainTable.setSelectable(true);
@@ -133,7 +123,8 @@ public class OrganizationView extends HorizontalSplitPanel implements ComponentC
                 final EntityItem<Organization> newOrganizationItem = tableContainer.createEntityItem(new Organization());
                 if(treeFilter != null)
                 	newOrganizationItem.getEntity().setParent(treeFilter);
-                OrganizationEditor organizationEditor = new OrganizationEditor(newOrganizationItem,tableContainer);
+                OrganizationEditor organizationEditor = new OrganizationEditor((JPAContainerItem<Organization>) newOrganizationItem,
+                		tableContainer);
                 organizationEditor.center();
                 UI.getCurrent().addWindow(organizationEditor);
             }
@@ -158,10 +149,12 @@ public class OrganizationView extends HorizontalSplitPanel implements ComponentC
 
         editButton = new Button("编辑");
         editButton.addClickListener(new Button.ClickListener() {
-
-            @Override
+            @SuppressWarnings("unchecked")
+			@Override
             public void buttonClick(ClickEvent event) {
-            	OrganizationEditor pe = new OrganizationEditor(mainTable.getItem(mainTable.getValue()),tableContainer);
+            	OrganizationEditor pe = new OrganizationEditor(
+            			(JPAContainerItem<Organization>) mainTable.getItem(mainTable.getValue()),
+            			tableContainer);
             	pe.center();
                 UI.getCurrent().addWindow(pe);
             }

@@ -43,17 +43,10 @@ public class EntityFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private <T extends Field, E > T  createEntityField(Class<E> dataType, Class<T> fieldType) {
 		ComboBox cb = new ComboBox();
-		String beanName = dataType.getSimpleName()+"EntityProvider";
-		Map<String,EntityProvider> beans = SpringApplicationContext.getApplicationContext().getBeansOfType(EntityProvider.class);
-		for(Entry<String, EntityProvider> en : beans.entrySet()) {
-			if(beanName.equalsIgnoreCase(en.getKey())){
-				JPAContainer container = new JPAContainer<E>(dataType);
-				container.setEntityProvider(en.getValue());
-				cb.setContainerDataSource(container);
-				cb.setItemCaptionMode(ItemCaptionMode.ITEM);
-				cb.setConverter(new SingleSelectConverter<Object>(cb));
-			}
-		}
+		JPAContainer<E> container = Utils.getJPAContainer(dataType);
+		cb.setContainerDataSource(container);
+		cb.setItemCaptionMode(ItemCaptionMode.ITEM);
+		cb.setConverter(new SingleSelectConverter<Object>(cb));
 		return (T) cb;
 	}
 

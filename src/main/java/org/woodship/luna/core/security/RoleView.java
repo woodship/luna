@@ -1,14 +1,11 @@
 package org.woodship.luna.core.security;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.vaadin.dialogs.ConfirmDialog;
-import org.woodship.luna.db.ContainerUtils;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.EntityItem;
@@ -39,13 +36,7 @@ import com.vaadin.ui.VerticalLayout;
 @Scope("prototype")
 public class RoleView extends VerticalLayout implements ComponentContainer, View{
 	public static final String NAME = "role";
-
-	@Autowired
-	ContainerUtils conu;
 	
-	@Autowired()
-	@Qualifier("roleEntityProvider")
-	EntityProvider<Role> mainProvider;
 
     private Table mainTable;
 
@@ -58,17 +49,18 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
     private Button setUsersButton;
     
     private JPAContainer<Role> mainContainer;
+    private JPAContainer<Resource> resContainer;
+    private JPAContainer<User> userContainer;
 
     private String textFilter;
 
     @PostConstruct
 	public void PostConstruct(){
-        mainContainer = new JPAContainer<Role>(Role.class);
-        mainContainer.setEntityProvider(mainProvider);
+        mainContainer = Utils.getJPAContainer(Role.class);
+        resContainer =Utils.getJPAContainer(Resource.class);
+        userContainer = Utils.getJPAContainer(User.class);
         
-        mainContainer.getEntityProvider();
         buildMainArea();
-
     }
 
     private void buildMainArea() {
@@ -166,7 +158,7 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
             @Override
             public void buttonClick(ClickEvent event) {
             	RoleResEditor pe = new RoleResEditor(mainTable.getItem(mainTable.getValue())
-            			                     ,mainContainer,      conu.createJPAHierarchialContainer(Resource.class));
+            			                     ,mainContainer,      resContainer);
             	pe.center();
                 UI.getCurrent().addWindow(pe);
             }
@@ -179,7 +171,7 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
             @Override
             public void buttonClick(ClickEvent event) {
             	RoleUserEditor pe = new RoleUserEditor(mainTable.getItem(mainTable.getValue())
-            			                     ,mainContainer,      conu.createJPAContainer(User.class));
+            			                     ,mainContainer,     userContainer);
             	pe.center();
                 UI.getCurrent().addWindow(pe);
             }
