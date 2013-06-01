@@ -30,6 +30,11 @@ public class User extends IdEntity<User>{
 		//this.password = ps.encryptPassword(DEFAULT_PASSWORD);
 	}
 
+	/**
+	 * @param username
+	 * @param password 明码，会自动转换成密码
+	 * @param showName
+	 */
 	public User(String username, String password,  String showName ) {
 		this.username = username;
 		setPassword(password);

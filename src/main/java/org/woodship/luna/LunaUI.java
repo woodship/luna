@@ -63,6 +63,7 @@ import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.NativeButton;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
@@ -284,7 +285,11 @@ public class LunaUI extends UI {
 						&& getItem(itemId).getEntity().getResType().equals(ResourceType.MODULE);
 			}
 		};
-
+		//没有任何资源权限
+		if(con.size() ==0){
+			Notification.show("未给您的帐户分配任何功能，不能继续访问。", Type.ERROR_MESSAGE);
+			return;
+		}
 		
 		//添加各视图到nav中
 		nav = new DiscoveryNavigator(this, content);
