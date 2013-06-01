@@ -15,9 +15,9 @@
 	<!-- Shiro Filter -->
 	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
 		<property name="securityManager" ref="securityManager" />
-		<property name="loginUrl" value="/login2" />
-		<property name="successUrl" value="/account/user/" />
-		<property name="unauthorizedUrl" value="/login?unauthorized=true" />
+		<property name="loginUrl" value="/" />
+		<property name="successUrl" value="/" />
+		<property name="unauthorizedUrl" value="/" />
 		<property name="filterChainDefinitions">
 			<value>
 				/ = anon

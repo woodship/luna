@@ -36,7 +36,7 @@ public class Role extends IdEntity<Role>{
 	
 	@Caption("数据范围")
 	@NotNull
-	private RoleDataScore dataScore;
+	private RoleDataScope dataScore;
 	
 	@Caption("内置角色")
 	private boolean sysRole;
@@ -128,11 +128,11 @@ public class Role extends IdEntity<Role>{
 		
 	}
 
-	public RoleDataScore getDataScore() {
+	public RoleDataScope getDataScore() {
 		return dataScore;
 	}
 
-	public void setDataScore(RoleDataScore dataScore) {
+	public void setDataScore(RoleDataScope dataScore) {
 		this.dataScore = dataScore;
 	}
 

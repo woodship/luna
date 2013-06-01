@@ -25,7 +25,7 @@ import org.woodship.luna.core.security.Resource;
 import org.woodship.luna.core.security.ResourceService;
 import org.woodship.luna.core.security.ResourceType;
 import org.woodship.luna.core.security.Role;
-import org.woodship.luna.core.security.RoleDataScore;
+import org.woodship.luna.core.security.RoleDataScope;
 import org.woodship.luna.core.security.RoleView;
 import org.woodship.luna.core.security.User;
 import org.woodship.luna.core.security.UserView;
@@ -84,10 +84,10 @@ public class InitData{
 		//型号
 		InvItem ia = new InvItem("WG7893",1000f,null);
 		em.persist(ia);
-		for(int i = 1000; i<1200 ; i++){
-			InvItem ib = new InvItem("XX"+i,1500f,null);
-			em.persist(ib);
-		}
+//		for(int i = 1000; i<1200 ; i++){
+//			InvItem ib = new InvItem("XX"+i,1500f,null);
+//			em.persist(ib);
+//		}
 		//客户
 		Customer ca = new Customer("CKY11", "开元物业", null);
 		Customer cb = new Customer("CTHYY", "天华制造", null);
@@ -226,12 +226,12 @@ public class InitData{
 		Role radmin = new Role(Role.SUPER_ADMIN_ROLE_NAME);
 		radmin.setSysRole(true);
 		radmin.addUser(userAdmin);
-		radmin.setDataScore(RoleDataScore.全部数据);
+		radmin.setDataScore(RoleDataScope.全部数据);
 		em.persist(radmin);
 		
 		Resource padd = resSer.getResByKey(Utils.getAddActionId(PersonView.class));
 		Role ruser = new Role("部门管理员");
-		ruser.setDataScore(RoleDataScore.本部门);
+		ruser.setDataScore(RoleDataScope.本部门);
 		ruser.addResource(home);
 		ruser.addResource(resPerson);
 		ruser.addResource(base);

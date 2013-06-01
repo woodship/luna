@@ -100,8 +100,7 @@ public class LunaUI extends UI {
 	@Override
 	protected void init(VaadinRequest request) {
 		Page.getCurrent().setTitle(messageSource.getMessage("luna.app.name", "Luna"));
-		//TODO setConverterFactory 老崔
-		//getSession().setConverterFactory(new MyConverterFactory());
+//		getSession().setConverterFactory(new LunaConverterFactory());
 		getSession().setErrorHandler(new LunaErrorHandler());
 		
 		helpManager = new HelpManager(this);
@@ -379,8 +378,8 @@ public class LunaUI extends UI {
 								exit.addClickListener(new ClickListener() {
 									@Override
 									public void buttonClick(ClickEvent event) {
-										buildLoginView(true);
-//										SecurityUtils.getSubject().logout();
+										SecurityUtils.getSubject().logout();
+										getPage().setLocation("/");
 									}
 								});
 							}
