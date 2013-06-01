@@ -10,7 +10,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Item;
-import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
+import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.validator.BeanValidator;
 import com.vaadin.ui.Field;

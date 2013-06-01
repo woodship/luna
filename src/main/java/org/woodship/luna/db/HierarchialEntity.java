@@ -6,8 +6,6 @@ import java.util.List;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
@@ -15,7 +13,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @SuppressWarnings("serial")
 @MappedSuperclass
-public abstract class HierarchialEntity<E> implements Serializable {
+public abstract class HierarchialEntity<E extends HierarchialEntity<E>> implements Serializable {
 
 	@Id
 	@GeneratedValue(generator = "system-uuid")
@@ -26,7 +24,7 @@ public abstract class HierarchialEntity<E> implements Serializable {
 	protected Integer version;
 
 	protected boolean leaf = true;
-
+	
 	protected int treeLevel;
 
 	public String getId() {
@@ -45,9 +43,6 @@ public abstract class HierarchialEntity<E> implements Serializable {
 		this.version = version;
 	}
 
-	public abstract E getParent();
-
-	public abstract void setParent(E parent);
 
 	public boolean isLeaf() {
 		return leaf;
@@ -57,10 +52,6 @@ public abstract class HierarchialEntity<E> implements Serializable {
 		this.leaf = leaf;
 	}
 
-	public abstract List<E> getAncestors();
-
-	public abstract void setAncestors(List<E> ancestors);
-
 	public int getTreeLevel() {
 		return treeLevel;
 	}
@@ -69,4 +60,32 @@ public abstract class HierarchialEntity<E> implements Serializable {
 		this.treeLevel = treeLevel;
 	}
 
+	public abstract List<E> getAncestors() ;
+
+	public abstract void setAncestors(List<E> ancestors);
+
+	public abstract  E getParent();
+
+	/**
+	 * 设置父级的同时，设置祖先，子类最好不要覆盖该方法
+	 * @param parent
+	 */
+	public  void setParent(E parent) {
+		if(this.getAncestors() == null){
+			return;
+		}
+		this.getAncestors().clear();
+		this.getAncestors().add((E) this);
+		if(parent == null){
+			return;
+		}
+		E p = parent;
+		p.setLeaf(false);
+		//增加祖先
+		while(p != null){
+			getAncestors().add((E) p);
+			p =p.getParent();
+		}
+	}
+	
 }

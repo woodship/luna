@@ -145,17 +145,16 @@ public class InitData{
 	public  void createOrgAndPerson() {
 
 		Random r = new Random(0);
-		Organization orgRoot = new Organization();
+		Organization orgRoot = new Organization(null);
 		orgRoot.setName(messageSource.getMessage("luna.company.name", "WoodShip"));
 		orgRoot.setOrgType(OrgType.单位);
 		em.persist(orgRoot);
 		for (String o : officeNames) {
-			Organization geoGroup = new Organization();
+			Organization geoGroup = new Organization(orgRoot);
 			geoGroup.setName(o);
-			geoGroup.setParent(orgRoot);
 			geoGroup.setOrgType(OrgType.顶级部门);
 			for (String g : groupsNames) {
-				Organization group = new Organization();
+				Organization group = new Organization(geoGroup);
 				group.setName(g);
 				group.setOrgType(OrgType.班组);
 				em.persist(group);
@@ -189,7 +188,6 @@ public class InitData{
 				}
 
 
-				group.setParent(geoGroup);
 				group.setPersons(gPersons);
 				em.persist(group);
 			}

@@ -31,10 +31,9 @@ import com.vaadin.navigator.View;
 public class Resource extends HierarchialEntity<Resource>{
 
 	private static final long serialVersionUID = 1L;
-
 	public Resource() {
 	}
-
+	
 	public Resource(String resKey, String name,  ResourceType resType) {
 		this.resKey = resKey;
 		this.name = name;
@@ -42,18 +41,18 @@ public class Resource extends HierarchialEntity<Resource>{
 	}
 	
 	public Resource(String resKey,String name, ResourceType resType, Resource parent) {
+		setParent(parent);
 		this.resKey = resKey;
 		this.name = name;
 		this.resType = resType;
-		this.setParent(parent);
 	}
 	
 	public Resource(String resKey,String name, ResourceType resType, Resource parent, String path, Class<? extends View> viewClass) {
+		setParent(parent);
 		this.resKey = resKey;
 		this.name = name;
 		this.path = path;
 		this.resType = resType;
-		this.setParent(parent);
 		this.viewClass = viewClass;
 	}
 
@@ -199,9 +198,7 @@ public class Resource extends HierarchialEntity<Resource>{
 	@Override
 	public void setParent(Resource parent) {
 		this.parent = parent;
-		if(parent != null){
-			parent.setLeaf(true);
-		}
+		super.setParent(parent);
 	}
 
 	@Override

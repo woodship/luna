@@ -111,8 +111,7 @@ public class OrganizationView extends HorizontalSplitPanel implements ComponentC
                 }
             }
         });
-
-        Utils.setTableDefaultHead(mainTable, Organization.class);
+       // Utils.setTableDefaultHead(mainTable, Organization.class);
         
 
         HorizontalLayout toolbar = new HorizontalLayout();
@@ -120,9 +119,7 @@ public class OrganizationView extends HorizontalSplitPanel implements ComponentC
         newButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                final EntityItem<Organization> newOrganizationItem = tableContainer.createEntityItem(new Organization());
-                if(treeFilter != null)
-                	newOrganizationItem.getEntity().setParent(treeFilter);
+                final EntityItem<Organization> newOrganizationItem = tableContainer.createEntityItem(new Organization(treeFilter));
                 OrganizationEditor organizationEditor = new OrganizationEditor((JPAContainerItem<Organization>) newOrganizationItem,
                 		tableContainer);
                 organizationEditor.center();

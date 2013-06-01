@@ -73,6 +73,7 @@ public class OrganizationEditor extends Window  {
 //					error.setVisible(false);
 					OrganizationEditor.this.close();//关闭，防止再点击，重复增加
 				} catch (FieldGroup.CommitException e) {
+					e.printStackTrace();
 					for (Field<?> field: fg.getFields()) {
 						ErrorMessage errMsg = ((AbstractField<?>)field).getErrorMessage();
 						if (errMsg != null) {

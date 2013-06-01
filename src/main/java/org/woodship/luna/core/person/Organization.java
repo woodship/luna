@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -34,6 +35,12 @@ import com.vaadin.data.fieldgroup.Caption;
 @SuppressWarnings("serial")
 @Entity
 public class Organization  extends HierarchialEntity<Organization>{
+	public Organization() {
+	}
+	
+	public Organization(Organization parent) {
+		this.setParent(parent);
+	}
 
 	@Caption("机构名称")
 	@NotEmpty
@@ -50,8 +57,8 @@ public class Organization  extends HierarchialEntity<Organization>{
     @ManyToOne
     private Organization parent;
     
-	 @ManyToMany
-	 private List<Organization> ancestors = new ArrayList<Organization>();
+	 @ManyToMany(fetch=FetchType.EAGER)
+	private List<Organization> ancestors = new ArrayList<Organization>();
     
     public String getName() {
         return name;
@@ -79,7 +86,7 @@ public class Organization  extends HierarchialEntity<Organization>{
 
     @Override
     public String toString() {
-        return getHierarchicalName();
+        return name;
     }
 
 
@@ -93,15 +100,13 @@ public class Organization  extends HierarchialEntity<Organization>{
 
 	@Override
 	public Organization getParent() {
-		return this.parent;
+		return parent;
 	}
 
 	@Override
 	public void setParent(Organization parent) {
 		this.parent = parent;
-		if(parent != null){
-			parent.setLeaf(false);
-		}
+		super.setParent(parent);
 	}
 
 	@Override
@@ -113,5 +118,7 @@ public class Organization  extends HierarchialEntity<Organization>{
 	public void setAncestors(List<Organization> ancestors) {
 		this.ancestors = ancestors;
 	}
+
+	
 
 }
