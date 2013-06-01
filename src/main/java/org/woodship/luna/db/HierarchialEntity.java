@@ -86,6 +86,9 @@ public abstract class HierarchialEntity<E extends HierarchialEntity<E>> implemen
 		E p = parent;
 		//增加祖先
 		while(p != null){
+			if(p.equals(this)){
+				throw new LunaException("上级不能选择自已的下级！");
+			}
 			getAncestors().add((E) p);
 			p =p.getParent();
 		}
