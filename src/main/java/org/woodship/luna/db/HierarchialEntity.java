@@ -1,7 +1,6 @@
 package org.woodship.luna.db;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.GeneratedValue;
@@ -68,7 +67,11 @@ public abstract class HierarchialEntity<E extends HierarchialEntity<E>> implemen
 	public abstract  E getParent();
 
 	/**
-	 * 设置父级的同时，设置祖先，子类最好不要覆盖该方法
+	 * 设置父级的同时，设置祖先，子类setParent方法需要这样实现：<p>
+	 * 	public void setParent(Organization parent) {<br>
+	 * 		this.parent = parent;<br>
+	 * 		super.setParent(parent);<br>
+	 * 	}
 	 * @param parent
 	 */
 	public  void setParent(E parent) {

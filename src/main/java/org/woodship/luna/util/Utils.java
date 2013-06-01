@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import javax.persistence.Entity;
 
 import org.woodship.luna.db.HierarchialEntity;
+import org.woodship.luna.db.TransactionalEntityProvider;
 
 import ru.xpoft.vaadin.SpringApplicationContext;
 
@@ -125,7 +126,7 @@ public class Utils {
 		return container;
 	}
 
-	
+
 	/**
 	 * 为指定实体生成支持树的JPAContaine
 	 * @param entityClass
@@ -148,7 +149,7 @@ public class Utils {
 						&& !getItem(itemId).getEntity().isLeaf();
 			}
 		}
-		
+
 		JPAContainer<T> container= new HJPAContainer<T>(entityClass, ep);
 		container.setEntityProvider(ep);
 		return container;
@@ -156,12 +157,13 @@ public class Utils {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static  <T> EntityProvider<T> getEntityProvider(Class<T> entityClass){
-		String beanName = entityClass.getSimpleName()+"EntityProvider";
-		Map<String, EntityProvider> beans = SpringApplicationContext.getApplicationContext().getBeansOfType(EntityProvider.class);
+		Map<String, TransactionalEntityProvider> beans = SpringApplicationContext.getApplicationContext().getBeansOfType(TransactionalEntityProvider.class);
 		EntityProvider<T> ep = null;
-		for(Entry<String, EntityProvider> en : beans.entrySet()) {
-			if(beanName.equalsIgnoreCase(en.getKey())){
-				ep = en.getValue();
+		for(Entry<String, TransactionalEntityProvider> en : beans.entrySet()) {
+			TransactionalEntityProvider tep = en.getValue();
+			if(entityClass.equals(tep.getEntityClass())){
+				ep = tep; 
+				break;
 			}
 		}
 		if(ep == null){

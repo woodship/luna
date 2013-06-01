@@ -71,4 +71,9 @@ public abstract class TransactionalEntityProvider<T> extends MutableLocalEntityP
     	container.setEntityProvider(this);
     	return container;
     }
+
+	public Class<T> getEntityClass() {
+		return entityClass;
+	}
+    
 }
