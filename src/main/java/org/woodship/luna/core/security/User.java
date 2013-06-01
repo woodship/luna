@@ -26,12 +26,13 @@ public class User extends IdEntity<User>{
 	public static final String SUPER_ADMIN_USERNAME = "admin";
 	public static final String DEFAULT_PASSWORD = "111";
 	public User(){
-		this.password = ps.encryptPassword(DEFAULT_PASSWORD);
+		//不能在构造函数中增加过多的东西，不然会使整个应用缓慢
+		//this.password = ps.encryptPassword(DEFAULT_PASSWORD);
 	}
 
-	public User(String username, String showName ) {
+	public User(String username, String password,  String showName ) {
 		this.username = username;
-		this.password = ps.encryptPassword(DEFAULT_PASSWORD);;
+		setPassword(password);
 		this.showName = showName;
 	}
 
@@ -74,8 +75,12 @@ public class User extends IdEntity<User>{
 		return password;
 	}
 
+	/**
+	 * 明码会被自动转换成密码
+	 * @param password 明码
+	 */
 	public void setPassword(String password) {
-		this.password = password;
+		this.password = ps.encryptPassword(password);
 	}
 
 

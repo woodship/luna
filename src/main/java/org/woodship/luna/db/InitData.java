@@ -47,7 +47,6 @@ public class InitData{
 	
 	@Autowired
 	private ResourceService resSer;
-	
 	private Person p1;
 	
 	private User userAdmin;
@@ -214,12 +213,15 @@ public class InitData{
 		
 		
 		//增加管理员
-		userAdmin = new User(User.SUPER_ADMIN_USERNAME,"管理员");
+		//增加管理员
+		String pw =  User.DEFAULT_PASSWORD;
+		userAdmin = new User(User.SUPER_ADMIN_USERNAME,pw,"管理员");
 		userAdmin.setSysUser(true);
 		em.persist(userAdmin);
 		
 		//增加一个普通用户
 		User u1 = new User();
+		u1.setPassword(pw);
 		u1.setPerson(p1);
 		em.persist(u1);
 		
@@ -238,6 +240,10 @@ public class InitData{
 		ruser.addResource(padd);
 		ruser.addUser(u1);
 		em.persist(ruser);
+		
+		//增加一个无任何权限的用户
+		User uno = new User("no", pw, "无权限");
+		em.persist(uno);
 	}
 	
 

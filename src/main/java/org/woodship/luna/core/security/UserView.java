@@ -127,6 +127,8 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
             @Override
             public void buttonClick(ClickEvent event) {
                 final EntityItem<User> newUserItem = mainContainer.createEntityItem(new User());
+                User u = newUserItem.getEntity();
+                u.setPassword(User.DEFAULT_PASSWORD);
                 UserEditor personEditor = new UserEditor(newUserItem,mainContainer);
                 personEditor.center();
                 UI.getCurrent().addWindow(personEditor);
