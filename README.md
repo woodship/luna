@@ -5,11 +5,11 @@
 
 <b>初步需求暂定：</b>
 
-1.人员管理
+1.人员管理<red>(已完成)</red>
 
-2.机构管理
+2.机构管理<red>(已完成)</red>
 
-3.权限管理
+3.权限管理<red>(已完成)</red>
 
 4.工作流集成，如activiti
 
@@ -25,7 +25,7 @@ vaadin + spring + shiro + hibernate + h2 +osgi
 
 <b>参与开发方法：</b>
 
-1.注册github帐号并登录。
+1.注册github帐号并登录
 
 2.点击本页右上角的fork，创建一个分支到自己的帐户下
 
@@ -35,4 +35,4 @@ vaadin + spring + shiro + hibernate + h2 +osgi
 
 5.管理员审核通过后会合并到源代码中
 
-6.如何保持自己的fork与原始库的同步：再建立一个指向原始库的remote,fetch,merge.
+6.如何保持自己的fork与原始库的同步：再建立一个指向原始库的remote,然后fetch,merge

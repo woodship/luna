@@ -46,7 +46,7 @@ public class ProductEditor extends Window  {
 	public ProductEditor(final Item item,  final JPAContainer<Product> persons) {
 		this.setCaption("产品编辑/增加");
 		this.setWidth(600, Unit.PIXELS);
-		this.setHeight(400,Unit.PIXELS);
+		this.setHeight(500,Unit.PIXELS);
 		this.products = persons;
 		this.jpaitem = (JPAContainerItem<Product>) item;
 		final GridLayout formLayout = new GridLayout(3,7);

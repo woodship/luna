@@ -33,31 +33,36 @@ public class Product extends IdEntity<Product>{
 	@Caption("班次")
 	@NotNull
 	private Classes classes;
+	 
+	@Caption("车间")
+    @NotNull
+    @ManyToOne
+    private Organization org;
 	
 	@Caption("操作员")
 	@ManyToOne
 	@NotNull
 	private Person person;
 	
-	@Caption("得分")
-	@Max(10)
-	@Min(0)
-	private Integer score;
-	
 	@Caption("操作员2")
 	@ManyToOne
 	private Person person2;
-	
-	@Caption("得分")
-	@Max(10)
-	@Min(0)
-	private Integer score2;
 	
 	@Caption("操作员3")
 	@ManyToOne
 	private Person person3;
 	
 	@Caption("得分")
+	@Max(10)
+	@Min(0)
+	private Integer score;
+	
+	@Caption("得分2")
+	@Max(10)
+	@Min(0)
+	private Integer score2;
+	
+	@Caption("得分3")
 	@Max(10)
 	@Min(0)
 	private Integer score3;
@@ -107,11 +112,7 @@ public class Product extends IdEntity<Product>{
 	@Caption("交米长")
 	@ManyToOne
 	private Person jiaoMiZhan;
-    
-	@Caption("车间")
-    @NotNull
-    @ManyToOne
-    private Organization org;
+   
 
     private java.util.Date createDate = new java.util.Date();
     
