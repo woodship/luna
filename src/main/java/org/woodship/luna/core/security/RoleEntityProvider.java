@@ -1,6 +1,14 @@
 package org.woodship.luna.core.security;
 
+import java.util.List;
 import java.util.Set;
+
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
 
 import org.apache.shiro.realm.Realm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +71,6 @@ public class RoleEntityProvider  extends TransactionalEntityProvider<Role> {
 		super.updateEntityProperty(entityId, propertyName, propertyValue);
 	}
 
-	
 	
 
 }

@@ -15,7 +15,7 @@ import com.vaadin.addon.jpacontainer.provider.MutableLocalEntityProvider;
 public abstract class TransactionalEntityProvider<T> extends MutableLocalEntityProvider<T> {
 
     @PersistenceContext
-    private EntityManager em;
+    private EntityManager entityManager;
     
     private Class<T> entityClass;
     
@@ -27,7 +27,7 @@ public abstract class TransactionalEntityProvider<T> extends MutableLocalEntityP
 
     @PostConstruct
     public void init() {
-        setEntityManager(em);
+        setEntityManager(entityManager);
         /*
          * The entity manager is transaction scoped, which means that the entities will be automatically detached when the transaction is
          * closed. Therefore, we do not need to explicitly detach them.
@@ -75,5 +75,11 @@ public abstract class TransactionalEntityProvider<T> extends MutableLocalEntityP
 	public Class<T> getEntityClass() {
 		return entityClass;
 	}
+
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+	
+	
     
 }

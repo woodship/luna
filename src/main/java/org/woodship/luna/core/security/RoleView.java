@@ -11,9 +11,11 @@ import org.woodship.luna.util.Utils;
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.EntityProvider;
 import com.vaadin.addon.jpacontainer.JPAContainer;
+import com.vaadin.addon.jpacontainer.filter.JoinFilter;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.filter.Like;
+import com.vaadin.data.util.filter.Compare.Equal;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.ItemClickEvent;
@@ -113,7 +115,6 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
         HorizontalLayout toolbar = new HorizontalLayout();
         newButton = new Button("增加");
         newButton.addClickListener(new Button.ClickListener() {
-
             @Override
             public void buttonClick(ClickEvent event) {
                 final EntityItem<Role> newRoleItem = mainContainer.createEntityItem(new Role());
@@ -132,6 +133,16 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
 					@Override
 					public void onClose(ConfirmDialog dialog) {
 						if(dialog.isConfirmed()){
+							Role role = mainContainer.getItem(mainTable.getValue()).getEntity();
+//							JoinFilter join = new JoinFilter(User_.roles.getName(), new Equal(Role_.id,mainTable.getValue()));
+//							userContainer.addContainerFilter(join);
+//							userContainer.applyFilters();
+							//TODO 过虑用户
+							for(Object id : userContainer.getItemIds()){
+								User u = userContainer.getItem(id).getEntity();
+								u.getRoles().remove(role);
+							}
+//							userContainer.removeAllContainerFilters();
 							mainContainer.removeItem(mainTable.getValue());
 						}
 					}
@@ -167,11 +178,10 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
         
         setUsersButton = new Button("用户设置");
         setUsersButton.addClickListener(new Button.ClickListener() {
-
             @Override
             public void buttonClick(ClickEvent event) {
-            	RoleUserEditor pe = new RoleUserEditor(mainTable.getItem(mainTable.getValue())
-            			                     ,mainContainer,     userContainer);
+            	RoleUserEditor pe = new RoleUserEditor(
+            			mainTable.getItem(mainTable.getValue())  ,mainContainer,   userContainer);
             	pe.center();
                 UI.getCurrent().addWindow(pe);
             }
