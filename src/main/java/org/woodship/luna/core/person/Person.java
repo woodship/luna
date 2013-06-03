@@ -7,6 +7,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.woodship.luna.core.security.RoleDataScope;
 import org.woodship.luna.db.IdEntity;
 
 import com.vaadin.data.fieldgroup.Caption;
@@ -32,6 +33,15 @@ public class Person extends IdEntity<Person>{
     @ManyToOne
     @Caption("部门")
     private Organization org;
+    
+    @ManyToOne
+    @Caption("单位")
+    private Organization company;
+    
+    @ManyToOne
+    @Caption("顶级部门")
+    private Organization topDepartment;
+    
     
     
     public String getTrueName() {
@@ -87,12 +97,54 @@ public class Person extends IdEntity<Person>{
 		return org;
 	}
 
+	/**
+	 * 同时设置所在单位与顶级部门
+	 * @param org
+	 */
 	public void setOrg(Organization org) {
 		this.org = org;
+		this.company = null;
+		this.topDepartment = null;
+		Organization porg = org;
+		while(porg != null){
+			if(OrgType.顶级部门.equals(porg.getOrgType())){
+				topDepartment = porg;
+			}else if(OrgType.单位.equals(porg.getOrgType())){
+				company = porg;
+			}
+			porg = porg.getParent();
+		}
+	}
+	
+	public Organization getCompany() {
+		return company;
+	}
+
+	public Organization getTopDepartment() {
+		return topDepartment;
+	}
+	
+	public void setCompany(Organization company) {
+		this.company = company;
+	}
+
+	public void setTopDepartment(Organization topDepartment) {
+		this.topDepartment = topDepartment;
 	}
 
 	@Override
 	public String toString(){
 		return org.getName()+":"+trueName;
+	}
+	
+	public Organization getOrgByScope(RoleDataScope scope){
+		if(RoleDataScope.本单位.equals(scope)){
+			return getCompany();
+		}else if(RoleDataScope.本顶级部门.equals(scope)){
+			return getTopDepartment();
+		}else if(RoleDataScope.本部门.equals(scope)){
+			return getOrg();
+		}
+		return null;
 	}
 }

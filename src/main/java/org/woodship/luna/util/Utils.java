@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import javax.persistence.Entity;
 
+import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.woodship.luna.db.HierarchialEntity;
 import org.woodship.luna.db.TransactionalEntityProvider;
 
@@ -22,6 +23,8 @@ import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Table;
 
 public class Utils {
+	private static final DefaultPasswordService ps = new DefaultPasswordService();
+	
 	/**
 	 * 为table中已经存在的列设置caption，(根据{@link Caption},beanClass的字段上有该注解则增加 )
 	 * @param table
@@ -172,5 +175,8 @@ public class Utils {
 		return ep;
 	}
 
+	public static String encryptPassword(String pw){
+		return ps.encryptPassword(pw);
+	}
 
 }

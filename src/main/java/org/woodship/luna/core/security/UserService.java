@@ -8,9 +8,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.criteria.SetJoin;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.woodship.luna.core.person.OrgType;
 import org.woodship.luna.core.person.Organization;
+import org.woodship.luna.core.person.Organization_;
 import org.woodship.luna.core.person.Person;
 
 @SuppressWarnings("serial")
@@ -80,37 +81,64 @@ public class UserService implements Serializable{
 		u.setPassword(ps.encryptPassword(user.getPassword()));
 	}
 
-	public List<Organization> getAdministrantOrg(OrgType type ,boolean containChildren){
-		User user = getCurrentUser();
-		List<Organization> orgs = new ArrayList<Organization>();
+	/**
+	 * 获得当前用户有权限查看的机构列表
+	 * @param user
+	 * @param type指定要返回的机构类别
+	 * @return
+	 */
+	public List<Organization> getCanReadOrg(User user, OrgType type ){
+		//一。获得可管理的顶层机构，不区分机构类型
+		List<Organization> topCanReadOrgs = new ArrayList<Organization>(); //不区分类型
 		
-		//获得最大RoleDataScope
+		//1.从所有Role中取得最大RoleDataScope，自定义的直接放入topCanReadOrgs
 		RoleDataScope maxScope = RoleDataScope.自定义;
 		for(Role role : user.getRoles()){
 			if(role.getDataScore().getLevel() > maxScope.getLevel()){
 				maxScope = role.getDataScore();
 			}
 			if(role.getDataScore().equals(RoleDataScope.自定义)){
-				//TODO 增加可管理的自定义机构 到orgs
+				//TODO 增加可管理的自定义机构到topCanReadOrgs
 			}
 		}
-		if(RoleDataScope.自定义.equals(maxScope) && orgs.size() == 0){
-			return orgs;
+		
+		//2.根最大RoleDataScope据获得最大目标机构，放入topCanReadOrgs
+		if(!RoleDataScope.全部数据.equals(maxScope )){
+			Person person = user.getPerson();
+			if(person != null){
+				Organization maxOrg = person.getOrgByScope(maxScope);
+				if(maxOrg != null) topCanReadOrgs.add(maxOrg);
+			}
 		}
 		
-//		CriteriaBuilder cb = em.getCriteriaBuilder();
-//		CriteriaQuery<Organization> c = cb.createQuery(Organization.class);
-//		Root<Organization> root =  c.from(Organization.class);
-//		SetJoin<Role, User> join = root.join(Role_.users);
-//		Predicate p = cb.equal(join.get(User_.username), username);
-//		c.where(p);
-//		return em.createQuery(c).getResultList();
-		
-		//查出最大RoleDataScope对应的Org,查询Org 限制
-
-		//TODO 增加自定义RoleDataScope限制
-
-
-		return null;
+		//二。应用机构类别
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Organization> c = cb.createQuery(Organization.class);
+		Root<Organization> root =  c.from(Organization.class);
+		//1.机构范围限制(如果有全部数据权限不做限制)
+		if(!RoleDataScope.全部数据.equals(maxScope )){
+			if(topCanReadOrgs.size() == 0){
+				return new ArrayList<Organization>();
+			}
+			ListJoin<Organization, Organization> join = root.join(Organization_.ancestors);
+			Predicate p = cb.in(join).in(topCanReadOrgs);
+			c.where(p);
+		}
+		//2.应用机构类别
+		if(type != null){
+			Predicate p = cb.equal(root.get(Organization_.orgType), type);
+			c.where(p);
+		}
+		return em.createQuery(c).getResultList();
+	}
+	
+	/**
+	 * 获得当前用户有权限查看的机构列表
+	 * @param type 指定要返回的机构类别
+	 * @return
+	 */
+	public List<Organization> getCurrCanReadOrg(OrgType type ){
+		User user  = getCurrentUser();
+		return getCanReadOrg(user, type);
 	}
 }

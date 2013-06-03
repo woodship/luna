@@ -42,6 +42,7 @@ public class RoleEditor extends Window  {
 
 	@SuppressWarnings("unchecked")
 	public RoleEditor(final Item item,  final JPAContainer<Role> persons) {
+		//TODO 角色编辑中限制如果选择本单位或本（顶级）部门必须关联人员
 		this.setCaption("角色编辑/新增");
 		this.persons = persons;
 		this.jpaitem = (JPAContainerItem<Role>) item;

@@ -141,7 +141,6 @@ public class Product extends IdEntity<Product>{
 
 	public void setPerson(Person workNum) {
 		this.person = workNum;
-		this.org = workNum.getOrg();
 	}
 
 	public String getCarNum() {

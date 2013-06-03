@@ -15,15 +15,26 @@
  */
 package org.woodship.luna.eam;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.woodship.luna.core.person.OrgType;
 import org.woodship.luna.core.person.Organization;
+import org.woodship.luna.core.person.Organization_;
 import org.woodship.luna.core.security.User;
+import org.woodship.luna.core.security.UserService;
 import org.woodship.luna.util.JPAContainerItemFieldGroup;
 import org.woodship.luna.util.Utils;
 
+import ru.xpoft.vaadin.SpringApplicationContext;
+
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
+import com.vaadin.data.Container.Filter;
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.FieldGroup;
+import com.vaadin.data.util.filter.Compare.Equal;
+import com.vaadin.data.util.filter.Or;
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.AbstractField;
@@ -39,14 +50,13 @@ import com.vaadin.ui.Window;
 
 @SuppressWarnings("serial")
 public class ProductEditor extends Window  {
-	JPAContainerItem<Product> jpaitem = null;
 
 	@SuppressWarnings("unchecked")
 	public ProductEditor(final Item item,  final JPAContainer<Product> products, User user) {
 		this.setCaption("产品编辑/增加");
 		this.setWidth(600, Unit.PIXELS);
 		this.setHeight(500,Unit.PIXELS);
-		this.jpaitem = (JPAContainerItem<Product>) item;
+		final JPAContainerItem<Product> jpaitem = (JPAContainerItem<Product>) item;
 		final GridLayout formLayout = new GridLayout(3,7);
 		formLayout.setSizeFull();
 		formLayout.setMargin(true);
@@ -56,9 +66,15 @@ public class ProductEditor extends Window  {
 		Utils.buildAndBindFieldGroup(fg, Product.class, formLayout);
 		
 		//配制车间可选择项目
+		UserService us = SpringApplicationContext.getApplicationContext().getBean(UserService.class);
 		ComboBox cb = (ComboBox) fg.getField(Product_.org.getName());
 		JPAContainer<Organization> orgcon = (JPAContainer<Organization>) cb.getContainerDataSource();
-		
+		List<Organization> orgs = us.getCurrCanReadOrg(OrgType.顶级部门);
+		Equal[] equs = new Equal[orgs.size()];
+		for(int i = 0; i < orgs.size(); i++){
+			equs[i] =(new Equal(Organization_.id.getName(), orgs.get(i).getId()));
+		}
+		orgcon.addContainerFilter(new Or(equs));
 		
 		final Label error = new Label("", ContentMode.HTML);
 		error.setVisible(false);

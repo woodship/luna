@@ -9,19 +9,18 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.woodship.luna.core.person.Person;
 import org.woodship.luna.db.IdEntity;
+import org.woodship.luna.util.Utils;
 
 import com.vaadin.data.fieldgroup.Caption;
 @Entity
 @Table(name="USER_")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User extends IdEntity<User>{
-	private static final DefaultPasswordService ps = new DefaultPasswordService();
 	private static final long serialVersionUID = 1L;
 	public static final String SUPER_ADMIN_USERNAME = "admin";
 	public static final String DEFAULT_PASSWORD = "111";
@@ -85,7 +84,7 @@ public class User extends IdEntity<User>{
 	 * @param password 明码
 	 */
 	public void setPassword(String password) {
-		this.password = ps.encryptPassword(password);
+		this.password = Utils.encryptPassword(password);
 	}
 
 
