@@ -30,14 +30,18 @@ public class Product extends IdEntity<Product>{
 	@NotNull
 	private Date produceDate;
 	
-	@Caption("班次")
-	@NotNull
-	private Classes classes;
-	 
+	/**
+	 * 录入员所在车间
+	 */
 	@Caption("车间")
     @NotNull
     @ManyToOne
     private Organization org;
+	
+	@Caption("班次")
+	@NotNull
+	private Classes classes;
+	
 	
 	@Caption("操作员")
 	@ManyToOne

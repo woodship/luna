@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Predicate;
@@ -107,29 +108,45 @@ public class UserService implements Serializable{
 			Person person = user.getPerson();
 			if(person != null){
 				Organization maxOrg = person.getOrgByScope(maxScope);
-				if(maxOrg != null) topCanReadOrgs.add(maxOrg);
+				if(maxOrg != null ) {
+					if(type == null){
+						topCanReadOrgs.add(maxOrg);
+					}
+				}
+			}
+			if(topCanReadOrgs.size() == 0){
+				return topCanReadOrgs;
 			}
 		}
 		
 		//二。应用机构类别
 		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Organization> c = cb.createQuery(Organization.class);
-		Root<Organization> root =  c.from(Organization.class);
+		CriteriaQuery<Organization> query = cb.createQuery(Organization.class);
+		Root<Organization> from =  query.from(Organization.class);
 		//1.机构范围限制(如果有全部数据权限不做限制)
+		 Predicate where = null;
 		if(!RoleDataScope.全部数据.equals(maxScope )){
 			if(topCanReadOrgs.size() == 0){
 				return new ArrayList<Organization>();
 			}
-			ListJoin<Organization, Organization> join = root.join(Organization_.ancestors);
-			Predicate p = cb.in(join).in(topCanReadOrgs);
-			c.where(p);
+			ListJoin<Organization, Organization> join = from.join(Organization_.ancestors);
+			In<String> in = cb.in(join.get(Organization_.id));
+			for(Organization o : topCanReadOrgs){
+				in = in.value(o.getId());
+			}
+			where = cb.and(in);
+		}else{
+			where = cb.isNotNull(from.get(Organization_.id));
 		}
+		
 		//2.应用机构类别
-		if(type != null){
-			Predicate p = cb.equal(root.get(Organization_.orgType), type);
-			c.where(p);
+		if(type != null ){
+			Predicate p = cb.equal(from.get(Organization_.orgType), type);
+			where = cb.and(where,p);
 		}
-		return em.createQuery(c).getResultList();
+		
+		query.where(where);
+		return em.createQuery(query).getResultList();
 	}
 	
 	/**

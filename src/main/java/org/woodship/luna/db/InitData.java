@@ -3,6 +3,7 @@ package org.woodship.luna.db;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -11,7 +12,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
-import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +20,7 @@ import org.woodship.luna.core.person.OrgType;
 import org.woodship.luna.core.person.Organization;
 import org.woodship.luna.core.person.OrganizationView;
 import org.woodship.luna.core.person.Person;
+import org.woodship.luna.core.person.PersonService;
 import org.woodship.luna.core.person.PersonView;
 import org.woodship.luna.core.security.ApplicationView;
 import org.woodship.luna.core.security.Resource;
@@ -29,6 +30,7 @@ import org.woodship.luna.core.security.Role;
 import org.woodship.luna.core.security.RoleDataScope;
 import org.woodship.luna.core.security.RoleView;
 import org.woodship.luna.core.security.User;
+import org.woodship.luna.core.security.UserService;
 import org.woodship.luna.core.security.UserView;
 import org.woodship.luna.eam.Customer;
 import org.woodship.luna.eam.CustomerView;
@@ -51,13 +53,21 @@ public class InitData implements Serializable{
 
 	@Autowired
 	private ResourceService resSer;
+	@Autowired
+	private UserService userSer;
+	@Autowired
+	private PersonService personSer;
 
 	@Autowired
 	private VaadinMessageSource messageSource;
 
-	private Person p1;
-
 	private User userAdmin;
+	
+	private Resource home;
+
+	private Resource resBase;
+
+	private Resource resPerson;
 	@Transactional
 	public void init(){
 		//有数据则不再初始化
@@ -81,11 +91,11 @@ public class InitData implements Serializable{
 	private void createBusinessData() {
 
 		//菜单
-		Resource bus = new Resource("BUSI_MODULE", "业务管理", ResourceType.MODULE);
-		em.persist(bus);
-		resSer.createCUDApp("型号维护", bus,InvItemView.NAME, InvItemView.class);
-		resSer.createCUDApp("客户维护", bus,CustomerView.NAME, CustomerView.class);
-		Resource resPro = resSer.createCUDApp("产品管理", bus,ProductView.NAME, ProductView.class);
+		Resource resBus = new Resource("BUSI_MODULE", "业务管理", ResourceType.MODULE);
+		em.persist(resBus);
+		Resource resItem =resSer.createCUDApp("型号维护", resBus,InvItemView.NAME, InvItemView.class);
+		Resource resCus =resSer.createCUDApp("客户维护", resBus,CustomerView.NAME, CustomerView.class);
+		Resource resPro = resSer.createCUDApp("产品管理", resBus,ProductView.NAME, ProductView.class);
 		resSer.createAction(ProductView.EXCEL_ACTION_KEY, "导出EXCEL", resPro);
 
 		//型号
@@ -102,14 +112,41 @@ public class InitData implements Serializable{
 		em.persist(cb);
 
 		//产品
+		Organization topDep =  userSer.getCanReadOrg(userAdmin, OrgType.顶级部门).get(0);
+		List<Person> persons = personSer.getOrgPerson(topDep);
 		Product pro = new Product();
 		pro.setProduceDate(new Date());
 		pro.setClasses(Classes.乙);
 		pro.setCarNum("CAR111");
 		pro.setCreateBy(userAdmin);
 		pro.setCustomerNum(ca);
-		pro.setPerson(p1);
+		pro.setPerson(persons.get(0));
+		pro.setOrg(topDep);
 		em.persist(pro);
+		
+		//增加一个部门管理员用户
+		User uDept = new User();
+		uDept.setPassword(User.DEFAULT_PASSWORD);
+		uDept.setPerson(persons.get(1));
+		uDept.setUsername("user");
+		em.persist(uDept);
+
+		//部门管理员角色
+		Role ruser = new Role("部门管理员");
+		ruser.setDataScore(RoleDataScope.本顶级部门);
+		ruser.addResource(home);
+		ruser.addResource(resBase);
+		ruser.addResource(resPerson);
+		ruser.addResource(resSer.getResByKey(Utils.getAddActionId(PersonView.class)));
+		ruser.addResource(resBus);
+		ruser.addResource(resPro);
+		ruser.addResource(resSer.getResByKey(Utils.getAddActionId(ProductView.class)));
+		ruser.addResource(resSer.getResByKey(Utils.getEditActionId(ProductView.class)));
+		ruser.addResource(resSer.getResByKey(Utils.getDelActionId(ProductView.class)));
+		ruser.addUser(uDept);
+		
+		uDept.addRole(ruser);
+		em.persist(ruser);
 	}
 
 
@@ -181,14 +218,6 @@ public class InitData implements Serializable{
 					em.persist(p);
 
 				}
-				//用于普通用户
-				if(p1 == null){
-					p1 = new Person();
-					p1.setTrueName("张长江");
-					p1.setWorkNum("user");
-					p1.setOrg(group);
-					em.persist(p1);
-				}
 				group.setPersons(gPersons);
 			}
 			
@@ -199,7 +228,7 @@ public class InitData implements Serializable{
 
 
 	private void createResource(){
-		Resource home = new Resource(HomeView.KEY,"主页", ResourceType.APPLICATION, null,  HomeView.NAME, HomeView.class);
+		home = new Resource(HomeView.KEY,"主页", ResourceType.APPLICATION, null,  HomeView.NAME, HomeView.class);
 		em.persist(home);
 
 		//增加系统管理模块
@@ -210,42 +239,28 @@ public class InitData implements Serializable{
 		resSer.createCUDApp("角色管理",  sys, RoleView.NAME, RoleView.class);
 
 		//增加基础应用模块
-		Resource base = new Resource("BASE_MODULE", "基础应用", ResourceType.MODULE);
-		em.persist(base);
-		resSer.createCUDApp("机构管理", base,OrganizationView.NAME, OrganizationView.class);
-		Resource resPerson = resSer.createCUDApp("人员管理", base,PersonView.NAME, PersonView.class);
+		resBase = new Resource("BASE_MODULE", "基础应用", ResourceType.MODULE);
+		em.persist(resBase);
+		resSer.createCUDApp("机构管理", resBase,OrganizationView.NAME, OrganizationView.class);
+		resPerson = resSer.createCUDApp("人员管理", resBase,PersonView.NAME, PersonView.class);
 
 
-		//增加管理员
-		//增加管理员
+		//增加管理员用户
 		String pw =  User.DEFAULT_PASSWORD;
 		userAdmin = new User(User.SUPER_ADMIN_USERNAME,pw,"管理员");
 		userAdmin.setSysUser(true);
 		em.persist(userAdmin);
 
-		//增加一个普通用户
-		User u1 = new User();
-		u1.setPassword(pw);
-		u1.setPerson(p1);
-		em.persist(u1);
 
+		//管理员角色
 		Role radmin = new Role(Role.SUPER_ADMIN_ROLE_NAME);
 		radmin.setSysRole(true);
 		radmin.addUser(userAdmin);
+		userAdmin.addRole(radmin);
 		radmin.setDataScore(RoleDataScope.全部数据);
 		em.persist(radmin);
 
-		Resource padd = resSer.getResByKey(Utils.getAddActionId(PersonView.class));
-		Role ruser = new Role("部门管理员");
-		ruser.setDataScore(RoleDataScope.本部门);
-		ruser.addResource(home);
-		ruser.addResource(resPerson);
-		ruser.addResource(base);
-		ruser.addResource(padd);
-		ruser.addUser(u1);
-		em.persist(ruser);
-
-		//增加一个无任何权限的用户
+		//增加一个无任何权限的用户(用于测试)
 		User uno = new User("no", pw, "无权限");
 		em.persist(uno);
 	}
