@@ -29,7 +29,7 @@ public class OrganizationEntityProvider  extends TransactionalEntityProvider<Org
 						@Override
 						public void filtersWillBeAdded( CriteriaBuilder cb, CriteriaQuery<?> query, List<Predicate> predicates) {
 							User user = us.getCurrentUser();
-							Predicate p = us.configQuery(user, null, cb, (CriteriaQuery<Organization>) query,true);
+							Predicate p = us.getCanReadOrgPredicate(user, null, cb, (CriteriaQuery<Organization>) query,true);
 							predicates.add(p);
 						}
 					}

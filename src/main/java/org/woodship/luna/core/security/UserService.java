@@ -87,14 +87,14 @@ public class UserService implements Serializable{
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Organization> query = cb.createQuery(Organization.class);
-		Predicate where = configQuery(user, type,cb,query,false);
+		Predicate where = getCanReadOrgPredicate(user, type,cb,query,false);
 		query.where(where);
 
 		return em.createQuery(query).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public  Predicate configQuery(User user, OrgType type,
+	public  Predicate getCanReadOrgPredicate(User user, OrgType type,
 			CriteriaBuilder cb, CriteriaQuery<Organization> query, boolean containRoot){
 
 		//一。获得可管理的顶层机构，不区分机构类型
