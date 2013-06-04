@@ -23,7 +23,6 @@ import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Table;
 
 public class Utils {
-	private static final DefaultPasswordService ps = new DefaultPasswordService();
 	
 	/**
 	 * 为table中已经存在的列设置caption，(根据{@link Caption},beanClass的字段上有该注解则增加 )
@@ -176,6 +175,7 @@ public class Utils {
 	}
 
 	public static String encryptPassword(String pw){
+		DefaultPasswordService ps = new DefaultPasswordService();
 		return ps.encryptPassword(pw);
 	}
 

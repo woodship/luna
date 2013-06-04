@@ -26,6 +26,11 @@ public abstract class HierarchialEntity<E extends HierarchialEntity<E>> implemen
 	protected boolean leaf = true;
 	
 	protected int treeLevel;
+	
+	
+
+	public HierarchialEntity() {
+	}
 
 	public String getId() {
 		return id;

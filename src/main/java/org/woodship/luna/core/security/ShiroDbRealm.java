@@ -35,8 +35,6 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	
 	@Autowired
 	private  ResourceService resser;
-	
-	private DefaultPasswordService ps = new DefaultPasswordService();
 
 	public ShiroDbRealm() {
 		super();
@@ -46,6 +44,7 @@ public class ShiroDbRealm extends AuthorizingRealm {
 			@Override
 			public boolean doCredentialsMatch(AuthenticationToken authenticationToken,
 					AuthenticationInfo info) {
+				DefaultPasswordService ps = new DefaultPasswordService();
 				String password = authenticationToken.getCredentials() instanceof char[] ? 
 						String.valueOf((char[]) authenticationToken.getCredentials()) : 
 							String.valueOf(authenticationToken.getCredentials());

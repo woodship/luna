@@ -20,9 +20,9 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.woodship.luna.core.security.Resource;
+import org.woodship.luna.core.security.ResourceEntityProvider;
 import org.woodship.luna.core.security.ResourceType;
 import org.woodship.luna.core.security.Resource_;
 import org.woodship.luna.core.security.Role;
@@ -35,13 +35,11 @@ import org.woodship.luna.core.security.User_;
 import ru.xpoft.vaadin.DiscoveryNavigator;
 import ru.xpoft.vaadin.VaadinMessageSource;
 
-import com.vaadin.addon.jpacontainer.EntityProvider;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.addon.jpacontainer.util.DefaultQueryModifierDelegate;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.Title;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
@@ -92,12 +90,12 @@ public class LunaUI extends UI {
     @Autowired
     private VaadinMessageSource messageSource;
 
-	@Autowired()
-	@Qualifier("resourceEntityProvider")
-	EntityProvider<Resource> resourceEntityProvider;
+    @Autowired
+    ResourceEntityProvider resourceEntityProvider;
 
 	@Autowired()
 	UserService us;
+	
 	@Override
 	protected void init(VaadinRequest request) {
 		Page.getCurrent().setTitle(messageSource.getMessage("luna.app.name", "Luna"));
@@ -264,7 +262,7 @@ public class LunaUI extends UI {
 						}
 						//非管理员按角色过虑菜单
 						query.distinct(true);//过虑重复记录
-						Root<Resource> root = (Root<Resource>) query.getRoots().iterator().next();
+						Root<Resource> root = (Root<Resource>) query.getRoots().iterator().next();//此处不能直接创建必须从query中取
 						SetJoin<Resource,Role> rjoin = root.join(Resource_.roles);
 						SetJoin<Role,User> ujoin = rjoin.join(Role_.users);
 						Predicate p = criteriaBuilder.equal(ujoin.get(User_.username), SecurityUtils.getSubject().getPrincipal());

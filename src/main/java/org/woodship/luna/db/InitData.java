@@ -68,6 +68,8 @@ public class InitData implements Serializable{
 	private Resource resBase;
 
 	private Resource resPerson;
+
+	private Resource resOrg;
 	@Transactional
 	public void init(){
 		//有数据则不再初始化
@@ -137,6 +139,7 @@ public class InitData implements Serializable{
 		ruser.addResource(home);
 		ruser.addResource(resBase);
 		ruser.addResource(resPerson);
+		ruser.addResource(resOrg);
 		ruser.addResource(resSer.getResByKey(Utils.getAddActionId(PersonView.class)));
 		ruser.addResource(resBus);
 		ruser.addResource(resPro);
@@ -184,10 +187,13 @@ public class InitData implements Serializable{
 	public  void createOrgAndPerson() {
 
 		Random r = new Random(0);
-		Organization orgRoot = new Organization(null);
+		Organization orgRoot = new Organization();
 		orgRoot.setName(messageSource.getMessage("luna.company.name", "WoodShip"));
 		orgRoot.setOrgType(OrgType.单位);
+		//TODO 根单位没办法调用setParent方法
 		em.persist(orgRoot);
+		orgRoot.getAncestors().add(orgRoot);
+		
 		for (String o : officeNames) {
 			Organization geoGroup = new Organization(orgRoot);
 			geoGroup.setName(o);
@@ -241,7 +247,7 @@ public class InitData implements Serializable{
 		//增加基础应用模块
 		resBase = new Resource("BASE_MODULE", "基础应用", ResourceType.MODULE);
 		em.persist(resBase);
-		resSer.createCUDApp("机构管理", resBase,OrganizationView.NAME, OrganizationView.class);
+		resOrg = resSer.createCUDApp("机构管理", resBase,OrganizationView.NAME, OrganizationView.class);
 		resPerson = resSer.createCUDApp("人员管理", resBase,PersonView.NAME, PersonView.class);
 
 

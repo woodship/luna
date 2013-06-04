@@ -36,6 +36,7 @@ import com.vaadin.data.fieldgroup.Caption;
 @Entity
 public class Organization  extends HierarchialEntity<Organization>{
 	public Organization() {
+		super();
 	}
 	
 	public Organization(Organization parent) {

@@ -9,9 +9,11 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
@@ -29,7 +31,6 @@ public class UserService implements Serializable{
 	@PersistenceContext
 	private  EntityManager em;
 
-	DefaultPasswordService ps = new DefaultPasswordService();
 
 	public User findByUsername(String username) {
 		if (username == null) return null;
@@ -41,13 +42,6 @@ public class UserService implements Serializable{
 		return null;
 	}
 
-	public boolean validate(String username, String password){
-		User user = findByUsername(username);
-		if(user != null){
-			return ps.passwordsMatch(password, user.getPassword());
-		}
-		return false;
-	}
 
 	/**
 	 * 返回当前登录用户，且该用户为受控Entity
@@ -78,6 +72,7 @@ public class UserService implements Serializable{
 	 */
 	@Transactional
 	public void changePassword(User user) {
+		DefaultPasswordService ps = new DefaultPasswordService();
 		User u = em.find(User.class, user.getId());
 		u.setPassword(ps.encryptPassword(user.getPassword()));
 	}
@@ -89,9 +84,77 @@ public class UserService implements Serializable{
 	 * @return
 	 */
 	public List<Organization> getCanReadOrg(User user, OrgType type ){
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Organization> query = cb.createQuery(Organization.class);
+		Predicate where = configQuery(user, type,cb,query,false);
+		query.where(where);
+
+		return em.createQuery(query).getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public  Predicate configQuery(User user, OrgType type,
+			CriteriaBuilder cb, CriteriaQuery<Organization> query, boolean containRoot){
+
 		//一。获得可管理的顶层机构，不区分机构类型
-		List<Organization> topCanReadOrgs = new ArrayList<Organization>(); //不区分类型
+		List<Organization> topCanReadOrgs = getTopCanReadOrgs(user);
+		Root<Organization> from ;
+		if(query.getRoots().size() > 0){
+			from =(Root<Organization>) query.getRoots().iterator().next();
+		}else{
+			from =query.from(Organization.class);
+		}
+		if(topCanReadOrgs.size() == 0){
+			return cb.isNull(from.get(Organization_.id));
+		}
+
+		//二。应用条件
+		//1.机构范围限制(如果有全部数据权限不做限制)
+		Subquery<Organization> subquery = query.subquery(Organization.class);
+		Root<Organization> subfrom = subquery.from(Organization.class);
+		subquery.select(subfrom);
+		ListJoin<Organization, Organization> join = subfrom.join(Organization_.ancestors,JoinType.INNER);
+		In<String>subin = cb.in(join.get(Organization_.id));
+		for(Organization o : topCanReadOrgs){
+			subin = subin.value(o.getId());
+		}
 		
+		//2.应用机构类别
+		if(type != null ){
+			Predicate p = cb.equal(subfrom.get(Organization_.orgType), type);
+			subquery.where(cb.and(subin,p));
+		}else{
+			subquery.where(subin);
+		}
+		//3.增加祖先节点
+		if(containRoot){
+			In<String> in = cb.in(from.get(Organization_.id));
+			boolean hasdata = false;
+			for(Organization o : topCanReadOrgs){
+				Organization parento = o.getParent();
+				while(parento != null){
+					hasdata = true;
+					in = in.value(parento.getId());
+					parento = parento.getParent();
+				}
+			}
+			if(hasdata){
+				return cb.or(cb.in(from).value(subquery),in);
+			}
+		}
+		return cb.in(from).value(subquery);
+	}
+
+	/**
+	 * 获得有权看到的顶层机构，不包含子机构，不区分机构类型
+	 * @param user
+	 * @param type
+	 * @return
+	 */
+	public List<Organization> getTopCanReadOrgs(User user ){
+		List<Organization> topCanReadOrgs = new ArrayList<Organization>(); //不区分类型
+
 		//1.从所有Role中取得最大RoleDataScope，自定义的直接放入topCanReadOrgs
 		RoleDataScope maxScope = RoleDataScope.自定义;
 		for(Role role : user.getRoles()){
@@ -102,53 +165,37 @@ public class UserService implements Serializable{
 				//TODO 增加可管理的自定义机构到topCanReadOrgs
 			}
 		}
-		
-		//2.根最大RoleDataScope据获得最大目标机构，放入topCanReadOrgs
+
+		//2.根据最大RoleDataScope据获得最大目标机构，放入topCanReadOrgs
 		if(!RoleDataScope.全部数据.equals(maxScope )){
 			Person person = user.getPerson();
 			if(person != null){
 				Organization maxOrg = person.getOrgByScope(maxScope);
 				if(maxOrg != null ) {
-					if(type == null){
-						topCanReadOrgs.add(maxOrg);
-					}
+					topCanReadOrgs.add(maxOrg);
 				}
 			}
 			if(topCanReadOrgs.size() == 0){
 				return topCanReadOrgs;
 			}
+		}else{
+			topCanReadOrgs =  getTopOrgs();
 		}
-		
-		//二。应用机构类别
+
+		return topCanReadOrgs;
+	}
+
+
+
+	private List<Organization> getTopOrgs() {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Organization> query = cb.createQuery(Organization.class);
-		Root<Organization> from =  query.from(Organization.class);
-		//1.机构范围限制(如果有全部数据权限不做限制)
-		 Predicate where = null;
-		if(!RoleDataScope.全部数据.equals(maxScope )){
-			if(topCanReadOrgs.size() == 0){
-				return new ArrayList<Organization>();
-			}
-			ListJoin<Organization, Organization> join = from.join(Organization_.ancestors);
-			In<String> in = cb.in(join.get(Organization_.id));
-			for(Organization o : topCanReadOrgs){
-				in = in.value(o.getId());
-			}
-			where = cb.and(in);
-		}else{
-			where = cb.isNotNull(from.get(Organization_.id));
-		}
-		
-		//2.应用机构类别
-		if(type != null ){
-			Predicate p = cb.equal(from.get(Organization_.orgType), type);
-			where = cb.and(where,p);
-		}
-		
-		query.where(where);
+		Root<Organization> root = query.from(Organization.class);
+		query.where(cb.isNull(root.get(Organization_.parent)));
 		return em.createQuery(query).getResultList();
 	}
-	
+
+
 	/**
 	 * 获得当前用户有权限查看的机构列表
 	 * @param type 指定要返回的机构类别
