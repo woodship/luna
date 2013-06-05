@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.woodship.luna.db.HierarchialEntity;
 import org.woodship.luna.db.TransactionalEntityProvider;
+import org.woodship.luna.eam.Product;
 
 import ru.xpoft.vaadin.SpringApplicationContext;
 
@@ -18,9 +19,14 @@ import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.Caption;
 import com.vaadin.data.fieldgroup.FieldGroup;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.server.ErrorMessage;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.ComponentContainer;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Notification.Type;
 
 public class Utils {
 	
@@ -75,8 +81,20 @@ public class Utils {
 	 * @param beanClass 要绑定到{@link BeanFieldGroup}上的beanClass
 	 * @return 
 	 */
-	public static void buildAndBindFieldGroup(FieldGroup fieldGroup, Class<?> beanClass,ComponentContainer layout){
+	public static void buildAndBindFieldGroup(FieldGroup fieldGroup, Class<?> beanClass,ComponentContainer layout,String... fieldNames){
+
 		for(Field f : beanClass.getDeclaredFields()){
+			//如果指定了fieldNames则过虑
+			if(fieldNames != null && fieldNames.length > 0){
+				boolean in = false;
+				for(String fn : fieldNames){
+					if(f.getName().equals(fn)){
+						in = true;
+						break;
+					}
+				}
+				if(!in) continue;
+			}
 			Caption caption = f.getAnnotation(Caption.class);
 			if(caption != null){
 				Class<?> type = f.getType();
@@ -177,6 +195,18 @@ public class Utils {
 	public static String encryptPassword(String pw){
 		DefaultPasswordService ps = new DefaultPasswordService();
 		return ps.encryptPassword(pw);
+	}
+
+	public static void showCommitExceptionMsg(CommitException e,
+			JPAContainerItemFieldGroup<Product> fg) {
+		for (com.vaadin.ui.Field<?> field: fg.getFields()) {
+			ErrorMessage errMsg = ((AbstractField<?>)field).getErrorMessage();
+			if (errMsg != null) {
+				Notification.show( "请填写完整",Type.WARNING_MESSAGE);
+				return;
+			}
+		}
+		
 	}
 
 }

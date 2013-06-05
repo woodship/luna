@@ -25,18 +25,17 @@ import com.vaadin.data.fieldgroup.Caption;
 @Entity
 public class Product extends IdEntity<Product>{
 	private static final long serialVersionUID = 1L;
+	/**
+	 * 取录入员所在车间
+	 */
+	@Caption("车间")
+	@NotNull
+	@ManyToOne
+	private Organization org;
 	
 	@Caption("生产日期")
 	@NotNull
-	private Date produceDate;
-	
-	/**
-	 * 录入员所在车间
-	 */
-	@Caption("车间")
-    @NotNull
-    @ManyToOne
-    private Organization org;
+	private Date produceDate = new Date();
 	
 	@Caption("班次")
 	@NotNull
@@ -93,6 +92,9 @@ public class Product extends IdEntity<Product>{
 	
     @Caption("长度")
     private String length;
+    
+    @Caption("编号")
+    private String productNum;
     
     @Caption("排线")
     private Winding winding;
@@ -322,7 +324,27 @@ public class Product extends IdEntity<Product>{
 	public void setJiaoMiZhan(Person jiaoMiZhan) {
 		this.jiaoMiZhan = jiaoMiZhan;
 	}
+
+	public String getProductNum() {
+		return productNum;
+	}
+
+	public void setProductNum(String productNum) {
+		this.productNum = productNum;
+	}
     
+	public  String[] getDeptFieldNames(){
+		if(org != null){
+			if("拉丝车间".equals(org.getName())){
+				return ProductDeptFileds.getLaSiFileds();
+			}else if("镀锌车间".equals(org.getName())){
+				return ProductDeptFileds.getDU_XINFileds();
+			}else if("绞线车间".equals(org.getName())){
+				return ProductDeptFileds.getJIAO_XIANFileds();
+			}
+		}
+		return null;
+	}
 	
     
 }

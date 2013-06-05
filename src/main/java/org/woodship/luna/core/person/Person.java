@@ -35,11 +35,11 @@ public class Person extends IdEntity<Person>{
     private Organization org;
     
     @ManyToOne
-    @Caption("单位")
+//    @Caption("单位")
     private Organization company;
     
     @ManyToOne
-    @Caption("顶级部门")
+//    @Caption("顶级部门")
     private Organization topDepartment;
     
     

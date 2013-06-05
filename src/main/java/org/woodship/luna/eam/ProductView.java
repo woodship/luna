@@ -1,5 +1,8 @@
 package org.woodship.luna.eam;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import org.apache.shiro.SecurityUtils;
@@ -7,6 +10,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.vaadin.dialogs.ConfirmDialog;
+import org.woodship.luna.core.person.OrgType;
 import org.woodship.luna.core.person.Organization;
 import org.woodship.luna.core.security.UserService;
 import org.woodship.luna.util.Utils;
@@ -31,6 +35,8 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.RowHeaderMode;
 import com.vaadin.ui.TextField;
@@ -121,8 +127,29 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
             @Override
             public void buttonClick(ClickEvent event) {
                 final EntityItem<Product> newProductItem = tableContainer.createEntityItem(new Product());
-                if(treeFilter != null)
+                //优先从选择机构上选择默认车间
+                if(treeFilter != null && (OrgType.顶级部门.equals(treeFilter.getOrgType()))){
                 	newProductItem.getEntity().setOrg(treeFilter);
+                }else{
+                	//从机构树中找默认车间
+                	List<Organization> topdepts = new ArrayList<Organization>();
+                	for(Object id : groupTree.getItemIds()){
+                		Organization org = treeContainer.getItem(id).getEntity();
+                		if(OrgType.顶级部门.equals(org.getOrgType())){
+                			topdepts.add(org);
+                		}
+                	}
+                	if(topdepts.size() == 0){
+                		Notification.show("你没有管理车间的权限，请联系管理员调整您的数据权限范围",Type.WARNING_MESSAGE);
+                		return;
+                	}else if(topdepts.size() > 1){
+                		Notification.show("请先在左侧机构树上选择要增加的车间",Type.WARNING_MESSAGE);
+                		return;
+                	}else{
+                		newProductItem.getEntity().setOrg(topdepts.get(0));
+                	}
+                }
+                	
                 ProductEditor organizationEditor = new ProductEditor(newProductItem,tableContainer,us.getCurrentUser());
                 organizationEditor.center();
                 UI.getCurrent().addWindow(organizationEditor);

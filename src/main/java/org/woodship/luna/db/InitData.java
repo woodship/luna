@@ -146,6 +146,7 @@ public class InitData implements Serializable{
 		ruser.addResource(resSer.getResByKey(Utils.getAddActionId(ProductView.class)));
 		ruser.addResource(resSer.getResByKey(Utils.getEditActionId(ProductView.class)));
 		ruser.addResource(resSer.getResByKey(Utils.getDelActionId(ProductView.class)));
+		ruser.addResource(resSer.getResByKey(ProductView.EXCEL_ACTION_KEY));
 		ruser.addUser(uDept);
 		
 		uDept.addRole(ruser);

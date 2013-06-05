@@ -15,7 +15,6 @@
  */
 package org.woodship.luna.eam;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.woodship.luna.core.person.OrgType;
@@ -30,13 +29,11 @@ import ru.xpoft.vaadin.SpringApplicationContext;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
-import com.vaadin.data.Container.Filter;
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.filter.Compare.Equal;
 import com.vaadin.data.util.filter.Or;
 import com.vaadin.server.ErrorMessage;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -44,8 +41,9 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 @SuppressWarnings("serial")
@@ -62,25 +60,19 @@ public class ProductEditor extends Window  {
 		formLayout.setMargin(true);
 		final JPAContainerItemFieldGroup<Product> fg = new JPAContainerItemFieldGroup<Product>(Product.class);
 		fg.setItemDataSource(jpaitem);
+		String[] fieldnames = jpaitem.getEntity().getDeptFieldNames();
 		//增加默认字段
-		Utils.buildAndBindFieldGroup(fg, Product.class, formLayout);
+		Utils.buildAndBindFieldGroup(fg, Product.class, formLayout, fieldnames);
 		
-		//配制车间可选择项目
-		UserService us = SpringApplicationContext.getApplicationContext().getBean(UserService.class);
-		ComboBox cb = (ComboBox) fg.getField(Product_.org.getName());
-		JPAContainer<Organization> orgcon = (JPAContainer<Organization>) cb.getContainerDataSource();
-		List<Organization> orgs = us.getCurrCanReadOrg(OrgType.顶级部门);
-		Equal[] equs = new Equal[orgs.size()];
-		for(int i = 0; i < orgs.size(); i++){
-			equs[i] =(new Equal(Organization_.id.getName(), orgs.get(i).getId()));
+		//所有项目设置成必填
+		for(String fn : fieldnames){
+			Field field =  fg.getField(fn);
+			field.setRequired(true);
+			if(fn.equals(Product_.org.getName())){
+				field.setReadOnly(true);//车间只读
+			}
 		}
-		orgcon.addContainerFilter(new Or(equs));
 		
-		final Label error = new Label("", ContentMode.HTML);
-		error.setVisible(false);
-//		formLayout.addComponent(error, 0, 1, 0, row2)addComponent(error);
-		
-
 		// Buffer the form content
 		fg.setBuffered(true);
 
@@ -98,17 +90,9 @@ public class ProductEditor extends Window  {
 						products.addEntity(p);
 					}
 					Notification.show("保存成功");
-//					error.setVisible(false);
 					ProductEditor.this.close();//关闭，防止再点击，重复增加
 				} catch (FieldGroup.CommitException e) {
-					for (Field<?> field: fg.getFields()) {
-						ErrorMessage errMsg = ((AbstractField<?>)field).getErrorMessage();
-						if (errMsg != null) {
-							error.setValue("<div style='color:red'> " + field.getCaption() + ": " +  errMsg.getFormattedHtmlMessage() + "</div>");
-							error.setVisible(true);
-							break;
-						}
-					}
+					Notification.show( "请填写正确，红色星号为必填",Type.WARNING_MESSAGE);
 				}
 			}
 		});
@@ -126,8 +110,16 @@ public class ProductEditor extends Window  {
 		buttons.addComponent(saveButton);
 		buttons.addComponent(cancelButton);
 		formLayout.addComponent(buttons);
-		formLayout.setComponentAlignment(buttons, Alignment.MIDDLE_LEFT);
-		setContent(formLayout);
+		formLayout.setComponentAlignment(buttons, Alignment.MIDDLE_CENTER);
+		
+		
+		final VerticalLayout root = new VerticalLayout();
+		root.setSizeFull();
+		root.setMargin(true);
+		root.addComponent(formLayout);
+		root.addComponent(buttons);
+		root.setExpandRatio(formLayout, 1);
+		setContent(root);
 	}
 
 }

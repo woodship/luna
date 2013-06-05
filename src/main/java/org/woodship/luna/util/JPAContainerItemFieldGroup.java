@@ -138,13 +138,11 @@ public class JPAContainerItemFieldGroup<T> extends FieldGroup {
 			if(f.getName().equals(pid)){
 		        //设置字段必填标识*
 		        NotNull notNullAnnotation = f.getAnnotation(NotNull.class);
-		        Size sizeAnnotation = f.getAnnotation(Size.class);
 		        NotEmpty ne = f.getAnnotation(NotEmpty.class);
 		        if (notNullAnnotation != null 
-		        		|| (sizeAnnotation != null && sizeAnnotation.min()>0)
 		        		|| ne != null
 		        		) {
-		           field.setCaption(field.getCaption()+"*");
+		           field.setRequired(true);
 		        }
 				break;
 			}
