@@ -106,7 +106,7 @@ public class UserService implements Serializable{
 			from =query.from(Organization.class);
 		}
 		if(topCanReadOrgs.size() == 0){
-			return cb.isNull(from.get(Organization_.id));
+			return cb.isNull(from);
 		}
 
 		//二。应用条件
@@ -198,7 +198,7 @@ public class UserService implements Serializable{
 
 	/**
 	 * 获得当前用户有权限查看的机构列表
-	 * @param type 指定要返回的机构类别
+	 * @param type 指定要返回的机构类别,null表示不限类别
 	 * @return
 	 */
 	public List<Organization> getCurrCanReadOrg(OrgType type ){

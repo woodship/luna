@@ -1,20 +1,19 @@
 package org.woodship.luna.core.security;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Item;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.shared.ui.MultiSelectMode;
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TreeTable;
 import com.vaadin.ui.VerticalLayout;
@@ -27,21 +26,21 @@ public class RoleResEditor extends Window  {
 	@SuppressWarnings("unchecked")
 	public RoleResEditor(final Item item,  final JPAContainer<Role> container, final JPAContainer<Resource> resContainer) {
 		this.setCaption("角色关联功能设置");
+		setWidth(500, Unit.PIXELS);
+		setHeight(100, Unit.PERCENTAGE);
 		this.jpaitem = (JPAContainerItem<Role>) item;
-		final VerticalLayout formLayout = new VerticalLayout();
-		formLayout.setMargin(true);
+
 		ttable = new TreeTable();
 		ttable.setContainerDataSource(resContainer);
 		ttable.setItemCaptionPropertyId("name");
 		ttable.setVisibleColumns(new Object[]{"name","resType"});
 		ttable.setColumnHeader("name","应用名");
 		ttable.setColumnHeader("resType","类型");
-		ttable.setWidth(300, Unit.PIXELS);
-		ttable.setHeight(400, Unit.PIXELS);
 		ttable.setMultiSelect(true);
 		ttable.setSelectable(true);
 		ttable.setMultiSelectMode(MultiSelectMode.SIMPLE);
 		ttable.setImmediate(true);
+		ttable.setSizeFull();
 		// Expand the tree
 		for (Object itemId: ttable.getItemIds()){
 			ttable.setCollapsed(itemId, false);
@@ -51,15 +50,20 @@ public class RoleResEditor extends Window  {
 		for(Resource res : r.getResource()){
 			ttable.select(res.getId());
 		}
-
+		
 		//选中子节点同时选中父节点
-		//TODO 未生效，需要进一步查找原因
-		ttable.addItemClickListener(new ItemClickListener() {
+		//TODO 全部取消一个模块，全部选择一个模块
+		ttable.addValueChangeListener(new ValueChangeListener() {
 			@Override
-			public void itemClick(ItemClickEvent event) {
-				//选中时同时选中父节点
-				if(!((Set<?>)ttable.getValue()).contains(event.getItemId())){
-					Object pid = ttable.getParent(event.getItemId());
+			public void valueChange(ValueChangeEvent event) {
+//				Collection<Object> changedid = (Collection<Object>) event.getProperty().getValue();
+//				for(Object id : changedid){
+//					Resource chRes = resContainer.getItem(id).getEntity();
+//					System.out.println(chRes);
+//				}
+				Collection<Object> ids =  (Collection<Object>) ttable.getValue();
+				for(Object id : ids){
+					Object pid =ttable.getParent(id);
 					while(pid != null){
 						ttable.select(pid);
 						pid = ttable.getParent(pid);
@@ -68,11 +72,7 @@ public class RoleResEditor extends Window  {
 			}
 		});
 
-		formLayout.addComponent(ttable);
-		final Label error = new Label("", ContentMode.HTML);
-		error.setVisible(false);
-		formLayout.addComponent(error);
-
+	
 
 		//处理保存事件
 		Button saveButton = new Button("保存");
@@ -91,10 +91,16 @@ public class RoleResEditor extends Window  {
 		});
 
 		HorizontalLayout buttons = new HorizontalLayout();
-		buttons.setMargin(true);
 		buttons.addComponent(saveButton);
+		buttons.setMargin(true);
+		
+		final VerticalLayout formLayout = new VerticalLayout();
+		formLayout.setSizeFull();
+		formLayout.setMargin(true);
+		formLayout.addComponent(ttable);
 		formLayout.addComponent(buttons);
-		formLayout.setComponentAlignment(buttons, Alignment.MIDDLE_LEFT);
+		formLayout.setExpandRatio(ttable, 1);
+		
 		setContent(formLayout);
 	}
 
