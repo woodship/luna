@@ -16,6 +16,7 @@
 package org.woodship.luna.core.security;
 
 import org.woodship.luna.util.JPAContainerItemFieldGroup;
+import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
@@ -70,6 +71,7 @@ public class UserEditor extends Window  {
 					//新增的需要单独处理
 					if(jpaitem.getEntity().getId() == null){
 						User p =fg.getItemDataSource().getEntity();
+						p.setPassword(Utils.encryptPassword(User.DEFAULT_PASSWORD));
 						persons.addEntity(p);
 					}
 					Notification.show("保存成功");

@@ -199,14 +199,15 @@ public class Utils {
 
 	public static void showCommitExceptionMsg(CommitException e,
 			JPAContainerItemFieldGroup<Product> fg) {
+		
 		for (com.vaadin.ui.Field<?> field: fg.getFields()) {
 			ErrorMessage errMsg = ((AbstractField<?>)field).getErrorMessage();
 			if (errMsg != null) {
-				Notification.show( "请填写完整",Type.WARNING_MESSAGE);
+				Notification.show(field.getCaption()+ ":"+errMsg.getFormattedHtmlMessage(),Type.WARNING_MESSAGE);
 				return;
 			}
 		}
-		
+		Notification.show( "请填写完整，红色星号为必填",Type.WARNING_MESSAGE);
 	}
 
 }

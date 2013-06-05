@@ -118,7 +118,17 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
             }
         });
 
-        Utils.setTableDefaultHead(mainTable, Product.class);
+        //根据车间权限配制table要显示的列
+        List<Organization> topdepts = findTopDepts();
+        if(topdepts.size() != 1){
+        	Utils.setTableDefaultHead(mainTable, Product.class);
+        }else{
+        	Organization o = topdepts.get(0);
+        	Product p = new Product();
+        	p.setOrg(o);
+        	mainTable.setVisibleColumns(p.getDeptFieldNames());
+        	Utils.setTableCaption(mainTable,  Product.class);
+        }
         
 
         HorizontalLayout toolbar = new HorizontalLayout();
@@ -132,13 +142,7 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
                 	newProductItem.getEntity().setOrg(treeFilter);
                 }else{
                 	//从机构树中找默认车间
-                	List<Organization> topdepts = new ArrayList<Organization>();
-                	for(Object id : groupTree.getItemIds()){
-                		Organization org = treeContainer.getItem(id).getEntity();
-                		if(OrgType.顶级部门.equals(org.getOrgType())){
-                			topdepts.add(org);
-                		}
-                	}
+                	List<Organization> topdepts = findTopDepts();
                 	if(topdepts.size() == 0){
                 		Notification.show("你没有管理车间的权限，请联系管理员调整您的数据权限范围",Type.WARNING_MESSAGE);
                 		return;
@@ -225,7 +229,19 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
 
     }
 
-    private void buildTree() {
+    protected List<Organization> findTopDepts() {
+    	List<Organization> topdepts =	new ArrayList<Organization>();
+        	for(Object id : groupTree.getItemIds()){
+        		Organization org = treeContainer.getItem(id).getEntity();
+        		if(OrgType.顶级部门.equals(org.getOrgType())){
+        			topdepts.add(org);
+        		}
+        	}
+		return topdepts;
+	}
+
+
+	private void buildTree() {
         groupTree = new Tree(null, treeContainer);
         groupTree.setItemCaptionPropertyId("name");
 
@@ -260,7 +276,8 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
             	Equal ea = new Equal("org",treeFilter);
             	Equal eb = new Equal("org.parent",treeFilter);
             	Equal ec = new Equal("org.parent.parent",treeFilter);
-            	Or or = new Or(ea,eb,ec);
+            	Equal ed = new Equal(Product_.classes.getName(),treeFilter);
+            	Or or = new Or(ea,eb,ec,ed);
             	tableContainer.addContainerFilter(or);
             } 
         }

@@ -23,6 +23,7 @@ import org.woodship.luna.core.person.OrgType;
 import org.woodship.luna.core.person.Organization;
 import org.woodship.luna.core.person.Organization_;
 import org.woodship.luna.core.person.Person;
+import org.woodship.luna.util.Utils;
 
 @SuppressWarnings("serial")
 @Service
@@ -50,7 +51,6 @@ public class UserService implements Serializable{
 	public  User getCurrentUser(){
 		Object username =  SecurityUtils.getSubject().getPrincipal();
 		User u =findByUsername((String) username);
-		u.getRoles().iterator().next();
 		return u;
 	}
 
@@ -63,6 +63,7 @@ public class UserService implements Serializable{
 	public User createUserFromPerson(Person person){
 		User u = new User();
 		u.setPerson(person);
+		u.setPassword(Utils.encryptPassword(User.DEFAULT_PASSWORD));
 		em.persist(u);
 		return u;
 	}

@@ -62,9 +62,13 @@ public class RoleUserEditor extends Window  {
 			public void buttonClick(Button.ClickEvent event) {
 					Set<?> v = (Set<?>) table.getValue();
 					Set<User> users = new LinkedHashSet<User>();
+					Role role = jpaitem.getEntity();
 					for(Object rid : v){
-						users.add(userContainer.getItem(rid).getEntity() );
+						User user = userContainer.getItem(rid).getEntity();
+						users.add(user );
+						user.addRole(role);
 					}
+					
 					jpaitem.getItemProperty("users").setValue(users);
 					container.commit();
 					Notification.show("保存成功");

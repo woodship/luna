@@ -117,7 +117,7 @@ public class InitData implements Serializable{
 		List<Organization> topDeps =  userSer.getCanReadOrg(userAdmin, OrgType.顶级部门);
 		Product pro = new Product();
 		pro.setProduceDate(new Date());
-		pro.setClasses(Classes.乙);
+		pro.setClasses(personSer.getOrgPerson(topDeps.get(0)).get(0).getOrg());
 		pro.setCarNum("CAR111");
 		pro.setCreateBy(userAdmin);
 		pro.setCustomerNum(ca);
@@ -126,18 +126,19 @@ public class InitData implements Serializable{
 		em.persist(pro);
 		
 		//三个部门各增加一个管理员用户
+		String password  = Utils.encryptPassword(User.DEFAULT_PASSWORD);
 		User uDept1 = new User();
-		uDept1.setPassword(User.DEFAULT_PASSWORD);
+		uDept1.setPassword(password);
 		uDept1.setPerson(personSer.getOrgPerson(topDeps.get(0)).get(0));
 		uDept1.setUsername("user1");
 		em.persist(uDept1);
 		User uDept2 = new User();
-		uDept2.setPassword(User.DEFAULT_PASSWORD);
+		uDept2.setPassword(password);
 		uDept2.setPerson(personSer.getOrgPerson(topDeps.get(1)).get(0));
 		uDept2.setUsername("user2");
 		em.persist(uDept2);
 		User uDept3 = new User();
-		uDept3.setPassword(User.DEFAULT_PASSWORD);
+		uDept3.setPassword(password);
 		uDept3.setPerson(personSer.getOrgPerson(topDeps.get(2)).get(0));
 		uDept3.setUsername("user3");
 		em.persist(uDept3);
@@ -266,7 +267,7 @@ public class InitData implements Serializable{
 
 
 		//增加管理员用户
-		String pw =  User.DEFAULT_PASSWORD;
+		String pw =  Utils.encryptPassword(User.DEFAULT_PASSWORD);
 		userAdmin = new User(User.SUPER_ADMIN_USERNAME,pw,"管理员");
 		userAdmin.setSysUser(true);
 		em.persist(userAdmin);

@@ -45,7 +45,6 @@ public class UserChangePWEditor extends Window  {
 		error.setVisible(false);
 		formLayout.addComponent(error);
 
-
 		//处理保存事件
 		Button saveButton = new Button("保存");
 		saveButton.addClickListener(new Button.ClickListener() {

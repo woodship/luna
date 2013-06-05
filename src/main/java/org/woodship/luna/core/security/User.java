@@ -80,11 +80,11 @@ public class User extends IdEntity<User>{
 	}
 
 	/**
-	 * 明码会被自动转换成密码
+	 * 明码，不会被自动转换成密码
 	 * @param password 明码
 	 */
 	public void setPassword(String password) {
-		this.password = Utils.encryptPassword(password);
+		this.password =password;
 	}
 
 

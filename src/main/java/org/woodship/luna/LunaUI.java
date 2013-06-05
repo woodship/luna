@@ -247,29 +247,6 @@ public class LunaUI extends UI {
 		final Subject subject =  SecurityUtils.getSubject();
 		final User currUser = us.findByUsername(subject.getPrincipal().toString());
 		
-		//按权限进行过虑
-		resourceEntityProvider.setQueryModifierDelegate(
-				new DefaultQueryModifierDelegate () {
-					@SuppressWarnings("unchecked")
-					@Override
-					public void filtersWillBeAdded(
-							CriteriaBuilder criteriaBuilder,
-							CriteriaQuery<?> query,
-							List<Predicate> predicates) {
-						//管理员不加过虑条件
-						if(subject.hasRole(Role.SUPER_ADMIN_ROLE_NAME)){
-							return;
-						}
-						//非管理员按角色过虑菜单
-						query.distinct(true);//过虑重复记录
-						Root<Resource> root = (Root<Resource>) query.getRoots().iterator().next();//此处不能直接创建必须从query中取
-						SetJoin<Resource,Role> rjoin = root.join(Resource_.roles);
-						SetJoin<Role,User> ujoin = rjoin.join(Role_.users);
-						Predicate p = criteriaBuilder.equal(ujoin.get(User_.username), SecurityUtils.getSubject().getPrincipal());
-						predicates.add(p);
-					}
-				}
-		);
 		
 		//配制菜单japcontainer
 		JPAContainer<Resource> con = new JPAContainer<Resource>(Resource.class){

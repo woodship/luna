@@ -40,6 +40,11 @@ public class ProductDeptFileds {
 		,Product_.produceDate
 		,Product_.classes
 		,Product_.person
+		,Product_.person2
+		,Product_.person3
+		,Product_.score
+		,Product_.score2
+		,Product_.score3
 		,Product_.carNum
 		,Product_.produceModel
 		,Product_.customerNum
@@ -55,7 +60,8 @@ public class ProductDeptFileds {
 		
 		,Product_.inunction
 		,Product_.pack
-		,Product_.weld
+		,Product_.jieMiZhan
+		,Product_.jiaoMiZhan
 	};
 	
 	public static String[] getLaSiFileds(){

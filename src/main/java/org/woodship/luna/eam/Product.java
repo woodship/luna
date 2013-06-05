@@ -43,7 +43,8 @@ public class Product extends IdEntity<Product>{
 	
 	@Caption("班次")
 	@NotNull
-	private Classes classes;
+	@ManyToOne
+	private Organization classes;
 	
 	
 	@Caption("操作员")
@@ -137,11 +138,12 @@ public class Product extends IdEntity<Product>{
 		this.produceDate = produceDate;
 	}
 
-	public Classes getClasses() {
+
+	public Organization getClasses() {
 		return classes;
 	}
 
-	public void setClasses(Classes classes) {
+	public void setClasses(Organization classes) {
 		this.classes = classes;
 	}
 

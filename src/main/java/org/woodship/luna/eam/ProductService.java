@@ -56,8 +56,8 @@ public class ProductService implements Serializable{
 			return "日期格式错误";
 		}
 		
-		//班次
-		p.setClasses(getEnumValue("classes",map,Classes.class));
+		//班次 TODO
+//		p.setClasses(getEnumValue("classes",map,Classes.class));
 		
 		//工号
 		String workNum = map.get("workNum")[0];
