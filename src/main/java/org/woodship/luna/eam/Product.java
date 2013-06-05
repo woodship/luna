@@ -25,6 +25,10 @@ import com.vaadin.data.fieldgroup.Caption;
 @Entity
 public class Product extends IdEntity<Product>{
 	private static final long serialVersionUID = 1L;
+	
+	public static final String LA_SI_DEPT_NAME = "拉丝车间";
+	public static final String JIAO_XIAN_DEPT_NAME = "绞线车间";
+	public static final String DU_XIN_DEPT_NAME = "镀锌车间";
 	/**
 	 * 取录入员所在车间
 	 */
@@ -335,11 +339,11 @@ public class Product extends IdEntity<Product>{
     
 	public  String[] getDeptFieldNames(){
 		if(org != null){
-			if("拉丝车间".equals(org.getName())){
+			if(LA_SI_DEPT_NAME.equals(org.getName())){
 				return ProductDeptFileds.getLaSiFileds();
-			}else if("镀锌车间".equals(org.getName())){
+			}else if(DU_XIN_DEPT_NAME.equals(org.getName())){
 				return ProductDeptFileds.getDU_XINFileds();
-			}else if("绞线车间".equals(org.getName())){
+			}else if(JIAO_XIAN_DEPT_NAME.equals(org.getName())){
 				return ProductDeptFileds.getJIAO_XIANFileds();
 			}
 		}

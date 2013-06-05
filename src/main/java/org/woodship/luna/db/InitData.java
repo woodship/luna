@@ -100,38 +100,47 @@ public class InitData implements Serializable{
 		Resource resPro = resSer.createCUDApp("产品管理", resBus,ProductView.NAME, ProductView.class);
 		resSer.createAction(ProductView.EXCEL_ACTION_KEY, "导出EXCEL", resPro);
 
-		//型号
+		//型号测试数据
 		InvItem ia = new InvItem("WG7893",1000f,null);
 		em.persist(ia);
 		for(int i = 1000; i<1200 ; i++){
 			InvItem ib = new InvItem("XX"+i,1500f,null);
 			em.persist(ib);
 		}
-		//客户
+		//客户测试数据
 		Customer ca = new Customer("CKY11", "开元物业", null);
 		Customer cb = new Customer("CTHYY", "天华制造", null);
 		em.persist(ca);
 		em.persist(cb);
 
-		//产品
-		Organization topDep =  userSer.getCanReadOrg(userAdmin, OrgType.顶级部门).get(0);
-		List<Person> persons = personSer.getOrgPerson(topDep);
+		//产品测试数据
+		List<Organization> topDeps =  userSer.getCanReadOrg(userAdmin, OrgType.顶级部门);
 		Product pro = new Product();
 		pro.setProduceDate(new Date());
 		pro.setClasses(Classes.乙);
 		pro.setCarNum("CAR111");
 		pro.setCreateBy(userAdmin);
 		pro.setCustomerNum(ca);
-		pro.setPerson(persons.get(0));
-		pro.setOrg(topDep);
+		pro.setPerson(personSer.getOrgPerson(topDeps.get(0)).get(0));
+		pro.setOrg(topDeps.get(0));
 		em.persist(pro);
 		
-		//增加一个部门管理员用户
-		User uDept = new User();
-		uDept.setPassword(User.DEFAULT_PASSWORD);
-		uDept.setPerson(persons.get(1));
-		uDept.setUsername("user");
-		em.persist(uDept);
+		//三个部门各增加一个管理员用户
+		User uDept1 = new User();
+		uDept1.setPassword(User.DEFAULT_PASSWORD);
+		uDept1.setPerson(personSer.getOrgPerson(topDeps.get(0)).get(0));
+		uDept1.setUsername("user1");
+		em.persist(uDept1);
+		User uDept2 = new User();
+		uDept2.setPassword(User.DEFAULT_PASSWORD);
+		uDept2.setPerson(personSer.getOrgPerson(topDeps.get(1)).get(0));
+		uDept2.setUsername("user2");
+		em.persist(uDept2);
+		User uDept3 = new User();
+		uDept3.setPassword(User.DEFAULT_PASSWORD);
+		uDept3.setPerson(personSer.getOrgPerson(topDeps.get(2)).get(0));
+		uDept3.setUsername("user3");
+		em.persist(uDept3);
 
 		//部门管理员角色
 		Role ruser = new Role("部门管理员");
@@ -147,15 +156,19 @@ public class InitData implements Serializable{
 		ruser.addResource(resSer.getResByKey(Utils.getEditActionId(ProductView.class)));
 		ruser.addResource(resSer.getResByKey(Utils.getDelActionId(ProductView.class)));
 		ruser.addResource(resSer.getResByKey(ProductView.EXCEL_ACTION_KEY));
-		ruser.addUser(uDept);
+		ruser.addUser(uDept1);
+		ruser.addUser(uDept2);
+		ruser.addUser(uDept3);
 		
-		uDept.addRole(ruser);
+		uDept1.addRole(ruser);
+		uDept2.addRole(ruser);
+		uDept3.addRole(ruser);
 		em.persist(ruser);
 	}
 
 
 	final static String[] groupsNames = { "甲班","乙班", "丙班" };
-	final static String[] officeNames = { "拉丝车间","镀锌车间", "绞线车间"};
+	final static String[] officeNames = { Product.LA_SI_DEPT_NAME,Product.DU_XIN_DEPT_NAME, Product.JIAO_XIAN_DEPT_NAME};
 	final static String[] fnames = { "赵", "钱", "孙", "李",
 		"周","吴","郑","王","冯","陈","褚",
 		"卫","蒋","沈"};

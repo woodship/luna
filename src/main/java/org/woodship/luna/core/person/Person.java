@@ -134,7 +134,7 @@ public class Person extends IdEntity<Person>{
 
 	@Override
 	public String toString(){
-		return org.getName()+":"+trueName;
+		return topDepartment+"/"+ org.getName()+":"+trueName;
 	}
 	
 	public Organization getOrgByScope(RoleDataScope scope){
