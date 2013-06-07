@@ -1,27 +1,43 @@
 package org.woodship.luna.eam;
 
 import java.io.Serializable;
-import java.text.ParseException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.SingularAttribute;
+import javax.validation.ConstraintViolation;
+import javax.validation.Path;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.Converter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.woodship.luna.LunaException;
+import org.woodship.luna.core.person.Organization;
+import org.woodship.luna.core.person.Organization_;
 import org.woodship.luna.core.person.Person;
 import org.woodship.luna.core.person.PersonService;
 import org.woodship.luna.core.security.User;
 import org.woodship.luna.core.security.UserService;
-import org.woodship.luna.eam.enums.Classes;
 import org.woodship.luna.eam.enums.Inunction;
 import org.woodship.luna.eam.enums.LayDirection;
 import org.woodship.luna.eam.enums.Pack;
 import org.woodship.luna.eam.enums.Weld;
 import org.woodship.luna.eam.enums.Winding;
+
+import com.vaadin.data.fieldgroup.Caption;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 
 @Service
 public class ProductService implements Serializable{
@@ -32,94 +48,79 @@ public class ProductService implements Serializable{
 
 	@Autowired
 	private  PersonService ps;
-	
+
 	@Autowired
 	private InvItemService is;
-	
+
 	@Autowired
 	private CustomerService cs;
-	
+
 	@Autowired
 	private UserService us;
-	
-	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	
+
+
+	public ProductService() {
+		ConvertUtils.register(new DateConvert(), java.util.Date.class); 
+	}
+
+	@SuppressWarnings("rawtypes")
 	@Transactional
 	public String createProduct(Map<String,String[]> map){
 		Product p = new Product();
-		//日期
-		String date = map.get("produceDate")[0];
-		try {
-			p.setProduceDate(sdf.parse(date));
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return "日期格式错误";
+		//创建人
+		User createBy = us.findByUsername(map.get("createBy")[0]);
+		p.setCreateBy(createBy);
+		Person cbPerson = createBy.getPerson();
+		//车间
+		p.setOrg(cbPerson.getTopDepartment());
+		SingularAttribute[] sas = ProductDeptFileds.getFieldsByDeptName(cbPerson.getTopDepartment().getName());
+		for(SingularAttribute sa : sas){
+			if(sa.equals(Product_.org)){
+				continue;
+			}
+			String clientv = map.get(sa.getName())[0];
+			if("".equals(clientv)){
+				return "请填写完整，所有字段都是必填项";
+			}
+			Object value = clientv;
+			try {
+				if(sa.equals(Product_.classes)){
+					value = getClasses(cbPerson.getTopDepartment(), clientv);;
+				}else if(sa.getJavaType() == Person.class)
+				{
+					value = ps.findByWorkNum(clientv);
+				}else if(sa.equals(Product_.produceModel)){
+					value = is.findByModel(clientv);
+				}else if(sa.equals(Product_.customerNum)){
+					value =cs.findByCusNum(clientv);
+				}else if(sa.equals(Product_.layDirection)){
+					value = LayDirection.valueOf(clientv);
+				}else if(sa.equals(Product_.winding)){
+					value = Winding.valueOf(clientv);
+				}else if(sa.equals(Product_.inunction)){
+					value = Inunction.valueOf(clientv);
+				}else if(sa.equals(Product_.pack)){
+					value = Pack.valueOf(clientv);
+				}else if(sa.equals(Product_.weld)){
+					value = Weld.valueOf(clientv);
+				}
+				
+				BeanUtils.setProperty(p, sa.getName(),value );
+				
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}catch(javax.persistence.NoResultException e){
+					String c =getCaption(sa.getName());
+					return "找不到对应数据，请确认你输入的'"+c+"'是否正确";
+			}
 		}
-		
-		//班次 TODO
-//		p.setClasses(getEnumValue("classes",map,Classes.class));
-		
-		//工号
-		String workNum = map.get("workNum")[0];
-		List<Person> persons = ps.findByWorkNum(workNum);
-		if(persons.size() == 0){
-			return "该工号不存在，请确认后再试";
-		}
-		p.setPerson(persons.get(0));
-		
-		//("车台号")
-		p.setCarNum(map.get("carNum")[0]);
-		
-		//@Caption("产品型号")
-		List<InvItem> pms = is.findByModel(map.get("produceModel")[0]);
-		if(pms.size() == 0){
-			return "该产品型号不存在，请确认后再试";
-		}
-		p.setProduceModel(pms.get(0));
-		
-//		@Caption("客户名称")
-		List<Customer> cuses = cs.findByCusNum(map.get("customerNum")[0]);
-		if(cuses.size() == 0){
-			return "该产客户编号不存在，请确认后再试";
-		}
-		p.setCustomerNum(cuses.get(0));
-		
-//		@Caption("重量")
-		p.setWeight(map.get("weight")[0]);
-		
-//		@Caption("捻向")
-		p.setLayDirection(getEnumValue("layDirection",map,LayDirection.class));
-		
-//		@Caption("捻距")
-		p.setTwistLength(map.get("twistLength")[0]);
-		
-//	    @Caption("长度")
-		p.setLength(map.get("lenght")[0]);
-	    
-//	    @Caption("排线")
-	    p.setWinding(getEnumValue("winding",map,Winding.class));
-	    
-//	    @Caption("涂油")
-	    p.setInunction(getEnumValue("inunction",map,Inunction.class));
-	    
-//	    @Caption("包装")
-	    p.setPack(getEnumValue("pack",map,Pack.class));
-	    
-//	    @Caption("原料型号")
-	    p.setMaterialModel(map.get("materialModel")[0]);
-	    
-//	    @Caption("焊接")
-	    p.setWeld(getEnumValue("weld",map,Weld.class));
-	    
-	    
-	    //创建人
-	    User createBy = us.findByUsername(map.get("createBy")[0]);
-	    p.setCreateBy(createBy);
-	    
 		em.persist(p);
+		
 		return "保存成功";
 	}
-	
+
 	public   <T extends Enum<T>>  T getEnumValue(String key, Map<String,String[]> map ,Class<T>  e){
 		String value = map.get(key)[0];
 		if(value != null && !"".equals(value)){
@@ -131,6 +132,48 @@ public class ProductService implements Serializable{
 		}
 		return null;
 	}
+
+	public class DateConvert implements Converter{  
+		public Object convert(Class arg0, Object arg1) {  
+			String p = (String)arg1;  
+			if(p== null || p.trim().length()==0){  
+				return null;  
+			}  
+			try{  
+				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");  
+				return df.parse(p.trim());  
+			}  
+			catch(Exception e){  
+				return null;  
+			}  
+		}  
+
+	}  
+
+	private Organization getClasses(Organization dept, String calssName){
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Organization> query = cb.createQuery(Organization.class);
+		Root<Organization> from = query.from(Organization.class);
+		Predicate pa = cb.equal(from.get(Organization_.parent), dept);
+		Predicate pb = cb.equal(from.get(Organization_.name), calssName);
+		query.where(cb.and(pa,pb));
+
+		return em.createQuery(query).getSingleResult();
+	}
 	
-	
+	public static String getCaption(String fieldname){
+		try {
+			Field f = Product.class.getDeclaredField(fieldname);
+			Caption cap = f.getAnnotation(Caption.class);
+			String c = f.getName();
+			if(cap != null ){
+				c = cap.value();
+			}
+			return c;
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			return null;
+		} 
+	}
+
 }

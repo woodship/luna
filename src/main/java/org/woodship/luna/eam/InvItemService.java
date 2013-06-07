@@ -14,10 +14,10 @@ public class InvItemService implements Serializable{
 	@PersistenceContext
 	private  EntityManager em;
 	
-	public List<InvItem> findByModel(String model){
+	public InvItem findByModel(String model){
 		  if (model == null) return null;
 		  return em.createQuery("SELECT o FROM InvItem o where o.model = ?", InvItem.class)
-				  .setParameter(1, model).getResultList();
+				  .setParameter(1, model).getSingleResult();
 	}
 	
 	

@@ -1,15 +1,15 @@
-1.view中不能有事务注解，不然DiscoveryNavigator会找不到该view，因为有事务注解过的bean会生成代理bean,代理bean的类型已经变了
+eclipse开发环境配制方法
+1. eclipse
 
-2.TransactionalEntityProvider类相当于是公共DAO,具体实体的EntityProvider实现该类，然后用其生成jpacontainer.增删改如果有其它业务需求，
- 可覆盖TransactionalEntityProvider中的相应方法，增加业务代码。
- 
-3. target/generated-sources/annotations 为maven自动生成，用于JPA API查询
+target/generated-sources/annotations 为maven自动生成，用于JPA API查询
 如果没有生成请右键项目 Run as>>Maven install，
 如果maven未自动设置成java resources, 请自己设置一下（右键target/generated-sources/annotations, build path>>Use as source folder）
 
-4.按钮权限已经实现，请参考PersonView.authenticate();
+2.按钮权限已经实现，请参考PersonView.authenticate();
 
 测试用户：
 admin  
-user
-密码都是111，user可看到部分功能
+user1
+user2
+user3
+密码都是111，user1/2/3可看到部分功能

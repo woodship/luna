@@ -3,6 +3,9 @@ package org.woodship.luna.eam;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Path;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
@@ -13,13 +16,15 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.woodship.luna.core.person.Organization;
+import org.woodship.luna.core.person.Person;
+import org.woodship.luna.core.security.User;
 import org.woodship.luna.core.security.UserService;
 
 import com.vaadin.server.RequestHandler;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinResponse;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.Notification;
 
 @Service
 public class AndroidRequestHandler implements RequestHandler{
@@ -30,8 +35,6 @@ public class AndroidRequestHandler implements RequestHandler{
 
 	@Autowired
 	UserService us ;
-
-
 
 	@Override
 	public boolean handleRequest(VaadinSession session, VaadinRequest request,
@@ -45,7 +48,19 @@ public class AndroidRequestHandler implements RequestHandler{
 				token.setRememberMe(true);
 				Subject currentUser = SecurityUtils.getSubject();
 				currentUser.login(token);
-				response.getWriter().append("16");
+				User u = us.getCurrentUser();
+				Person p = u.getPerson();
+				if(p == null || p.getTopDepartment() == null){
+					response.getWriter().append("登录成功，但无法确定您所在车间，请使用关联有人员信息的用户登录");
+					return true;
+				}
+				Organization dept = p.getTopDepartment();
+				String[] fns = ProductDeptFileds.getFiledNamesByDeptName(dept.getName());
+				String fnames = fns[0];
+				for(int i = 1; i < fns.length; i++){
+					fnames += ","+fns[i];
+				}
+				response.getWriter().append("OK:"+dept.getName()+":"+fnames);
 			} catch (UnknownAccountException uae) {
 				response.getWriter().append("未知帐户错误");
 			} catch (IncorrectCredentialsException ice) {
@@ -64,11 +79,23 @@ public class AndroidRequestHandler implements RequestHandler{
 
 		} else if ("/android/add".equals(request.getPathInfo())) {
 			Map<String, String[]> map = request.getParameterMap();
-			String msg;
+			String msg = "";
 			try {
 				msg = ps.createProduct(map);
-			} catch (Exception e) {
-				msg = "保存出错";
+			}
+			catch (Exception e) {
+				for(Throwable t = e.getCause(); t != null; t = t.getCause()){
+					if(t instanceof javax.validation.ConstraintViolationException){
+						for(ConstraintViolation<?> v : ((javax.validation.ConstraintViolationException)t).getConstraintViolations()){
+							String fn = v.getPropertyPath().toString();
+							String caption = ProductService.getCaption(fn);
+							msg += caption+v.getMessage()+"\n";
+						}
+					}
+				}
+				if("".equals(msg)){
+					msg = "保存出错"+e.getMessage();
+				}
 				e.printStackTrace();
 			}
 			response.getWriter().write(msg);

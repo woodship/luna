@@ -124,9 +124,7 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
         	Utils.setTableDefaultHead(mainTable, Product.class);
         }else{
         	Organization o = topdepts.get(0);
-        	Product p = new Product();
-        	p.setOrg(o);
-        	mainTable.setVisibleColumns(p.getDeptFieldNames());
+        	mainTable.setVisibleColumns(ProductDeptFileds.getFiledNamesByDeptName(o.getName()));
         	Utils.setTableCaption(mainTable,  Product.class);
         }
         

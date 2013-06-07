@@ -22,10 +22,10 @@ public class PersonService implements Serializable{
 	@PersistenceContext
 	private  EntityManager em;
 	
-	public List<Person> findByWorkNum(String workNum){
+	public Person findByWorkNum(String workNum){
 		  if (workNum == null) return null;
 		  return em.createQuery("SELECT o FROM Person o where o.workNum = ?", Person.class)
-				  .setParameter(1, workNum).getResultList();
+				  .setParameter(1, workNum).getSingleResult();
 	}
 
 	/**

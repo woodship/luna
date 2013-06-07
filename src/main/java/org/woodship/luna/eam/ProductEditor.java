@@ -58,8 +58,8 @@ public class ProductEditor extends Window  {
 		formLayout.setMargin(true);
 		final JPAContainerItemFieldGroup<Product> fg = new JPAContainerItemFieldGroup<Product>(Product.class);
 		fg.setItemDataSource(jpaitem);
-		
-		String[] fieldnames = jpaitem.getEntity().getDeptFieldNames();
+		Product mainp =  jpaitem.getEntity();
+		String[] fieldnames = ProductDeptFileds.getFiledNamesByDeptName(mainp.getOrg().getName());
 		if( Product.JIAO_XIAN_DEPT_NAME.equals(jpaitem.getEntity().getOrg().getName())){
 			this.setHeight(550,Unit.PIXELS);
 		}

@@ -49,40 +49,37 @@ public class ProductDeptFileds {
 		,Product_.produceModel
 		,Product_.customerNum
 		,Product_.weight
-		
 		,Product_.layDirection
 		,Product_.twistLength
-		
 		,Product_.length
 		,Product_.productNum
-		
 		,Product_.winding
-		
 		,Product_.inunction
 		,Product_.pack
-		,Product_.jieMiZhan
-		,Product_.jiaoMiZhan
+		,Product_.jiaoMiLength
+		,Product_.jieMiLength
 	};
+	@SuppressWarnings("rawtypes")
+	public static String[] getFiledNamesByDeptName(String deptName){
+		SingularAttribute[] s = getFieldsByDeptName(deptName);
+		String[] strs = new String[s.length];
+		for(int i=0; i < s.length; i++){
+			strs[i]  = s[i].getName();
+		}
+		return strs;
+	}
 	
-	public static String[] getLaSiFileds(){
-		String[] strs = new String[LA_SI.length];
-		for(int i=0; i < LA_SI.length; i++){
-			strs[i]  = LA_SI[i].getName();
+	@SuppressWarnings("rawtypes")
+	public static SingularAttribute[] getFieldsByDeptName(String deptName){
+		SingularAttribute[] s = new SingularAttribute[]{};
+		if(Product.DU_XIN_DEPT_NAME.equals(deptName)){
+			s = DU_XIN;
+		}else if(Product.JIAO_XIAN_DEPT_NAME.equals(deptName)){
+			s = JIAO_XIAN;
+		}else if(Product.LA_SI_DEPT_NAME.equals(deptName)){
+			s = LA_SI;
 		}
-		return strs;
+		return s;
 	}
-	public static String[] getDU_XINFileds(){
-		String[] strs = new String[DU_XIN.length];
-		for(int i=0; i < DU_XIN.length; i++){
-			strs[i]  = DU_XIN[i].getName();
-		}
-		return strs;
-	}
-	public static String[] getJIAO_XIANFileds(){
-		String[] strs = new String[JIAO_XIAN.length];
-		for(int i=0; i < JIAO_XIAN.length; i++){
-			strs[i]  = JIAO_XIAN[i].getName();
-		}
-		return strs;
-	}
+	
 }

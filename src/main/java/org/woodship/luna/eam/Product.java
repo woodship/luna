@@ -117,12 +117,10 @@ public class Product extends IdEntity<Product>{
     private String materialModel;
     
 	@Caption("接米长")
-	@ManyToOne
-	private Person jieMiZhan;
+	private Double jieMiLength;
 	
 	@Caption("交米长")
-	@ManyToOne
-	private Person jiaoMiZhan;
+	private Double jiaoMiLength;
    
 
     private java.util.Date createDate = new java.util.Date();
@@ -315,21 +313,6 @@ public class Product extends IdEntity<Product>{
 		this.score3 = score3;
 	}
 
-	public Person getJieMiZhan() {
-		return jieMiZhan;
-	}
-
-	public void setJieMiZhan(Person jieMiZhan) {
-		this.jieMiZhan = jieMiZhan;
-	}
-
-	public Person getJiaoMiZhan() {
-		return jiaoMiZhan;
-	}
-
-	public void setJiaoMiZhan(Person jiaoMiZhan) {
-		this.jiaoMiZhan = jiaoMiZhan;
-	}
 
 	public String getProductNum() {
 		return productNum;
@@ -338,19 +321,7 @@ public class Product extends IdEntity<Product>{
 	public void setProductNum(String productNum) {
 		this.productNum = productNum;
 	}
-    
-	public  String[] getDeptFieldNames(){
-		if(org != null){
-			if(LA_SI_DEPT_NAME.equals(org.getName())){
-				return ProductDeptFileds.getLaSiFileds();
-			}else if(DU_XIN_DEPT_NAME.equals(org.getName())){
-				return ProductDeptFileds.getDU_XINFileds();
-			}else if(JIAO_XIAN_DEPT_NAME.equals(org.getName())){
-				return ProductDeptFileds.getJIAO_XIANFileds();
-			}
-		}
-		return null;
-	}
+	
 	
     
 }
