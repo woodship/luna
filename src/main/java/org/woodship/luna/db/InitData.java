@@ -13,8 +13,10 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.woodship.luna.HomeView;
 import org.woodship.luna.core.person.OrgType;
 import org.woodship.luna.core.person.Organization;
@@ -38,10 +40,7 @@ import org.woodship.luna.eam.InvItem;
 import org.woodship.luna.eam.InvItemView;
 import org.woodship.luna.eam.Product;
 import org.woodship.luna.eam.ProductView;
-import org.woodship.luna.eam.enums.Classes;
 import org.woodship.luna.util.Utils;
-
-import ru.xpoft.vaadin.VaadinMessageSource;
 
 
 @Component
@@ -58,9 +57,6 @@ public class InitData implements Serializable{
 	@Autowired
 	private PersonService personSer;
 
-	@Autowired
-	private VaadinMessageSource messageSource;
-
 	private User userAdmin;
 	
 	private Resource home;
@@ -70,6 +66,10 @@ public class InitData implements Serializable{
 	private Resource resPerson;
 
 	private Resource resOrg;
+	
+	@Value("${luna.company.name}")
+	private String lunaCompanyName;
+	
 	@Transactional
 	public void init(){
 		//有数据则不再初始化
@@ -203,7 +203,7 @@ public class InitData implements Serializable{
 
 		Random r = new Random(0);
 		Organization orgRoot = new Organization();
-		orgRoot.setName(messageSource.getMessage("luna.company.name", "WoodShip"));
+		orgRoot.setName(StringUtils.isEmpty(lunaCompanyName)?"WoodShip":lunaCompanyName);
 		orgRoot.setOrgType(OrgType.单位);
 		//TODO 根单位没办法调用setParent方法
 		em.persist(orgRoot);

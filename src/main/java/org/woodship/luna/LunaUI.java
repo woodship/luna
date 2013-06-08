@@ -1,15 +1,8 @@
 package org.woodship.luna;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.SetJoin;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -20,24 +13,20 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.util.StringUtils;
 import org.woodship.luna.core.security.Resource;
 import org.woodship.luna.core.security.ResourceEntityProvider;
 import org.woodship.luna.core.security.ResourceType;
-import org.woodship.luna.core.security.Resource_;
-import org.woodship.luna.core.security.Role;
-import org.woodship.luna.core.security.Role_;
 import org.woodship.luna.core.security.User;
 import org.woodship.luna.core.security.UserChangePWEditor;
 import org.woodship.luna.core.security.UserService;
-import org.woodship.luna.core.security.User_;
 
 import ru.xpoft.vaadin.DiscoveryNavigator;
-import ru.xpoft.vaadin.VaadinMessageSource;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
-import com.vaadin.addon.jpacontainer.util.DefaultQueryModifierDelegate;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.event.ItemClickEvent;
@@ -88,17 +77,32 @@ public class LunaUI extends UI {
 	private HelpManager helpManager;
 
     @Autowired
-    private VaadinMessageSource messageSource;
-
-    @Autowired
     ResourceEntityProvider resourceEntityProvider;
 
 	@Autowired()
 	UserService us;
 	
+	@Value("${luna.app.name}")
+	private String lunaAppName;
+	
+	@Value("${luna.login.right}")
+	private String lunaLoginRight;
+	
+	@Value("${luna.login.username}")
+	private String lunaLoginUsername;
+	
+	@Value("${luna.login.password}")
+	private String lunaLoginPassword;
+	
+	@Value("${luna.company.name}")
+	private String lunaCompanyName;
+
+	@Value("${luna.login.left}")
+	private String lunaLoginLeft;
+	
 	@Override
 	protected void init(VaadinRequest request) {
-		Page.getCurrent().setTitle(messageSource.getMessage("luna.app.name", "Luna"));
+		Page.getCurrent().setTitle(StringUtils.isEmpty(lunaAppName)?"Luna":lunaAppName);
 		getSession().setConverterFactory(new LunaConverterFactory());
 		getSession().setErrorHandler(new LunaErrorHandler());
 		
@@ -153,13 +157,13 @@ public class LunaUI extends UI {
 		labels.addStyleName("labels");
 		loginPanel.addComponent(labels);
 
-		Label welcome = new Label(messageSource.getMessage("luna.login.left", "Welcome"));
+		Label welcome = new Label(StringUtils.isEmpty(lunaLoginLeft)?"Welcome":lunaLoginLeft);
 		welcome.setSizeUndefined();
 		welcome.addStyleName("h4");
 		labels.addComponent(welcome);
 		labels.setComponentAlignment(welcome, Alignment.MIDDLE_LEFT);
 
-		Label title = new Label(messageSource.getMessage("luna.login.right", "WoodShip Luna"));
+		Label title = new Label(StringUtils.isEmpty(lunaLoginRight)?"WoodShip Luna":lunaLoginRight);
 		title.setSizeUndefined();
 		title.addStyleName("h2");
 		title.addStyleName("light");
@@ -171,12 +175,12 @@ public class LunaUI extends UI {
 		fields.setMargin(true);
 		fields.addStyleName("fields");
 
-		final TextField username = new TextField(messageSource.getMessage("luna.login.username", "Username"));
+		final TextField username = new TextField(StringUtils.isEmpty(lunaLoginUsername)?"UserName":lunaLoginUsername);
 		username.focus();
 		username.setValue(User.SUPER_ADMIN_USERNAME);
 		fields.addComponent(username);
 
-		final PasswordField password = new PasswordField(messageSource.getMessage("luna.login.password", "Password"));
+		final PasswordField password = new PasswordField(StringUtils.isEmpty(lunaLoginPassword)?"Password":lunaLoginPassword);
 		password.setValue(User.DEFAULT_PASSWORD);
 		fields.addComponent(password);
 
@@ -300,8 +304,8 @@ public class LunaUI extends UI {
 							{
 								addStyleName("branding");
 								Label logo = new Label(
-										"<span>"+messageSource.getMessage("luna.company.name", "WoodShip")
-										+"</span><br>"+messageSource.getMessage("luna.app.name", "Luna"),
+										"<span>"+(StringUtils.isEmpty(lunaCompanyName)?"WoodShip":lunaCompanyName)
+										+"</span><br>"+(StringUtils.isEmpty(lunaAppName)?"Luna":lunaAppName),
 										ContentMode.HTML);
 								logo.setSizeUndefined();
 								addComponent(logo);
