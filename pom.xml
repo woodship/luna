@@ -33,7 +33,7 @@
 
 	<profiles>
 		<profile>
-			<id>production-mode</id>
+			<id>production</id>
 			<properties>
 				<productionMode>true</productionMode>
 			</properties>
@@ -351,14 +351,11 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
 					<webResources>
-						<webResource>
-							<directory>${basedir}/src/main/webapp/WEB-INF</directory>
-							<includes>
-								<include>*.xml</include>
-							</includes>
+						<resource>
+						<!-- 打包时将production/classes中的用于生产环境的配制打到war中-->
+							<directory>${basedir}/src/main/resources/production</directory>
 							<targetPath>WEB-INF</targetPath>
-							<filtering>true</filtering>
-						</webResource>
+						</resource>
 					</webResources>
 				</configuration>
 			</plugin>
