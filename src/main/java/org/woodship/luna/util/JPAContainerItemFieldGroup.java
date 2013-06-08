@@ -142,6 +142,7 @@ public class JPAContainerItemFieldGroup<T> extends FieldGroup {
 		        if (notNullAnnotation != null 
 		        		|| ne != null
 		        		) {
+		        	//增加上该标识后就
 		           field.setRequired(true);
 		        }
 				break;

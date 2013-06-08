@@ -78,14 +78,7 @@ public class UserEditor extends Window  {
 //					error.setVisible(false);
 					UserEditor.this.close();//关闭，防止再点击，重复增加
 				} catch (FieldGroup.CommitException e) {
-					for (Field<?> field: fg.getFields()) {
-						ErrorMessage errMsg = ((AbstractField<?>)field).getErrorMessage();
-						if (errMsg != null) {
-							error.setValue("<div style='color:red'> " + field.getCaption() + ": " +  errMsg.getFormattedHtmlMessage() + "</div>");
-							error.setVisible(true);
-							break;
-						}
-					}
+					Utils.setCommitExceptionMsg(e, fg, error);
 				}
 			}
 		});

@@ -21,6 +21,7 @@ import org.woodship.luna.util.Utils;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Item;
+import com.vaadin.data.Validator.EmptyValueException;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -78,14 +79,7 @@ public class PersonEditor extends Window  {
 //					error.setVisible(false);
 					PersonEditor.this.close();//关闭，防止再点击，重复增加
 				} catch (FieldGroup.CommitException e) {
-					for (Field<?> field: fg.getFields()) {
-						ErrorMessage errMsg = ((AbstractField<?>)field).getErrorMessage();
-						if (errMsg != null) {
-							error.setValue("<div style='color:red'> " + field.getCaption() + ": " +  errMsg.getFormattedHtmlMessage() + "</div>");
-							error.setVisible(true);
-							break;
-						}
-					}
+					Utils.setCommitExceptionMsg(e, fg, error);
 				}
 			}
 		});

@@ -105,16 +105,7 @@ public class ProductEditor extends Window  {
 					Notification.show("保存成功");
 					ProductEditor.this.close();//关闭，防止再点击，重复增加
 				} catch (FieldGroup.CommitException e) {
-					for (Field<?> field: fg.getFields()) {
-						ErrorMessage errMsg = ((AbstractField<?>)field).getErrorMessage();
-						if (errMsg != null) {
-							error.setValue("<div style='color:red'> " + field.getCaption() + ": " +  errMsg.getFormattedHtmlMessage() + "</div>");
-							error.setVisible(true);
-							return;
-						}
-					}
-					error.setValue("<div style='color:red'>请填写完整，红色星号为必填</div>");
-					error.setVisible(true);
+					Utils.setCommitExceptionMsg(e, fg, error);
 				}
 			}
 		});

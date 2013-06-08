@@ -16,6 +16,7 @@ import ru.xpoft.vaadin.SpringApplicationContext;
 
 import com.vaadin.addon.jpacontainer.EntityProvider;
 import com.vaadin.addon.jpacontainer.JPAContainer;
+import com.vaadin.data.Validator.EmptyValueException;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.Caption;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -24,9 +25,8 @@ import com.vaadin.server.ErrorMessage;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.ComponentContainer;
-import com.vaadin.ui.Notification;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.Notification.Type;
 
 public class Utils {
 	
@@ -197,17 +197,22 @@ public class Utils {
 		return ps.encryptPassword(pw);
 	}
 
-	public static void showCommitExceptionMsg(CommitException e,
-			JPAContainerItemFieldGroup<Product> fg) {
+	public static void setCommitExceptionMsg(CommitException e,FieldGroup fg, Label error ) {
+		String msg = "提交异常，"+e.getMessage();
+		if(e.getCause() instanceof EmptyValueException){
+			//TODO 精确定位异常
+			msg = "请填写完整，红色星号为必填";
+		}
 		
 		for (com.vaadin.ui.Field<?> field: fg.getFields()) {
 			ErrorMessage errMsg = ((AbstractField<?>)field).getErrorMessage();
 			if (errMsg != null) {
-				Notification.show(field.getCaption()+ ":"+errMsg.getFormattedHtmlMessage(),Type.WARNING_MESSAGE);
-				return;
+				msg =  field.getCaption()+ ":"+errMsg.getFormattedHtmlMessage();
 			}
 		}
-		Notification.show( "请填写完整，红色星号为必填",Type.WARNING_MESSAGE);
+		
+		error.setValue( "<div style='color:red'>"+msg+ "</div>");
+		error.setVisible(true);
 	}
 
 }

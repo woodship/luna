@@ -75,21 +75,7 @@ public class OrganizationEditor extends Window  {
 //					error.setVisible(false);
 					OrganizationEditor.this.close();//关闭，防止再点击，重复增加
 				} catch (FieldGroup.CommitException e) {
-					for (Field<?> field: fg.getFields()) {
-						ErrorMessage errMsg = ((AbstractField<?>)field).getErrorMessage();
-						if (errMsg != null) {
-							String msg = errMsg.getFormattedHtmlMessage();
-							for(Throwable t = e.getCause(); t != null; t = t.getCause()){
-								if(t instanceof LunaException){
-									msg = t.getMessage();
-									break;
-								}
-							}
-							error.setValue("<div style='color:red'> " + field.getCaption() + ": " +  msg + "</div>");
-							error.setVisible(true);
-							break;
-						}
-					}
+					Utils.setCommitExceptionMsg(e, fg, error);
 				}
 			}
 		});
