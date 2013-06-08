@@ -69,7 +69,7 @@ public class UserEditor extends Window  {
 					//新增的需要单独处理
 					if(jpaitem.getEntity().getId() == null){
 						User p =fg.getItemDataSource().getEntity();
-						p.setPassword(Utils.encryptPassword(User.DEFAULT_PASSWORD));
+						p.setPassword(Utils.DEFAULT_PASSWORD);
 						users.addEntity(p);
 					}
 					Notification.show("保存成功");

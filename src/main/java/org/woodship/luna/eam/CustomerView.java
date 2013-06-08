@@ -96,7 +96,7 @@ public class CustomerView extends VerticalLayout implements ComponentContainer, 
             }
         });
 
-        Utils.setTableDefaultHead(mainTable, Customer.class);
+        Utils.configTableHead(mainTable, Customer.class);
         
 
         HorizontalLayout toolbar = new HorizontalLayout();

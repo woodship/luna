@@ -64,7 +64,7 @@ public class UserService implements Serializable{
 	public User createUserFromPerson(Person person){
 		User u = new User();
 		u.setPerson(person);
-		u.setPassword(Utils.encryptPassword(User.DEFAULT_PASSWORD));
+		u.setPassword(Utils.DEFAULT_PASSWORD);
 		em.persist(u);
 		return u;
 	}

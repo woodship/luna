@@ -5,6 +5,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.vaadin.dialogs.ConfirmDialog;
+import org.woodship.luna.core.person.Person;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.addon.jpacontainer.EntityItem;
@@ -53,13 +54,13 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
     private Button changePwButton;
     
     private JPAContainer<User> mainContainer ;
-    private JPAContainer<Role> roleContainer ;
+    private JPAContainer<Person> personContainer ;
     private String textFilter;
 
     @PostConstruct
 	public void PostConstruct(){
         mainContainer= Utils.getJPAContainer(User.class);
-        roleContainer=Utils.getJPAContainer(Role.class);
+        personContainer=Utils.getJPAContainer(Person.class);
         
         buildMainArea();
 
@@ -108,7 +109,7 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
         });
 
 //        mainTable.setVisibleColumns(new Object[]{"username","showName","sysUser","person.trueName"});
-        Utils.setTableDefaultHead(mainTable, User.class);
+        Utils.configTableHead(mainTable, User.class);
         
 
         HorizontalLayout toolbar = new HorizontalLayout();
@@ -129,7 +130,9 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
         fromPersonButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-            	Notification.show("暂未实现");
+            	UserPersonEditor editor = new UserPersonEditor(mainContainer,personContainer);
+            	editor.center();
+                UI.getCurrent().addWindow(editor);
             }
         });
         

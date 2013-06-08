@@ -109,7 +109,7 @@ public class RoleView extends VerticalLayout implements ComponentContainer, View
             }
         });
 
-        Utils.setTableDefaultHead(mainTable, Role.class);
+        Utils.configTableHead(mainTable, Role.class);
         
 
         HorizontalLayout toolbar = new HorizontalLayout();

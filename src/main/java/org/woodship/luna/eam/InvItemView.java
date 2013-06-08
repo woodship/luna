@@ -95,7 +95,7 @@ public class InvItemView extends VerticalLayout implements ComponentContainer, V
             }
         });
 
-        Utils.setTableDefaultHead(mainTable, InvItem.class);
+        Utils.configTableHead(mainTable, InvItem.class);
         
 
         HorizontalLayout toolbar = new HorizontalLayout();

@@ -126,7 +126,7 @@ public class InitData implements Serializable{
 		em.persist(pro);
 		
 		//三个部门各增加一个管理员用户
-		String password  = Utils.encryptPassword(User.DEFAULT_PASSWORD);
+		String password  = Utils.DEFAULT_PASSWORD;
 		User uDept1 = new User();
 		uDept1.setPassword(password);
 		uDept1.setPerson(personSer.getOrgPerson(topDeps.get(0)).get(0));
@@ -267,7 +267,7 @@ public class InitData implements Serializable{
 
 
 		//增加管理员用户
-		String pw =  Utils.encryptPassword(User.DEFAULT_PASSWORD);
+		String pw =  Utils.DEFAULT_PASSWORD;
 		userAdmin = new User(User.SUPER_ADMIN_USERNAME,pw,"管理员");
 		userAdmin.setSysUser(true);
 		em.persist(userAdmin);

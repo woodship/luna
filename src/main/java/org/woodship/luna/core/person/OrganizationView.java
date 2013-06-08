@@ -108,7 +108,7 @@ public class OrganizationView extends HorizontalSplitPanel implements ComponentC
                 }
             }
         });
-        Utils.setTableDefaultHead(mainTable, Organization.class);
+        Utils.configTableHead(mainTable, Organization.class);
         
 
         HorizontalLayout toolbar = new HorizontalLayout();

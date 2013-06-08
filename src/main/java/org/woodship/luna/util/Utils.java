@@ -8,9 +8,9 @@ import java.util.Map.Entry;
 import javax.persistence.Entity;
 
 import org.apache.shiro.authc.credential.DefaultPasswordService;
+import org.woodship.luna.core.security.User;
 import org.woodship.luna.db.HierarchialEntity;
 import org.woodship.luna.db.TransactionalEntityProvider;
-import org.woodship.luna.eam.Product;
 
 import ru.xpoft.vaadin.SpringApplicationContext;
 
@@ -29,6 +29,10 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 
 public class Utils {
+	/**
+	 * 默认密码，已经加密
+	 */
+	public static final String DEFAULT_PASSWORD = (new DefaultPasswordService()).encryptPassword(User.DEFAULT_PASSWORD);
 	
 	/**
 	 * 为table中已经存在的列设置caption，(根据{@link Caption},beanClass的字段上有该注解则增加 )
@@ -57,10 +61,21 @@ public class Utils {
 	 * @param table
 	 * @param beanClass
 	 */
-	public static void setTableDefaultHead(Table table,Class<?> beanClass){
+	public static void configTableHead(Table table,Class<?> beanClass, String... fieldNames){
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		//准备数据
 		for(Field f : beanClass.getDeclaredFields()){
+			//如果指定了fieldNames则过虑
+			if(fieldNames != null && fieldNames.length > 0){
+				boolean in = false;
+				for(String fn : fieldNames){
+					if(f.getName().equals(fn)){
+						in = true;
+						break;
+					}
+				}
+				if(!in) continue;
+			}
 			Caption caption = f.getAnnotation(Caption.class);
 			if(caption != null){
 				map.put(f.getName(), caption.value());
@@ -192,6 +207,11 @@ public class Utils {
 		return ep;
 	}
 
+	/**
+	 * 明码转换成密码，该方法比较慢，尽量少用
+	 * @param pw
+	 * @return
+	 */
 	public static String encryptPassword(String pw){
 		DefaultPasswordService ps = new DefaultPasswordService();
 		return ps.encryptPassword(pw);

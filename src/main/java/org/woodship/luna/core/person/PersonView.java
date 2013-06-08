@@ -114,7 +114,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
             }
         });
 
-        Utils.setTableDefaultHead(mainTable, Person.class);
+        Utils.configTableHead(mainTable, Person.class);
         
 
         HorizontalLayout toolbar = new HorizontalLayout();

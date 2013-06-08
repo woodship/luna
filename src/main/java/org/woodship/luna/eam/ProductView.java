@@ -121,7 +121,7 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
         //根据车间权限配制table要显示的列
         List<Organization> topdepts = findTopDepts();
         if(topdepts.size() != 1){
-        	Utils.setTableDefaultHead(mainTable, Product.class);
+        	Utils.configTableHead(mainTable, Product.class);
         }else{
         	Organization o = topdepts.get(0);
         	mainTable.setVisibleColumns(ProductDeptFileds.getFiledNamesByDeptName(o.getName()));
