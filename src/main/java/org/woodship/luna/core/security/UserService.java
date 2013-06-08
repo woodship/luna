@@ -23,6 +23,7 @@ import org.woodship.luna.core.person.OrgType;
 import org.woodship.luna.core.person.Organization;
 import org.woodship.luna.core.person.Organization_;
 import org.woodship.luna.core.person.Person;
+import org.woodship.luna.core.person.Person_;
 import org.woodship.luna.util.Utils;
 
 @SuppressWarnings("serial")
@@ -205,5 +206,23 @@ public class UserService implements Serializable{
 	public List<Organization> getCurrCanReadOrg(OrgType type ){
 		User user  = getCurrentUser();
 		return getCanReadOrg(user, type);
+	}
+	
+	/**
+	 * 删除人员关联的用户
+	 * @param pid
+	 */
+	public void removePersonUser(String pid){
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<User> query = cb.createQuery(User.class);
+		Root<User> from = query.from(User.class);
+		query.where(cb.equal(from.get(User_.person).get(Person_.id), pid));
+		
+		List<User> users = em.createQuery(query).getResultList();
+		for(User u : users){
+			if(!u.isSysUser()){
+				em.remove(u);
+			}
+		}
 	}
 }

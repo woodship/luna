@@ -14,6 +14,7 @@ import javax.persistence.criteria.SetJoin;
 
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("serial")
 @Service
@@ -38,4 +39,5 @@ public class RoleService implements Serializable{
 		c.where(p);
 		return em.createQuery(c).getResultList();
 	}
+
 }

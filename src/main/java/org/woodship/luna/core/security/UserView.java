@@ -112,7 +112,7 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
         
 
         HorizontalLayout toolbar = new HorizontalLayout();
-        newButton = new Button("直接增加");
+        newButton = new Button("增加");
         newButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {

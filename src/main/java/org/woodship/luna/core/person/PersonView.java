@@ -136,7 +136,8 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
         deleteButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-            	ConfirmDialog.show(UI.getCurrent(),"警告","确定要删除吗？删除后将不能恢复！","是","否",
+            	ConfirmDialog.show(UI.getCurrent(),"警告"
+            			,"确定要删除吗？如果该人员关联有非系统用户，也将被删除，删除后将不能恢复！","是","否",
            			 new ConfirmDialog.Listener() {
 					@Override
 					public void onClose(ConfirmDialog dialog) {

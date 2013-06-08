@@ -23,6 +23,8 @@ public class LunaConverterFactory extends DefaultConverterFactory {
         	return (Converter<PRESENTATION, MODEL>) new DateConverter<java.sql.Date>(java.sql.Date.class,"yyyy-MM-dd");
         }else if (presentationType == String.class && modelType == java.sql.Time.class) {
         	return (Converter<PRESENTATION, MODEL>) new DateConverter<java.sql.Time>(java.sql.Time.class,"yyyy-MM-dd hh:mm");
+        }else if (presentationType == String.class && modelType == Boolean.class) {
+        	return (Converter<PRESENTATION, MODEL>) new BooleanConverter();
         }
 
         return super.findConverter(presentationType, modelType);
@@ -64,6 +66,34 @@ class DateConverter<T extends Date> implements Converter<String, T>{
 	@Override
 	public Class<T> getModelType() {
 		return clazz;
+	}
+
+	@Override
+	public Class<String> getPresentationType() {
+		return String.class;
+	}
+	
+}
+
+
+class BooleanConverter implements Converter<String, Boolean>{
+	private static final long serialVersionUID = -43286848187606610L;
+
+	@Override
+	public Boolean convertToModel(String value, Locale locale)
+			throws com.vaadin.data.util.converter.Converter.ConversionException {
+		return Boolean.valueOf(value);
+	}
+
+	@Override
+	public String convertToPresentation(Boolean value, Locale locale)
+			throws com.vaadin.data.util.converter.Converter.ConversionException {
+		return value?"是":"否";
+	}
+
+	@Override
+	public Class<Boolean> getModelType() {
+		return Boolean.class;
 	}
 
 	@Override

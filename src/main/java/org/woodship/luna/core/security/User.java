@@ -12,9 +12,10 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.woodship.luna.core.person.Person;
 import org.woodship.luna.db.IdEntity;
-import org.woodship.luna.util.Utils;
 
 import com.vaadin.data.fieldgroup.Caption;
 @Entity
@@ -54,7 +55,7 @@ public class User extends IdEntity<User>{
 	@Caption("系统用户")
 	private boolean sysUser;
 
-	@Caption("人员信息")
+	@Caption("关联人员")
 	@OneToOne
 	private Person person;
 
@@ -80,7 +81,7 @@ public class User extends IdEntity<User>{
 	}
 
 	/**
-	 * 明码，不会被自动转换成密码
+	 * 明码，不会被自动转换成密码，需要自已在设置前转换
 	 * @param password 明码
 	 */
 	public void setPassword(String password) {
@@ -110,8 +111,12 @@ public class User extends IdEntity<User>{
 
 	public void setPerson(Person person) {
 		this.person = person;
-		this.username = person.getWorkNum();
-		this.showName = person.getTrueName();
+		if(StringUtils.isEmpty(username)){
+			this.username = person.getWorkNum();
+		}
+		if(StringUtils.isEmpty(showName)){
+			this.showName = person.getTrueName();
+		}
 	}
 
 
@@ -122,6 +127,12 @@ public class User extends IdEntity<User>{
 	public void setSysUser(boolean sysUser) {
 		this.sysUser = sysUser;
 	}
-
+	
+	public void clearUserRoles(){
+		for(Role role : getRoles()){
+			role.getUsers().remove(this);
+		}
+		this.setRoles(null);
+	}
 
 }

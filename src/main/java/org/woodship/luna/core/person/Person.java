@@ -43,7 +43,6 @@ public class Person extends IdEntity<Person>{
     private Organization topDepartment;
     
     
-    
     public String getTrueName() {
 		return trueName;
 	}

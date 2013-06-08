@@ -46,14 +46,12 @@ public class PersonEntityProvider  extends TransactionalEntityProvider<Person> {
 			);
 	    }
 
-//		@Override
-//		@Transactional(propagation = Propagation.REQUIRED)
-//		public Person addEntity(Person entity) {
-//			//增加人员同时增加用户
-//			Person p =  super.addEntity(entity);
-//			us.createUserFromPerson(p);
-//			return p;
-//		}
+		@Override
+		@Transactional(propagation = Propagation.REQUIRED)
+		public void removeEntity(Object entityId) {
+			us.removePersonUser(entityId.toString());
+			super.removeEntity(entityId);
+		}
 
 	    
 }

@@ -36,22 +36,20 @@ import com.vaadin.ui.Window;
 
 @SuppressWarnings("serial")
 public class UserEditor extends Window  {
-	JPAContainer<User> persons = null;
-	JPAContainerItem<User> jpaitem = null;
 
 	@SuppressWarnings("unchecked")
-	public UserEditor(final Item item,  final JPAContainer<User> persons) {
+	public UserEditor(final Item item,  final JPAContainer<User> users) {
 		this.setCaption("角色编辑/新增");
-		this.persons = persons;
-		this.jpaitem = (JPAContainerItem<User>) item;
-		final FormLayout formLayout = new FormLayout();
-		formLayout.setMargin(true);
+		final JPAContainerItem<User> jpaitem = (JPAContainerItem<User>) item;
 		final JPAContainerItemFieldGroup<User> fg = new JPAContainerItemFieldGroup<User>(User.class);
 		fg.setItemDataSource(jpaitem);
 		
+		final FormLayout formLayout = new FormLayout();
+		formLayout.setMargin(true);
 		//增加默认字段
-		formLayout.addComponent(fg.buildAndBind("登录名","username"));
-		formLayout.addComponent(fg.buildAndBind("显示名","showName"));
+		Utils.buildAndBindFieldGroup(fg, User.class, formLayout);
+		
+		//TODO 只能选择未选择过的人员
 		
 		final Label error = new Label("", ContentMode.HTML);
 		error.setVisible(false);
@@ -72,7 +70,7 @@ public class UserEditor extends Window  {
 					if(jpaitem.getEntity().getId() == null){
 						User p =fg.getItemDataSource().getEntity();
 						p.setPassword(Utils.encryptPassword(User.DEFAULT_PASSWORD));
-						persons.addEntity(p);
+						users.addEntity(p);
 					}
 					Notification.show("保存成功");
 //					error.setVisible(false);
