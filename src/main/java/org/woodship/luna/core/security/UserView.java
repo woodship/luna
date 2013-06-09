@@ -55,12 +55,14 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
     
     private JPAContainer<User> mainContainer ;
     private JPAContainer<Person> personContainer ;
+    private JPAContainer<Role> roleContainer ;
     private String textFilter;
 
     @PostConstruct
 	public void PostConstruct(){
         mainContainer= Utils.getJPAContainer(User.class);
         personContainer=Utils.getJPAContainer(Person.class);
+        roleContainer=Utils.getJPAContainer(Role.class);
         
         buildMainArea();
 
@@ -169,10 +171,10 @@ public class UserView extends VerticalLayout implements ComponentContainer, View
         setRolsesButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-            	Notification.show("暂未实现，请先在角色管理中操作",Type.WARNING_MESSAGE);
-//            	UserRoleEditor pe = new UserRoleEditor(mainTable.getItem(mainTable.getValue()) ,mainContainer, roleContainer);
-//            	pe.center();
-//                UI.getCurrent().addWindow(pe);
+//            	Notification.show("暂未实现，请先在角色管理中操作",Type.WARNING_MESSAGE);
+            	UserRoleEditor pe = new UserRoleEditor(mainTable.getItem(mainTable.getValue()) ,mainContainer, roleContainer);
+            	pe.center();
+                UI.getCurrent().addWindow(pe);
             }
         });
         setRolsesButton.setEnabled(false);

@@ -41,7 +41,6 @@ public class RoleUserEditor extends Window  {
 		table.setHeight(400, Unit.PIXELS);
 		table.setMultiSelect(true);
 		table.setSelectable(true);
-		table.setMultiSelectMode(MultiSelectMode.SIMPLE);
 		//设置值
 		Role r = jpaitem.getEntity();
 		for(User u : r.getUsers()){

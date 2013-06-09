@@ -24,15 +24,15 @@ public class UserRoleEditor extends Window  {
 	private JPAContainerItem<User> jpaitem = null;
 	private Table table;
 	@SuppressWarnings("unchecked")
-	public UserRoleEditor(final Item item,  final JPAContainer<User> container, final JPAContainer<Role> roleContainer) {
+	public UserRoleEditor(final Item item,  final JPAContainer<User> userContainer, final JPAContainer<Role> roleContainer) {
 		this.setCaption("为用户设置角色");
 		this.jpaitem = (JPAContainerItem<User>) item;
 		final VerticalLayout formLayout = new VerticalLayout();
 		formLayout.setMargin(true);
 		table = new Table();
 		table.setContainerDataSource(roleContainer);
-		table.setVisibleColumns(new Object[]{"name","remark"});
-		Utils.setTableCaption(table, User.class);
+		table.setVisibleColumns(new Object[]{Role_.name.getName(),Role_.remark.getName()});
+		Utils.setTableCaption(table, Role.class);
 		table.setWidth(300, Unit.PIXELS);
 		table.setHeight(400, Unit.PIXELS);
 		table.setMultiSelect(true);
@@ -57,12 +57,15 @@ public class UserRoleEditor extends Window  {
 			@Override
 			public void buttonClick(Button.ClickEvent event) {
 				Set<?> v = (Set<?>) table.getValue();
+				User currUser = jpaitem.getEntity();
+				currUser.getRoles().clear();
 				for(Object rid : v){
 					Role role = roleContainer.getItem(rid).getEntity() ;
-					role.addUser(jpaitem.getEntity());
+					role.addUser(currUser);
+					currUser.getRoles().add(role);
 					roleContainer.getItem(rid).getItemProperty("users").setValue(role.getUsers());
 				}
-				roleContainer.commit();
+				jpaitem.getItemProperty(User_.roles.getName()).setValue(currUser.getRoles());
 				Notification.show("保存成功");
 			}
 		});
