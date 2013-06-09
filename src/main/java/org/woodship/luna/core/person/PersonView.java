@@ -81,10 +81,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 
 
 	private void buildMainArea() {
-    	//右侧
-        VerticalLayout verticalLayout = new VerticalLayout();
-        setSecondComponent(verticalLayout);
-
+    	
         
         mainTable = new Table(null, persons);
         mainTable.setSelectable(true);
@@ -182,15 +179,21 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
         toolbar.setComponentAlignment(searchField, Alignment.TOP_RIGHT);
         toolbar.setMargin(true);
 
+      //右侧
+        this.setSizeUndefined();
+        this.setSizeFull();
+        VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.setSizeFull();
+        setSecondComponent(verticalLayout);
         verticalLayout.addComponent(toolbar);
         verticalLayout.addComponent(mainTable);
         verticalLayout.setExpandRatio(mainTable, 1);
-        verticalLayout.setSizeFull();
 
     }
 
     private void buildTree() {
         groupTree = new Tree(null, departments);
+        groupTree.setSizeFull();
         groupTree.setItemCaptionPropertyId("name");
 
         groupTree.setImmediate(true);

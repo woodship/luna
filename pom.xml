@@ -6,10 +6,11 @@
 	<version>1.0.0</version>
 	<packaging>war</packaging>
 
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<productionMode>false</productionMode>
-		<vaadin.version>7.0.6</vaadin.version>
+		<vaadin.version>7.0.7</vaadin.version>
 		
 		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
 		<spring.version>3.2.2.RELEASE</spring.version>
