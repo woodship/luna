@@ -27,6 +27,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.woodship.luna.db.HierarchialEntity;
 
@@ -34,6 +36,7 @@ import com.vaadin.data.fieldgroup.Caption;
 
 @SuppressWarnings("serial")
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Organization  extends HierarchialEntity<Organization>{
 	public Organization() {
 		super();

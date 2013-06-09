@@ -6,6 +6,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.woodship.luna.core.security.RoleDataScope;
 import org.woodship.luna.db.IdEntity;
@@ -15,6 +17,7 @@ import com.vaadin.data.fieldgroup.Caption;
 @SuppressWarnings("serial")
 @Entity
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = {"workNum"})})
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Person extends IdEntity<Person>{
 
 	@NotEmpty
