@@ -70,7 +70,7 @@ public class OrganizationView extends HorizontalSplitPanel implements ComponentC
         buildTree();
         buildMainArea();
 
-        setSplitPosition(20);
+        setSplitPosition(15);
         
         authenticate();
     }

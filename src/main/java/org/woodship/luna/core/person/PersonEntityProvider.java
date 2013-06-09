@@ -32,15 +32,18 @@ public class PersonEntityProvider  extends TransactionalEntityProvider<Person> {
 						@SuppressWarnings("unchecked")
 						@Override
 						public void filtersWillBeAdded( CriteriaBuilder cb, CriteriaQuery<?> query, List<Predicate> predicates) {
-							List<Organization> orgs = us.getCurrCanReadOrg(null);
-							if(orgs.size() == 0) return;
-							
 							Root<Person> root = (Root<Person>) query.getRoots().iterator().next();
-							In<Organization> in = cb.in(root.get(Person_.org));
-							for(Organization o: orgs ){
-								in = in.value(o);
+							List<Organization> orgs = us.getCurrCanReadOrg(null);
+							if(orgs.size() == 0) {
+								//无权限
+								predicates.add(cb.isNull(root));
+							}else{
+								In<Organization> in = cb.in(root.get(Person_.org));
+								for(Organization o: orgs ){
+									in = in.value(o);
+								}
+								predicates.add(in);
 							}
-							predicates.add(in);
 						}
 					}
 			);

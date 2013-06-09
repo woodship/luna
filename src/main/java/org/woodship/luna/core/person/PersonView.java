@@ -74,7 +74,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
         buildTree();
         buildMainArea();
 
-        setSplitPosition(20);
+        setSplitPosition(15);
         
         authenticate();
     }

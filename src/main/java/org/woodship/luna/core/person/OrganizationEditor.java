@@ -72,7 +72,6 @@ public class OrganizationEditor extends Window  {
 						tableContainer.addEntity(p);
 					}
 					Notification.show("保存成功");
-//					error.setVisible(false);
 					OrganizationEditor.this.close();//关闭，防止再点击，重复增加
 				} catch (FieldGroup.CommitException e) {
 					Utils.setCommitExceptionMsg(e, fg, error);

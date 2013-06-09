@@ -118,7 +118,7 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
             }
         });
 
-        //根据车间权限配制table要显示的列
+        //根据当前登录用户车间权限配制table要显示的列
         List<Organization> topdepts = findTopDepts();
         if(topdepts.size() != 1){
         	Utils.configTableHead(mainTable, Product.class);
@@ -255,6 +255,21 @@ public class ProductView extends HorizontalSplitPanel implements ComponentContai
                 if (id != null) {
                 	Organization entity = treeContainer.getItem(id).getEntity();
                     treeFilter = entity;
+                    
+                    //根据选择的车间配制table要显示的列
+                	Organization o = null;
+                	if(OrgType.顶级部门.equals(treeFilter.getOrgType())){
+                		o = treeFilter;
+                	}else if(	treeFilter.getParent() != null 
+                			&& OrgType.顶级部门.equals(treeFilter.getParent().getOrgType())){
+                		o = treeFilter.getParent();
+                	}
+                	if(o != null){
+                		mainTable.setVisibleColumns(ProductDeptFileds.getFiledNamesByDeptName(o.getName()));
+                		Utils.setTableCaption(mainTable,  Product.class);
+                	}else{
+                		Utils.configTableHead(mainTable, Product.class);
+                	}
                 } else if (treeFilter != null) {
                     treeFilter = null;
                 }

@@ -1,6 +1,5 @@
 package org.woodship.luna.core.security;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.woodship.luna.util.Utils;
@@ -65,6 +64,7 @@ public class UserRoleEditor extends Window  {
 					currUser.getRoles().add(role);
 					roleContainer.getItem(rid).getItemProperty("users").setValue(role.getUsers());
 				}
+				//不可不写，不然为了让界面同步显示正常
 				jpaitem.getItemProperty(User_.roles.getName()).setValue(currUser.getRoles());
 				Notification.show("保存成功");
 			}
