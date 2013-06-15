@@ -1,33 +1,24 @@
 package org.woodship.luna.db;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Transient;
-import javax.persistence.TypedQuery;
 import javax.persistence.Version;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.beans.factory.annotation.Configurable;
-@SuppressWarnings("serial")
 @MappedSuperclass
-public abstract class IdEntity<E> implements Serializable{
-	
+public  class IdEntity<E> implements Serializable{
+	private static final long serialVersionUID = 7904559135688465527L;
+
 	@Id
 	@GeneratedValue(generator = "system-uuid")
 	@GenericGenerator(name = "system-uuid", strategy = "uuid.hex")
 	protected String id;
 	
 	@Version
-	private Integer version;
+	protected Integer version;
 	
 	
 	public String getId() {
@@ -43,4 +34,30 @@ public abstract class IdEntity<E> implements Serializable{
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		IdEntity other = (IdEntity) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
+	
 }
