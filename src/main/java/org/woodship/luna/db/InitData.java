@@ -145,7 +145,7 @@ public class InitData implements Serializable{
 
 		//部门管理员角色
 		Role ruser = new Role("部门管理员");
-		ruser.setDataScore(RoleDataScope.本顶级部门);
+		ruser.setDataScope(RoleDataScope.本顶级部门);
 		ruser.addResource(home);
 		ruser.addResource(resBase);
 		ruser.addResource(resPerson);
@@ -278,7 +278,7 @@ public class InitData implements Serializable{
 		radmin.setSysRole(true);
 		radmin.addUser(userAdmin);
 		userAdmin.addRole(radmin);
-		radmin.setDataScore(RoleDataScope.全部数据);
+		radmin.setDataScope(RoleDataScope.全部数据);
 		em.persist(radmin);
 
 		//增加一个无任何权限的用户(用于测试)

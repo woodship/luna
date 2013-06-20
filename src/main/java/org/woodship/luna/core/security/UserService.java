@@ -160,10 +160,10 @@ public class UserService implements Serializable{
 		//1.从所有Role中取得最大RoleDataScope，自定义的直接放入topCanReadOrgs
 		RoleDataScope maxScope = RoleDataScope.自定义;
 		for(Role role : user.getRoles()){
-			if(role.getDataScore().getLevel() > maxScope.getLevel()){
-				maxScope = role.getDataScore();
+			if(role.getDataScope().getLevel() > maxScope.getLevel()){
+				maxScope = role.getDataScope();
 			}
-			if(role.getDataScore().equals(RoleDataScope.自定义)){
+			if(role.getDataScope().equals(RoleDataScope.自定义)){
 				//TODO 增加可管理的自定义机构到topCanReadOrgs
 			}
 		}

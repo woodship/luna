@@ -8,18 +8,18 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.woodship.luna.core.person.Person;
 import org.woodship.luna.db.IdEntity;
 
 import com.vaadin.data.fieldgroup.Caption;
 @Entity
-@Table(name="USER_")
+@Table(name="USER_",uniqueConstraints = { @UniqueConstraint(columnNames = {"username"})})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User extends IdEntity<User>{
 	private static final long serialVersionUID = 1L;
