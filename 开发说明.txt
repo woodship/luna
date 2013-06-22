@@ -9,7 +9,5 @@ target/generated-sources/annotations 为maven自动生成，用于JPA API查询
 
 测试用户：
 admin  
-user1
-user2
-user3
-密码都是111，user1/2/3可看到部分功能
+user
+密码都是111，user可看到部分功能

@@ -135,31 +135,11 @@ public class InitData implements Serializable{
 		
 		String password  = Utils.DEFAULT_PASSWORD;
 		
-		//增加一个炉工用户
-		User userLG = new User();
-		userLG.setPassword(password);
-		userLG.setUsername("ccf");
-		userLG.setShowName("崔春峰");
-		em.persist(userLG);
-
-		//炉工角色
-		Role roleLG = new Role("炉工");
-		roleLG.setDataScope(RoleDataScope.自定义);
-		roleLG.addResource(home);
-		roleLG.addResource(resBus);
-		
-		roleLG.addResource(productView);
-		
-		roleLG.addUser(userLG);
-		
-		userLG.addRole(roleLG);
-		em.persist(roleLG);
-		
 		//增加一个配料管理员用户
 		User userPLadmin = new User();
 		userPLadmin.setPassword(password);
-		userPLadmin.setUsername("chl");
-		userPLadmin.setShowName("崔红亮");
+		userPLadmin.setUsername("user");
+		userPLadmin.setShowName("用户1");
 		em.persist(userPLadmin);
 		
 		//配料管理员
