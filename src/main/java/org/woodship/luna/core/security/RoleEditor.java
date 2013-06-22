@@ -55,10 +55,6 @@ public class RoleEditor extends Window  {
 		Utils.buildAndBindFieldGroup(fg, Role.class, formLayout);
 //		formLayout.addComponent(fg.buildAndBind("trueName"));
 
-		final Label error = new Label("", ContentMode.HTML);
-		error.setVisible(false);
-		formLayout.addComponent(error);
-
 		// Buffer the form content
 		fg.setBuffered(true);
 
@@ -79,7 +75,7 @@ public class RoleEditor extends Window  {
 //					error.setVisible(false);
 					RoleEditor.this.close();//关闭，防止再点击，重复增加
 				} catch (FieldGroup.CommitException e) {
-					Utils.setCommitExceptionMsg(e, fg, error);
+					Utils.setCommitExceptionMsg(e, fg);
 				}
 			}
 		});

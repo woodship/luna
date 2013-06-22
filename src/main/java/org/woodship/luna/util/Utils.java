@@ -1,14 +1,17 @@
 package org.woodship.luna.util;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.persistence.Entity;
+import javax.persistence.metamodel.Attribute;
 
 import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.woodship.luna.core.security.User;
+import org.woodship.luna.db.BatchUpdateEntityProvider;
 import org.woodship.luna.db.HierarchialEntity;
 import org.woodship.luna.db.TransactionalEntityProvider;
 
@@ -21,19 +24,21 @@ import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.Caption;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.server.ErrorMessage;
-import com.vaadin.ui.AbstractField;
+import com.vaadin.event.FieldEvents.FocusEvent;
+import com.vaadin.event.FieldEvents.FocusListener;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.ComponentContainer;
-import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.TextField;
 
 public class Utils {
 	/**
 	 * 默认密码，已经加密
 	 */
 	public static final String DEFAULT_PASSWORD = (new DefaultPasswordService()).encryptPassword(User.DEFAULT_PASSWORD);
-	
+
 	/**
 	 * 为table中已经存在的列设置caption，(根据{@link Caption},beanClass的字段上有该注解则增加 )
 	 * @param table
@@ -63,22 +68,19 @@ public class Utils {
 	 */
 	public static void configTableHead(Table table,Class<?> beanClass, String... fieldNames){
 		Map<String, String> map = new LinkedHashMap<String, String>();
-		//准备数据
-		for(Field f : beanClass.getDeclaredFields()){
-			//如果指定了fieldNames则过虑
-			if(fieldNames != null && fieldNames.length > 0){
-				boolean in = false;
-				for(String fn : fieldNames){
-					if(f.getName().equals(fn)){
-						in = true;
-						break;
-					}
-				}
-				if(!in) continue;
+		if(fieldNames != null && fieldNames.length > 0){
+			//如果指定了fieldNames则不管存在不存在都增加，因为有可能是使用的自定义列
+			for(String fn : fieldNames){
+				String caption = getCaption(beanClass, fn);
+				map.put(fn, caption);
 			}
-			Caption caption = f.getAnnotation(Caption.class);
-			if(caption != null){
-				map.put(f.getName(), caption.value());
+		}else{
+			//如果没指定fieldNames，则只增加有注解的
+			for(Field f : beanClass.getDeclaredFields()){
+				Caption caption = f.getAnnotation(Caption.class);
+				if(caption != null){
+					map.put(f.getName(), caption.value());
+				}
 			}
 		}
 		//设置数据
@@ -90,12 +92,32 @@ public class Utils {
 	}
 
 	/**
+	 * 参考 configTableHead
+	 * @param table
+	 * @param beanClass
+	 * @param fieldNames
+	 */
+	@SuppressWarnings("rawtypes")
+	public static void configTableHeadA(Table table,Class<?> beanClass
+			, Attribute ... fieldNames) {
+		String[] fs  = null;
+		if(fieldNames != null){
+			fs = new String[fieldNames.length];
+			for(int i = 0; i < fieldNames.length; i++){
+				fs[i] = fieldNames[i].getName();
+			}
+		}
+		configTableHead(table, beanClass,fs);
+	}
+
+	/**
 	 * 为指定{@link BeanFieldGroup}绑定默认字段。(根据{@link Caption}，beanClass的字段上有该注解则绑定 ) </p>
 	 * 该方法只负责确定生成哪些字段，生成Caption，，创建字段
 	 * @param fieldGroup
 	 * @param beanClass 要绑定到{@link BeanFieldGroup}上的beanClass
 	 * @return 
 	 */
+	@SuppressWarnings("serial")
 	public static void buildAndBindFieldGroup(FieldGroup fieldGroup, Class<?> beanClass,ComponentContainer layout,String... fieldNames){
 
 		for(Field f : beanClass.getDeclaredFields()){
@@ -122,6 +144,34 @@ public class Utils {
 				}
 			}
 		}
+		Collection<com.vaadin.ui.Field<?>> fs =  fieldGroup.getFields();
+		for(com.vaadin.ui.Field<?> f : fs){
+			if(f instanceof TextField){
+				final TextField tf = (TextField)f;
+				tf.addFocusListener(new FocusListener() {
+					@Override
+					public void focus(FocusEvent event) {
+						tf.selectAll();
+					}
+				});
+			}
+		}
+		if(fs.size() > 0){
+			fs.iterator().next().focus();
+		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static void buildAndBindFieldGroupA(FieldGroup fieldGroup, Class<?> beanClass,ComponentContainer layout
+			, Attribute ... fieldNames) {
+		String[] fs  = null;
+		if(fieldNames != null){
+			fs = new String[fieldNames.length];
+			for(int i = 0; i < fieldNames.length; i++){
+				fs[i] = fieldNames[i].getName();
+			}
+		}
+		buildAndBindFieldGroup(fieldGroup, beanClass,layout,fs);
 	}
 
 	/**
@@ -192,8 +242,8 @@ public class Utils {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static  <T> EntityProvider<T> getEntityProvider(Class<T> entityClass){
-		Map<String, TransactionalEntityProvider> beans = SpringApplicationContext.getApplicationContext().getBeansOfType(TransactionalEntityProvider.class);
 		EntityProvider<T> ep = null;
+		Map<String, TransactionalEntityProvider> beans = SpringApplicationContext.getApplicationContext().getBeansOfType(TransactionalEntityProvider.class);
 		for(Entry<String, TransactionalEntityProvider> en : beans.entrySet()) {
 			TransactionalEntityProvider tep = en.getValue();
 			if(entityClass.equals(tep.getEntityClass())){
@@ -202,10 +252,21 @@ public class Utils {
 			}
 		}
 		if(ep == null){
+			Map<String, BatchUpdateEntityProvider> beans2 = SpringApplicationContext.getApplicationContext().getBeansOfType(BatchUpdateEntityProvider.class);
+			for(Entry<String, BatchUpdateEntityProvider> en : beans2.entrySet()) {
+				BatchUpdateEntityProvider tep = en.getValue();
+				if(entityClass.equals(tep.getEntityClass())){
+					ep = tep; 
+					break;
+				}
+			}
+		}
+		if(ep == null){
 			throw new RuntimeException("未找到类 "+entityClass.getName()+" 对应的EntityProvider bean");
 		}
 		return ep;
 	}
+
 
 	/**
 	 * 明码转换成密码，该方法比较慢，尽量少用
@@ -217,22 +278,39 @@ public class Utils {
 		return ps.encryptPassword(pw);
 	}
 
-	public static void setCommitExceptionMsg(CommitException e,FieldGroup fg, Label error ) {
+	public static void setCommitExceptionMsg(CommitException e,FieldGroup fg) {
 		String msg = "提交异常，"+e.getMessage();
+		
 		if(e.getCause() instanceof EmptyValueException){
 			//TODO 精确定位异常
 			msg = "请填写完整，红色星号为必填";
 		}
-		
-		for (com.vaadin.ui.Field<?> field: fg.getFields()) {
-			ErrorMessage errMsg = ((AbstractField<?>)field).getErrorMessage();
-			if (errMsg != null) {
-				msg =  field.getCaption()+ ":"+errMsg.getFormattedHtmlMessage();
-			}
+		else{
+			msg = e.getCause().getMessage();
 		}
 		
-		error.setValue( "<div style='color:red'>"+msg+ "</div>");
-		error.setVisible(true);
+		Notification.show(msg, Type.WARNING_MESSAGE);
+		
+	}
+
+	/**
+	 * 根据Caption注解返回caption
+	 * @param clazz
+	 * @param fieldname
+	 * @return 找不到则返回fieldname
+	 */
+	public static String getCaption(Class<?> clazz, String fieldname){
+		try {
+			Field f = clazz.getDeclaredField(fieldname);
+			Caption cap = f.getAnnotation(Caption.class);
+			String c = f.getName();
+			if(cap != null ){
+				c = cap.value();
+			}
+			return c;
+		} catch (Exception e1) {
+			return fieldname;
+		} 
 	}
 
 }

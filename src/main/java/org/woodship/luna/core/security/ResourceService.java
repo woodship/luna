@@ -11,7 +11,6 @@ import javax.persistence.criteria.CriteriaQuery;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.woodship.luna.eam.ProductView;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.navigator.View;

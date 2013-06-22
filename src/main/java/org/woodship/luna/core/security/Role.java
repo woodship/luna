@@ -128,6 +128,7 @@ public class Role extends IdEntity<Role>{
 		
 	}
 
+
 	public RoleDataScope getDataScope() {
 		return dataScope;
 	}
@@ -135,7 +136,6 @@ public class Role extends IdEntity<Role>{
 	public void setDataScope(RoleDataScope dataScope) {
 		this.dataScope = dataScope;
 	}
-
 
 	@Override
 	public String toString() {

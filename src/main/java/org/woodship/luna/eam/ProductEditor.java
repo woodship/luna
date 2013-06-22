@@ -83,9 +83,6 @@ public class ProductEditor extends Window  {
 		orgcon.addContainerFilter(equs);
 		
 
-		final Label error = new Label("", ContentMode.HTML);
-		error.setVisible(false);
-		
 		// Buffer the form content
 		fg.setBuffered(true);
 
@@ -105,7 +102,7 @@ public class ProductEditor extends Window  {
 					Notification.show("保存成功");
 					ProductEditor.this.close();//关闭，防止再点击，重复增加
 				} catch (FieldGroup.CommitException e) {
-					Utils.setCommitExceptionMsg(e, fg, error);
+					Utils.setCommitExceptionMsg(e, fg);
 				}
 			}
 		});
@@ -131,7 +128,6 @@ public class ProductEditor extends Window  {
 		root.setSizeFull();
 		root.setMargin(true);
 		root.addComponent(formLayout);
-		root.addComponent(error);
 		root.addComponent(buttons);
 		root.setExpandRatio(formLayout, 1);
 		setContent(root);

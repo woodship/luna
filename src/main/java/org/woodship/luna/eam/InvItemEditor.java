@@ -52,10 +52,6 @@ public class InvItemEditor extends Window  {
 		//增加默认字段
 		Utils.buildAndBindFieldGroup(fg, InvItem.class, formLayout);
 
-		final Label error = new Label("", ContentMode.HTML);
-		error.setVisible(false);
-		formLayout.addComponent(error);
-
 		// Buffer the form content
 		fg.setBuffered(true);
 
@@ -76,7 +72,7 @@ public class InvItemEditor extends Window  {
 //					error.setVisible(false);
 					InvItemEditor.this.close();//关闭，防止再点击，重复增加
 				} catch (FieldGroup.CommitException e) {
-					Utils.setCommitExceptionMsg(e, fg, error);
+					Utils.setCommitExceptionMsg(e, fg);
 				}
 			}
 		});

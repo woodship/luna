@@ -248,8 +248,8 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 	
     private void authenticate() {
     	Subject user = SecurityUtils.getSubject(); 
-		newButton.setVisible(user.isPermitted(Utils.getAddActionId(PersonView.class)));
-		deleteButton.setVisible(user.isPermitted(Utils.getDelActionId(PersonView.class)));
-		editButton.setVisible(user.isPermitted(Utils.getEditActionId(PersonView.class)));
+		newButton.setVisible(user.isPermitted(Utils.getAddActionId(this.getClass())));
+		deleteButton.setVisible(user.isPermitted(Utils.getDelActionId(this.getClass())));
+		editButton.setVisible(user.isPermitted(Utils.getEditActionId(this.getClass())));
 	}
 }

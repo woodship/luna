@@ -151,7 +151,7 @@ public class JPAContainerItemFieldGroup<T> extends FieldGroup {
         // Add Bean validators if there are annotations
         if (isBeanValidationImplementationAvailable()) {
         	field.removeAllValidators();
-            BeanValidator validator = new BeanValidator(beanType,pid);
+        	LunaBeanValidator validator = new LunaBeanValidator(beanType,pid);
             field.addValidator(validator);
 //            field.setRequired(required)
             if (field.getLocale() != null) {

@@ -51,10 +51,6 @@ public class UserEditor extends Window  {
 		
 		//TODO 只能选择未选择过的人员
 		
-		final Label error = new Label("", ContentMode.HTML);
-		error.setVisible(false);
-		formLayout.addComponent(error);
-
 		// Buffer the form content
 		fg.setBuffered(true);
 
@@ -76,7 +72,7 @@ public class UserEditor extends Window  {
 //					error.setVisible(false);
 					UserEditor.this.close();//关闭，防止再点击，重复增加
 				} catch (FieldGroup.CommitException e) {
-					Utils.setCommitExceptionMsg(e, fg, error);
+					Utils.setCommitExceptionMsg(e, fg);
 				}
 			}
 		});
