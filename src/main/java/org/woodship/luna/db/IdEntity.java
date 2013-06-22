@@ -3,6 +3,7 @@ package org.woodship.luna.db;
 import java.io.Serializable;
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
@@ -13,8 +14,7 @@ public  class IdEntity<E> implements Serializable{
 	private static final long serialVersionUID = 7904559135688465527L;
 
 	@Id
-	@GeneratedValue(generator = "system-uuid")
-	@GenericGenerator(name = "system-uuid", strategy = "uuid.hex")
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	protected String id;
 	
 	@Version

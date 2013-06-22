@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.woodship.luna.LunaException;
 
 @SuppressWarnings("serial")
@@ -16,8 +16,7 @@ import org.woodship.luna.LunaException;
 public abstract class HierarchialEntity<E extends HierarchialEntity<E>> implements Serializable {
 
 	@Id
-	@GeneratedValue(generator = "system-uuid")
-	@GenericGenerator(name = "system-uuid", strategy = "uuid.hex")
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	protected String id;
 
 	@Version
@@ -26,8 +25,6 @@ public abstract class HierarchialEntity<E extends HierarchialEntity<E>> implemen
 	protected boolean leaf = true;
 	
 	protected int treeLevel;
-	
-	
 
 	public HierarchialEntity() {
 	}
