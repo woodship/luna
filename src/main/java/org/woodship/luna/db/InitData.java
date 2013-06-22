@@ -1,7 +1,7 @@
 package org.woodship.luna.db;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -34,12 +34,10 @@ import org.woodship.luna.core.security.RoleView;
 import org.woodship.luna.core.security.User;
 import org.woodship.luna.core.security.UserService;
 import org.woodship.luna.core.security.UserView;
-import org.woodship.luna.eam.Customer;
-import org.woodship.luna.eam.CustomerView;
-import org.woodship.luna.eam.InvItem;
-import org.woodship.luna.eam.InvItemView;
-import org.woodship.luna.eam.Product;
-import org.woodship.luna.eam.ProductView;
+import org.woodship.luna.demo.Element;
+import org.woodship.luna.demo.ElementScope;
+import org.woodship.luna.demo.Product;
+import org.woodship.luna.demo.ProductView;
 import org.woodship.luna.util.Utils;
 
 
@@ -93,83 +91,99 @@ public class InitData implements Serializable{
 	private void createBusinessData() {
 
 		//菜单
-		Resource resBus = new Resource("BUSI_MODULE", "业务管理", ResourceType.MODULE);
+		Resource resBus = new Resource("BUSI_MODULE", "示例程序", ResourceType.MODULE);
 		em.persist(resBus);
-		Resource resItem =resSer.createCUDApp("型号维护", resBus,InvItemView.NAME, InvItemView.class);
-		Resource resCus =resSer.createCUDApp("客户维护", resBus,CustomerView.NAME, CustomerView.class);
-		Resource resPro = resSer.createCUDApp("产品管理", resBus,ProductView.NAME, ProductView.class);
-		resSer.createAction(ProductView.EXCEL_ACTION_KEY, "导出EXCEL", resPro);
-
-		//型号测试数据
-		InvItem ia = new InvItem("WG7893",1000f,null);
-		em.persist(ia);
-		for(int i = 1000; i<1200 ; i++){
-			InvItem ib = new InvItem("XX"+i,1500f,null);
-			em.persist(ib);
-		}
-		//客户测试数据
-		Customer ca = new Customer("CKY11", "开元物业", null);
-		Customer cb = new Customer("CTHYY", "天华制造", null);
-		em.persist(ca);
-		em.persist(cb);
-
+		Resource productView =resSer.createCUDApp("主子表", resBus,ProductView.class.getSimpleName(), ProductView.class);
+		
 		//产品测试数据
-		List<Organization> topDeps =  userSer.getCanReadOrg(userAdmin, OrgType.顶级部门);
-		Product pro = new Product();
-		pro.setProduceDate(new Date());
-		pro.setClasses(personSer.getOrgPerson(topDeps.get(0)).get(0).getOrg());
-		pro.setCarNum("CAR111");
-		pro.setCreateBy(userAdmin);
-		pro.setCustomerNum(ca);
-		pro.setPerson(personSer.getOrgPerson(topDeps.get(0)).get(0));
-		pro.setOrg(topDeps.get(0));
-		em.persist(pro);
+		Product p2 = new Product("叶轮");
+		p2.addElementScope(new ElementScope(Element.C,   0.0,  0.06 ));
+		p2.addElementScope(new ElementScope(Element.Si,  0.0,   1 ));
+		p2.addElementScope(new ElementScope(Element.Mn,0.0,   1));
+		p2.addElementScope(new ElementScope(Element.P,   0.0,   0.035));
+		p2.addElementScope(new ElementScope(Element.S,   0.0d,   0.0d));
+		p2.addElementScope(new ElementScope(Element.Cr,  0.0d,   0.0d));
+		p2.addElementScope(new ElementScope(Element.Ni,  4.5,   5.6));
+		p2.addElementScope(new ElementScope(Element.Mo,   0.05,  0.15));
+		p2.addElementScope(new ElementScope(Element.V,   0.0d,   0.0d));
+		p2.addElementScope(new ElementScope(Element.W,  0.0d,   0.0d));
+		p2.addElementScope(new ElementScope(Element.Cu,  0.0d,   0.0d));
 		
-		//三个部门各增加一个管理员用户
+		for(ElementScope es : p2.getEss()){
+			em.persist(es);
+		}
+		em.persist(p2);
+		
+		Product p = new Product("衬板");
+		p.addElementScope(new ElementScope(Element.C,   0.0,  0.06 ));
+		p.addElementScope(new ElementScope(Element.Si,  0.0,   1 ));
+		p.addElementScope(new ElementScope(Element.Mn,0.0,   1));
+		p.addElementScope(new ElementScope(Element.P,   0.0,   0.035));
+		p.addElementScope(new ElementScope(Element.S,   0.0,   0.035));
+		p.addElementScope(new ElementScope(Element.Cr,  15.5, 17.5));
+		p.addElementScope(new ElementScope(Element.Ni,  4.5,   5.6));
+		p.addElementScope(new ElementScope(Element.Mo,   0.05,  0.15));
+		p.addElementScope(new ElementScope(Element.V,   0.0d,   0.0d));
+		p.addElementScope(new ElementScope(Element.W,  0.0d,   0.0d));
+		p.addElementScope(new ElementScope(Element.Cu,  0.0d,   0.0d));
+		
+		for(ElementScope es : p.getEss()){
+			em.persist(es);
+		}
+		em.persist(p);
+		
+		
 		String password  = Utils.DEFAULT_PASSWORD;
-		User uDept1 = new User();
-		uDept1.setPassword(password);
-		uDept1.setPerson(personSer.getOrgPerson(topDeps.get(0)).get(0));
-		uDept1.setUsername("user1");
-		em.persist(uDept1);
-		User uDept2 = new User();
-		uDept2.setPassword(password);
-		uDept2.setPerson(personSer.getOrgPerson(topDeps.get(1)).get(0));
-		uDept2.setUsername("user2");
-		em.persist(uDept2);
-		User uDept3 = new User();
-		uDept3.setPassword(password);
-		uDept3.setPerson(personSer.getOrgPerson(topDeps.get(2)).get(0));
-		uDept3.setUsername("user3");
-		em.persist(uDept3);
-
-		//部门管理员角色
-		Role ruser = new Role("部门管理员");
-		ruser.setDataScope(RoleDataScope.本顶级部门);
-		ruser.addResource(home);
-		ruser.addResource(resBase);
-		ruser.addResource(resPerson);
-		ruser.addResource(resOrg);
-		ruser.addResource(resSer.getResByKey(Utils.getAddActionId(PersonView.class)));
-		ruser.addResource(resBus);
-		ruser.addResource(resPro);
-		ruser.addResource(resSer.getResByKey(Utils.getAddActionId(ProductView.class)));
-		ruser.addResource(resSer.getResByKey(Utils.getEditActionId(ProductView.class)));
-		ruser.addResource(resSer.getResByKey(Utils.getDelActionId(ProductView.class)));
-		ruser.addResource(resSer.getResByKey(ProductView.EXCEL_ACTION_KEY));
-		ruser.addUser(uDept1);
-		ruser.addUser(uDept2);
-		ruser.addUser(uDept3);
 		
-		uDept1.addRole(ruser);
-		uDept2.addRole(ruser);
-		uDept3.addRole(ruser);
-		em.persist(ruser);
+		//增加一个炉工用户
+		User userLG = new User();
+		userLG.setPassword(password);
+		userLG.setUsername("ccf");
+		userLG.setShowName("崔春峰");
+		em.persist(userLG);
+
+		//炉工角色
+		Role roleLG = new Role("炉工");
+		roleLG.setDataScope(RoleDataScope.自定义);
+		roleLG.addResource(home);
+		roleLG.addResource(resBus);
+		
+		roleLG.addResource(productView);
+		
+		roleLG.addUser(userLG);
+		
+		userLG.addRole(roleLG);
+		em.persist(roleLG);
+		
+		//增加一个配料管理员用户
+		User userPLadmin = new User();
+		userPLadmin.setPassword(password);
+		userPLadmin.setUsername("chl");
+		userPLadmin.setShowName("崔红亮");
+		em.persist(userPLadmin);
+		
+		//配料管理员
+		Role rolePeiLiao = new Role("配料管理员");
+		rolePeiLiao.setDataScope(RoleDataScope.全部数据);
+		rolePeiLiao.addResource(home);
+		rolePeiLiao.addResource(resBus);
+		
+		rolePeiLiao.addResource(productView);
+		rolePeiLiao.addResource(resSer.getResByKey(Utils.getAddActionId(ProductView.class)));
+		rolePeiLiao.addResource(resSer.getResByKey(Utils.getEditActionId(ProductView.class)));
+		rolePeiLiao.addResource(resSer.getResByKey(Utils.getDelActionId(ProductView.class)));
+		
+		rolePeiLiao.addUser(userPLadmin);
+		
+		userPLadmin.addRole(rolePeiLiao);
+		em.persist(rolePeiLiao);
+		
+		
 	}
 
 
 	final static String[] groupsNames = { "甲班","乙班", "丙班" };
-	final static String[] officeNames = { Product.LA_SI_DEPT_NAME,Product.DU_XIN_DEPT_NAME, Product.JIAO_XIAN_DEPT_NAME};
+	final static String[] officeNames = { "办公室","炉子", "混沙"};
 	final static String[] fnames = { "赵", "钱", "孙", "李",
 		"周","吴","郑","王","冯","陈","褚",
 		"卫","蒋","沈"};

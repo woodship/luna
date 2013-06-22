@@ -95,8 +95,6 @@ public class SpringVaadinServlet extends VaadinServlet
             public void sessionInit(SessionInitEvent event) throws ServiceException
             {
             	//处理其它客户端请求
-            	RequestHandler rh = (RequestHandler)applicationContext.getBean("androidRequestHandler");
-            	event.getSession().addRequestHandler(rh);
             }
         });
         //初始化系统数据 add by laocui
