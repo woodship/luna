@@ -112,7 +112,7 @@ public class EntitySubTable<E extends IdEntity<E>> extends CustomField<List<E>> 
 				
 				if(readOnlyColumns.contains(propertyId)){
 					field.setReadOnly(true);
-					field.setEnabled(false);
+					field.setTabIndex(-1);
 				}else{
 				     // Manage the field in the field storage
 			        HashMap<Object,Field<?>> itemMap = editablefields.get(itemId);
