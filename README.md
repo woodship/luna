@@ -4,9 +4,11 @@
 
 2.项目中引用到的*_文件，为JPA元模型（metamodel，相关概念请百度）,由maven命令根据法实体类生成，生成方法如下
 
-    a.右键项目 Run as>>Maven install
+    a.右键项目 Run as>>Maven clear
+    
+    b.右键项目 Run as>>Maven install
       
-    b.右键target/generated-sources/annotations, build path>>Use as source folder
+    c.右键target/generated-sources/annotations, build path>>Use as source folder
 
 3.测试用户：
 
