@@ -1,9 +1,7 @@
 package org.woodship.luna.db;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -34,10 +32,12 @@ import org.woodship.luna.core.security.RoleView;
 import org.woodship.luna.core.security.User;
 import org.woodship.luna.core.security.UserService;
 import org.woodship.luna.core.security.UserView;
-import org.woodship.luna.demo.Element;
-import org.woodship.luna.demo.ElementScope;
-import org.woodship.luna.demo.Product;
-import org.woodship.luna.demo.ProductView;
+import org.woodship.luna.demo.simpleview.Vendor;
+import org.woodship.luna.demo.simpleview.VendorView;
+import org.woodship.luna.demo.subtable.Element;
+import org.woodship.luna.demo.subtable.ElementScope;
+import org.woodship.luna.demo.subtable.Product;
+import org.woodship.luna.demo.subtable.ProductView;
 import org.woodship.luna.util.Utils;
 
 
@@ -65,8 +65,11 @@ public class InitData implements Serializable{
 
 	private Resource resOrg;
 	
+	
 	@Value("${luna.company.name}")
 	private String lunaCompanyName;
+	
+	
 	
 	@Transactional
 	public void init(){
@@ -94,6 +97,7 @@ public class InitData implements Serializable{
 		Resource resBus = new Resource("BUSI_MODULE", "示例程序", ResourceType.MODULE);
 		em.persist(resBus);
 		Resource productView =resSer.createCUDApp("主子表", resBus,ProductView.class.getSimpleName(), ProductView.class);
+		resSer.createCUDApp("供应商", resBus,Vendor.class.getSimpleName().toLowerCase(), VendorView.class);
 		
 		//产品测试数据
 		Product p2 = new Product("叶轮");

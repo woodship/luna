@@ -1,4 +1,4 @@
-package org.woodship.luna.demo;
+package org.woodship.luna.demo.subtable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

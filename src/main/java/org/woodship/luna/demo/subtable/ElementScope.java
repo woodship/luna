@@ -1,4 +1,4 @@
-package org.woodship.luna.demo;
+package org.woodship.luna.demo.subtable;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.Max;

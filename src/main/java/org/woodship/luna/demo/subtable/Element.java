@@ -1,4 +1,4 @@
-package org.woodship.luna.demo;
+package org.woodship.luna.demo.subtable;
 
 public enum Element {
 	C(0.95),Si(0.95),Mn(0.95),P(1),S(1),
