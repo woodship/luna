@@ -97,7 +97,7 @@ public class InitData implements Serializable{
 		Resource resBus = new Resource("BUSI_MODULE", "示例程序", ResourceType.MODULE);
 		em.persist(resBus);
 		Resource productView =resSer.createCUDApp("主子表", resBus,ProductView.class.getSimpleName(), ProductView.class);
-		resSer.createCUDApp("供应商", resBus,Vendor.class.getSimpleName().toLowerCase(), VendorView.class);
+		resSer.createCUDApp("简单视图", resBus,Vendor.class.getSimpleName().toLowerCase(), VendorView.class);
 		
 		//产品测试数据
 		Product p2 = new Product("叶轮");
