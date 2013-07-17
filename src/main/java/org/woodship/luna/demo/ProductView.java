@@ -216,9 +216,9 @@ public class ProductView extends VerticalLayout implements ComponentContainer, V
 	}
 	 private void authenticate() {
 	    	Subject user = SecurityUtils.getSubject(); 
-			newButton.setVisible(user.isPermitted(Utils.getAddActionId(this.getClass())));
-			deleteButton.setVisible(user.isPermitted(Utils.getDelActionId(this.getClass())));
-			editButton.setVisible(user.isPermitted(Utils.getEditActionId(this.getClass())));
+			newButton.setVisible(user.isPermitted(Utils.getAddActionKey(this.getClass())));
+			deleteButton.setVisible(user.isPermitted(Utils.getDelActionKey(this.getClass())));
+			editButton.setVisible(user.isPermitted(Utils.getEditActionKey(this.getClass())));
 		}
 	
 }

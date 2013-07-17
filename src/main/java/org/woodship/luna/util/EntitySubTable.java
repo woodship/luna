@@ -4,23 +4,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import javax.validation.constraints.NotNull;
+
+import org.apache.log4j.Logger;
 import org.woodship.luna.db.IdEntity;
 import org.woodship.luna.db.IdEntity_;
 
 import com.vaadin.data.Container;
-import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.fieldgroup.Caption;
-import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
 import com.vaadin.data.util.BeanContainer;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.Action;
 import com.vaadin.event.Action.Handler;
 import com.vaadin.event.FieldEvents.FocusEvent;
 import com.vaadin.event.FieldEvents.FocusListener;
 import com.vaadin.event.ShortcutAction;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -32,19 +34,24 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.ColumnGenerator;
 import com.vaadin.ui.Table.HeaderClickEvent;
 import com.vaadin.ui.Table.HeaderClickListener;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.Runo;
 
 
 /**
+ * 目前主要用于@OneToMany(cascade=CascadeType.ALL)
  * 有Caption注解的字段默认会可见
- * @author 
+ * 支持上下左右小箭头切换光标位置
+ * 
+ * @author laocui
  *
  * @param <E>
  */
 @SuppressWarnings("serial")
 public class EntitySubTable<E extends IdEntity<E>> extends CustomField<List<E>> {
-	private final DefaultFieldGroupFieldFactory dff = new DefaultFieldGroupFieldFactory();
+	 static Logger logger = Logger.getLogger(EntitySubTable.class.getName());
+	
 	private final String actionid = "action" + System.currentTimeMillis();
 	private BeanContainer<String, E> container ;
 
@@ -54,29 +61,36 @@ public class EntitySubTable<E extends IdEntity<E>> extends CustomField<List<E>> 
 	private boolean edited = false;//是否编辑了数据，不包含删除
 	private List<Object> visibleColumns = new ArrayList<Object>();
 	private boolean readOnly = false;
-	private boolean canAddOrRemove;
+	private boolean canRemove = true;
+	private boolean canAdd = true;
 	private List<String> readOnlyColumns = new ArrayList<String>();
 	private Map<String,Integer> columnsWidth = new HashMap<String,Integer>();
-	
+	private String[] customerVisibleColumns;
+	private final int defaultTextFieldWith = 80;
 
-	// Map to find a field component by its item ID and property ID
+	// Map to find a field component by its item ID and property ID，key:itemId,value:
+	//{itemid : [{fieldid : Field},...]}
 	final HashMap<Object,HashMap<Object,Field<?>>> editablefields = new HashMap<Object,HashMap<Object,Field<?>>>();
 	        
-	// Map to find the item ID of a field
+	// {Field : itemid}
 	final HashMap<Field<?>,Object> itemIds = new HashMap<Field<?>,Object>(); 
 
-	/**
-	 * @param propertyClass 子表的class
-	 */
 	public EntitySubTable(final Class<E> entityClass) {
+		this(entityClass, false);
+	}
+	public EntitySubTable(final Class<E> entityClass , boolean readOnly) {
 		this.entityClass = entityClass;
 		table = new Table();
+		table.setSelectable(true);
 		container = new BeanContainer<String, E>(entityClass);
 		container.setBeanIdProperty(IdEntity_.id.getName());
 		table.setContainerDataSource(container);
 		this.setHeight(350,Unit.PIXELS);
+		this.readOnly = readOnly;
 	}
 
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Component initContent() {
@@ -91,104 +105,140 @@ public class EntitySubTable<E extends IdEntity<E>> extends CustomField<List<E>> 
 			container.addBean(e);
 		}
 
-		table.setTableFieldFactory(new EntityFieldGroupFieldFactory() {
-			@SuppressWarnings({ "rawtypes"})
-			@Override
-			public Field createField(Container container, Object itemId,
-					Object propertyId, Component uiContext) {
-				Field field =  super.createField(container, itemId, propertyId, uiContext);
-
-				LunaBeanValidator validator = new LunaBeanValidator(entityClass,propertyId.toString());
-				field.addValidator(validator);
-				field.addValueChangeListener(new ValueChangeListener() {
-					@Override
-					public void valueChange(com.vaadin.data.Property.ValueChangeEvent event) {
-						edited = true;						
-					}
-				});
-				if(columnsWidth.containsKey(propertyId)){
-					field.setWidth(columnsWidth.get(propertyId),Unit.PIXELS);
-				}
-				
-				if(readOnlyColumns.contains(propertyId)){
-					field.setReadOnly(true);
-					field.setTabIndex(-1);
-				}else{
-				     // Manage the field in the field storage
-			        HashMap<Object,Field<?>> itemMap = editablefields.get(itemId);
-			        if (itemMap == null) {
-			            itemMap = new HashMap<Object,Field<?>>();
-			            editablefields.put(itemId, itemMap);
-			        }
-			        itemMap.put(propertyId, field);
-					
-					itemIds.put(field, itemId);
-					
-					if(field instanceof TextField){
-						final TextField tf = ((TextField)field);
-						tf.setData(new ItemPropertyId(itemId, propertyId));
-						tf.addFocusListener(new FocusListener() {//移入选中
-							@Override
-							public void focus(FocusEvent event) {
-								tf.selectAll();
-							}
-						});
-					}
-				}
-				return field;
-			}
-		});
-
-
-		//增加删除checkbox,按钮并绑定删除事件
-		if(canAddOrRemove){
-			table.addGeneratedColumn(actionid, new ColumnGenerator() {
+		if(table.isEditable()){
+			table.setTableFieldFactory(new EntityFieldGroupFieldFactory() {
 				@Override
-				public Object generateCell(Table source, final Object itemId, Object columnId) {
-					final Button bt = new Button("删除");
-					bt.setStyleName(Runo.BUTTON_LINK);
-					bt.addClickListener(new ClickListener() {
+				public Field<?> createField(Container container, Object itemId,
+						Object propertyId, Component uiContext) {
+					Field<?> field =  super.createField(container, itemId, propertyId, uiContext);
+	
+					LunaBeanValidator validator = new LunaBeanValidator(entityClass,propertyId.toString());
+					field.addValidator(validator);
+					field.addValueChangeListener(new ValueChangeListener() {
 						@Override
-						public void buttonClick(ClickEvent event) {
-							E e = container.getItem(itemId).getBean();
-							value.remove(e);
-							container.removeItem(itemId);
-							edited = true;
+						public void valueChange(com.vaadin.data.Property.ValueChangeEvent event) {
+							edited = true;						
 						}
 					});
-					return bt;
-				}
-			});
-			visibleColumns.add(actionid);
-			table.setColumnHeader(actionid, "增加");
-
-			table.addHeaderClickListener(new HeaderClickListener() {
-				@Override
-				public void headerClick(HeaderClickEvent event) {
-					Object pid = event.getPropertyId();
-					if(pid.equals(actionid)){
-						try {
-							table.setEditable(true);
-							E bean = entityClass.newInstance();
-							bean.setId(java.util.UUID.randomUUID().toString());
-							container.addBean(bean);
-							edited = true;
-						} catch (Exception e) {
-							e.printStackTrace();
+					
+					if(readOnlyColumns.contains(propertyId)){
+						field.setReadOnly(true);
+						field.setTabIndex(-1);
+					}else{
+					     // Manage the field in the field storage
+				        HashMap<Object,Field<?>> itemMap = editablefields.get(itemId);
+				        if (itemMap == null) {
+				            itemMap = new HashMap<Object,Field<?>>();
+				            editablefields.put(itemId, itemMap);
+				        }
+				        itemMap.put(propertyId, field);
+						
+						itemIds.put(field, itemId);
+						
+						if(field instanceof TextField){
+							final TextField tf = ((TextField)field);
+							tf.setData(new ItemPropertyId(itemId, propertyId));
+							tf.addFocusListener(new FocusListener() {//移入选中
+								@Override
+								public void focus(FocusEvent event) {
+									tf.selectAll();
+								}
+							});
+							tf.setNullRepresentation("");
+						}else if (field instanceof TextArea){
+							final TextArea ta = ((TextArea)field);
+							ta.setNullRepresentation("");
 						}
 					}
+					
+					//设置宽度
+					if(field instanceof TextField){
+						field.setWidth(defaultTextFieldWith,Unit.PIXELS);//默认
+					}
+					if(columnsWidth.containsKey(propertyId)){
+						field.setWidth(columnsWidth.get(propertyId),Unit.PIXELS);//订制
+					}
+					return field;
 				}
 			});
-			table.setColumnWidth(actionid, 40);
-			table.setColumnAlignment(actionid, Table.Align.CENTER);
-
+			
+			
+			if(canAdd || canRemove){
+				visibleColumns.add(actionid);
+				table.setColumnWidth(actionid, 40);
+				table.setColumnAlignment(actionid, Table.Align.CENTER);
+				
+				//增加删除图标, 按钮并绑定删除事件
+				if(canRemove){
+					table.addGeneratedColumn(actionid, new ColumnGenerator() {
+						@Override
+						public Object generateCell(Table source, final Object itemId, Object columnId) {
+							final Button bt = new Button();
+							bt.setIcon(new ThemeResource("icons/x_14x14.png"));
+							bt.setStyleName(Runo.BUTTON_LINK);
+							bt.addClickListener(new ClickListener() {
+								@Override
+								public void buttonClick(ClickEvent event) {
+									E e = container.getItem(itemId).getBean();
+									value.remove(e);
+									container.removeItem(itemId);
+									edited = true;
+									
+									for(Entry<Object, Field<?>> en : editablefields.get(itemId).entrySet()){
+										itemIds.remove(en.getValue());
+									}
+									editablefields.remove(itemId);
+								}
+							});
+							return bt;
+						}
+					});
+				}
+				
+				//新增图标及事件
+				if(canAdd){
+					//TODO 根据不同主题自动适应路径
+					table.setColumnHeader(actionid, "<img style='width:14px'' src='/VAADIN/themes/dashboard/icons/plus1_16x16.png'>");
+		
+					table.addHeaderClickListener(new HeaderClickListener() {
+						@Override
+						public void headerClick(HeaderClickEvent event) {
+							Object pid = event.getPropertyId();
+							if(pid.equals(actionid)){
+								try {
+									table.setEditable(true);
+									E bean = entityClass.newInstance();
+									bean.setId(java.util.UUID.randomUUID().toString());
+									container.addBean(bean);
+									edited = true;
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						}
+					});
+				}else{
+					table.setColumnHeader(actionid, "操作");
+				}
+			}
 		}
-		//设置默认可见列及每列标题
-		for(java.lang.reflect.Field field : entityClass.getDeclaredFields()){
-			Caption caption = field.getAnnotation(Caption.class);
-			if(caption != null){
-				visibleColumns.add(field.getName());
-				table.setColumnHeader(field.getName(), caption.value());
+		//设置可见列及每列标题
+		if(customerVisibleColumns != null && customerVisibleColumns.length > 0){
+			for(String col : customerVisibleColumns){
+				boolean showRequiredSign = !readOnlyColumns.contains(col)&& !readOnly;
+				String cap = Utils.getCaption(entityClass, col,showRequiredSign);
+				visibleColumns.add(col);
+				table.setColumnHeader(col,cap);
+			}
+		}else{
+			for(java.lang.reflect.Field field : entityClass.getDeclaredFields()){
+				boolean showRequiredSign = !readOnlyColumns.contains(field.getName())&& !readOnly;
+					Caption caption = field.getAnnotation(Caption.class);
+					if(caption != null){
+						String cap = Utils.getCaption(field,showRequiredSign);
+						visibleColumns.add(field.getName());
+						table.setColumnHeader(field.getName(),cap);
+					}
 			}
 		}
 		table.setVisibleColumns(visibleColumns.toArray());
@@ -213,8 +263,10 @@ public class EntitySubTable<E extends IdEntity<E>> extends CustomField<List<E>> 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void validate() throws InvalidValueException {
-		for(Field field : itemIds.keySet()){
-			field.validate();
+		for(Entry<Object, HashMap<Object, Field<?>>> ien : editablefields.entrySet()){
+			for(Entry<Object, Field<?>> fen : ien.getValue().entrySet()){
+				fen.getValue().validate();
+			}
 		}
 	}
 
@@ -237,10 +289,10 @@ public class EntitySubTable<E extends IdEntity<E>> extends CustomField<List<E>> 
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Class<? extends List<E>> getType() {
-		return (Class<? extends List<E>>) List.class;
+	public Class getType() {
+		return  List.class;
 	}
 
 	@Override
@@ -253,11 +305,7 @@ public class EntitySubTable<E extends IdEntity<E>> extends CustomField<List<E>> 
 	}
 
 
-	public void setCanAddOrRemove(boolean canAddOrRemove) {
-		this.canAddOrRemove  = canAddOrRemove;
-	}
-
-	public void setColumnReadOnly(String... propertyIds) {
+	public void setReadOnlyColumns(String... propertyIds) {
 		if(propertyIds != null){
 			for(String pid : propertyIds){
 				this.readOnlyColumns.add(pid);
@@ -270,7 +318,18 @@ public class EntitySubTable<E extends IdEntity<E>> extends CustomField<List<E>> 
 	}
 
 
-
+	public boolean isCanRemove() {
+		return canRemove;
+	}
+	public void setCanRemove(boolean canRemove) {
+		this.canRemove = canRemove;
+	}
+	public boolean isCanAdd() {
+		return canAdd;
+	}
+	public void setCanAdd(boolean canAdd) {
+		this.canAdd = canAdd;
+	}
 	@Override
 	public void focus() {
 		super.focus();
@@ -278,10 +337,19 @@ public class EntitySubTable<E extends IdEntity<E>> extends CustomField<List<E>> 
 			itemIds.keySet().iterator().next().focus();
 	}
 
+    
+
+	public HashMap<Object, HashMap<Object, Field<?>>> getEditablefields() {
+		return editablefields;
+	}
+
+	public void setVisiableColumns(String ...cols){
+		this.customerVisibleColumns = cols;
+	}
 
 
 	// Keyboard navigation
-	class KbdHandler implements Handler {
+	private class KbdHandler implements Handler {
 	    Action tab_next = new ShortcutAction("Shift",
 	            ShortcutAction.KeyCode.TAB, null);
 	    Action tab_prev = new ShortcutAction("Shift+Tab",
@@ -358,6 +426,10 @@ public class EntitySubTable<E extends IdEntity<E>> extends CustomField<List<E>> 
 	                newField.focus();
 	        } 
 	    }
+	}
+
+	public BeanContainer<String, E> getContainer() {
+		return container;
 	}
 
 

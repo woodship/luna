@@ -114,7 +114,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
         Utils.configTableHead(mainTable, Person.class);
         
 
-        HorizontalLayout toolbar = new HorizontalLayout();
+        
         newButton = new Button("增加");
         newButton.addClickListener(new Button.ClickListener() {
 
@@ -170,6 +170,7 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
             }
         });
 
+        HorizontalLayout toolbar = new HorizontalLayout();
         toolbar.addComponent(newButton);
         toolbar.addComponent(deleteButton);
         toolbar.addComponent(editButton);
@@ -248,8 +249,8 @@ public class PersonView extends HorizontalSplitPanel implements ComponentContain
 	
     private void authenticate() {
     	Subject user = SecurityUtils.getSubject(); 
-		newButton.setVisible(user.isPermitted(Utils.getAddActionId(this.getClass())));
-		deleteButton.setVisible(user.isPermitted(Utils.getDelActionId(this.getClass())));
-		editButton.setVisible(user.isPermitted(Utils.getEditActionId(this.getClass())));
+		newButton.setVisible(user.isPermitted(Utils.getAddActionKey(this.getClass())));
+		deleteButton.setVisible(user.isPermitted(Utils.getDelActionKey(this.getClass())));
+		editButton.setVisible(user.isPermitted(Utils.getEditActionKey(this.getClass())));
 	}
 }

@@ -17,6 +17,7 @@ public class LunaConverterFactory extends DefaultConverterFactory {
 	@Override
     protected <PRESENTATION, MODEL> Converter<PRESENTATION, MODEL> findConverter(
             Class<PRESENTATION> presentationType, Class<MODEL> modelType) {
+		
         if (presentationType == String.class && modelType == Date.class) {
         	return (Converter<PRESENTATION, MODEL>) new DateConverter<Date>(Date.class,"yyyy-MM-dd");
         }else if (presentationType == String.class && modelType == java.sql.Date.class) {
@@ -60,6 +61,7 @@ class DateConverter<T extends Date> implements Converter<String, T>{
 	@Override
 	public String convertToPresentation(Date value, Locale locale)
 			throws com.vaadin.data.util.converter.Converter.ConversionException {
+		if(value == null) return ""; 
 		return sdf.format(value);
 	}
 
@@ -100,5 +102,6 @@ class BooleanConverter implements Converter<String, Boolean>{
 	public Class<String> getPresentationType() {
 		return String.class;
 	}
+	
 	
 }

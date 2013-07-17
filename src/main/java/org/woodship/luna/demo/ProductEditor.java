@@ -48,8 +48,9 @@ public class ProductEditor extends Window  {
 			public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {
 				if(dataType == Product_.ess.getJavaType()){
 					EntitySubTable<ElementScope> st =  new EntitySubTable<ElementScope>(ElementScope.class);
-					st.setCanAddOrRemove(false);
-					st.setColumnReadOnly(ElementScope_.element.getName());
+					st.setCanAdd(false);
+					st.setCanRemove(false);
+					st.setReadOnlyColumns(ElementScope_.element.getName());
 					st.setColumnWidth(ElementScope_.element.getName(),50);
 					st.setColumnWidth(ElementScope_.min.getName(),100);
 					st.setColumnWidth(ElementScope_.max.getName(),100);

@@ -11,16 +11,15 @@ import javax.persistence.criteria.CriteriaQuery;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.woodship.luna.util.SimpleEntityView;
 import org.woodship.luna.util.Utils;
 
 import com.vaadin.navigator.View;
 
 @Service
 public class ResourceService implements Serializable{
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2416370618448117352L;
+	
 	@PersistenceContext
 	private  EntityManager em;
 	
@@ -37,15 +36,16 @@ public class ResourceService implements Serializable{
 		Resource app =  createApp( appName, parent, resKey, viewClass);
 		em.persist(app);
 		
-		Resource add = new Resource(Utils.getAddActionId(viewClass), "新增", ResourceType.ACTION,app);
+		Resource add = new Resource(Utils.getAddActionKey(viewClass), "新增", ResourceType.ACTION,app);
 		em.persist(add);
-		Resource del = new Resource(Utils.getDelActionId(viewClass), "删除", ResourceType.ACTION,app);
+		Resource del = new Resource(Utils.getDelActionKey(viewClass), "删除", ResourceType.ACTION,app);
 		em.persist(del);
-		Resource edit = new Resource(Utils.getEditActionId(viewClass), "编辑", ResourceType.ACTION,app);
+		Resource edit = new Resource(Utils.getEditActionKey(viewClass), "编辑", ResourceType.ACTION,app);
 		em.persist(edit);
 		
 		return app;
 	}
+	
 	
 	/**
 	 * 创建一个不带增删改功能的应用
@@ -57,6 +57,20 @@ public class ResourceService implements Serializable{
 	 */
 	@Transactional
 	public Resource createApp(String appName,Resource parent, String resKey, Class<? extends View> viewClass){
+		Resource app = new Resource(resKey, appName, ResourceType.APPLICATION, parent, "/"+resKey, viewClass);
+		em.persist(app);
+		return app;
+	}
+	/**
+	 * 创建一个不带增删改功能的应用
+	 * @param appName
+	 * @param parent
+	 * @param viewClass
+	 * @return
+	 */
+	@Transactional
+	public Resource createApp(String appName,Resource parent, Class<? extends View> viewClass){
+		String resKey = viewClass.getSimpleName().replace("View",	"").toLowerCase();
 		Resource app = new Resource(resKey, appName, ResourceType.APPLICATION, parent, "/"+resKey, viewClass);
 		em.persist(app);
 		return app;

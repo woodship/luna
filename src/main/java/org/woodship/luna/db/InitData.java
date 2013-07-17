@@ -149,9 +149,9 @@ public class InitData implements Serializable{
 		rolePeiLiao.addResource(resBus);
 		
 		rolePeiLiao.addResource(productView);
-		rolePeiLiao.addResource(resSer.getResByKey(Utils.getAddActionId(ProductView.class)));
-		rolePeiLiao.addResource(resSer.getResByKey(Utils.getEditActionId(ProductView.class)));
-		rolePeiLiao.addResource(resSer.getResByKey(Utils.getDelActionId(ProductView.class)));
+		rolePeiLiao.addResource(resSer.getResByKey(Utils.getAddActionKey(ProductView.class)));
+		rolePeiLiao.addResource(resSer.getResByKey(Utils.getEditActionKey(ProductView.class)));
+		rolePeiLiao.addResource(resSer.getResByKey(Utils.getDelActionKey(ProductView.class)));
 		
 		rolePeiLiao.addUser(userPLadmin);
 		

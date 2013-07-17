@@ -234,8 +234,8 @@ public class OrganizationView extends HorizontalSplitPanel implements ComponentC
 	
     private void authenticate() {
     	Subject user = SecurityUtils.getSubject(); 
-		newButton.setVisible(user.isPermitted(Utils.getAddActionId(OrganizationView.class)));
-		deleteButton.setVisible(user.isPermitted(Utils.getDelActionId(OrganizationView.class)));
-		editButton.setVisible(user.isPermitted(Utils.getEditActionId(OrganizationView.class)));
+		newButton.setVisible(user.isPermitted(Utils.getAddActionKey(OrganizationView.class)));
+		deleteButton.setVisible(user.isPermitted(Utils.getDelActionKey(OrganizationView.class)));
+		editButton.setVisible(user.isPermitted(Utils.getEditActionKey(OrganizationView.class)));
 	}
 }

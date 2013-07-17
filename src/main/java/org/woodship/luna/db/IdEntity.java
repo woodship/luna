@@ -1,14 +1,13 @@
 package org.woodship.luna.db;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
-
-import org.hibernate.annotations.GenericGenerator;
 @MappedSuperclass
 public  class IdEntity<E> implements Serializable{
 	private static final long serialVersionUID = 7904559135688465527L;
@@ -20,6 +19,7 @@ public  class IdEntity<E> implements Serializable{
 	@Version
 	protected Integer version;
 	
+	protected Date createDate =new Date();
 	
 	public String getId() {
 		return id;
@@ -57,6 +57,12 @@ public  class IdEntity<E> implements Serializable{
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+	public Date getCreateDate() {
+		return createDate;
+	}
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
 	}
 	
 	

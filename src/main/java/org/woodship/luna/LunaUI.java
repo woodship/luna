@@ -100,6 +100,18 @@ public class LunaUI extends UI {
 	@Value("${luna.login.left}")
 	private String lunaLoginLeft;
 	
+	@Value("${luna.default.login.username}")
+	private String defaultUsername;
+	
+	@Value("${luna.default.login.password}")
+	private String defaultPassword;
+	
+	
+	
+	public LunaUI() {
+		super();
+	}
+
 	@Override
 	protected void init(VaadinRequest request) {
 		Page.getCurrent().setTitle(StringUtils.isEmpty(lunaAppName)?"Luna":lunaAppName);
@@ -175,13 +187,13 @@ public class LunaUI extends UI {
 		fields.setMargin(true);
 		fields.addStyleName("fields");
 
-		final TextField username = new TextField(StringUtils.isEmpty(lunaLoginUsername)?"UserName":lunaLoginUsername);
+		final TextField username = new TextField(StringUtils.isEmpty(lunaLoginUsername)?"Username":lunaLoginUsername);
+		username.setValue(defaultUsername);
 		username.focus();
-		username.setValue(User.SUPER_ADMIN_USERNAME);
 		fields.addComponent(username);
 
 		final PasswordField password = new PasswordField(StringUtils.isEmpty(lunaLoginPassword)?"Password":lunaLoginPassword);
-		password.setValue(User.DEFAULT_PASSWORD);
+		password.setValue(defaultPassword);
 		fields.addComponent(password);
 
 

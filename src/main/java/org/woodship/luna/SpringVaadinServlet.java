@@ -63,7 +63,12 @@ public class SpringVaadinServlet extends VaadinServlet
     @Override
     protected VaadinServletService createServletService(DeploymentConfiguration deploymentConfiguration)
     {
-        final VaadinServletService service = super.createServletService(deploymentConfiguration);
+        VaadinServletService service = null;
+		try {
+			service = super.createServletService(deploymentConfiguration);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
         // Spring system messages provider
         if (systemMessagesBeanName != null && systemMessagesBeanName != "")
@@ -88,15 +93,6 @@ public class SpringVaadinServlet extends VaadinServlet
             });
         }
 
-        //add by laocui
-        service.addSessionInitListener(new SessionInitListener()
-        {
-            @Override
-            public void sessionInit(SessionInitEvent event) throws ServiceException
-            {
-            	//处理其它客户端请求
-            }
-        });
         //初始化系统数据 add by laocui
         InitData initData = (InitData)applicationContext.getBean("initData");
         initData.init();

@@ -7,6 +7,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.woodship.luna.LunaException;
 
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.provider.MutableLocalEntityProvider;
@@ -38,7 +39,7 @@ public abstract class TransactionalEntityProvider<T> extends MutableLocalEntityP
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     protected void runInTransaction(Runnable operation) {
-        super.runInTransaction(operation);
+    		super.runInTransaction(operation);
     }
 
     @Override

@@ -135,4 +135,9 @@ public class User extends IdEntity<User>{
 		this.setRoles(null);
 	}
 
+	@Override
+	public String toString() {
+		return  showName ;
+	}
+
 }

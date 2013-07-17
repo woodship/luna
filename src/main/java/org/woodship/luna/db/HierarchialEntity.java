@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.woodship.luna.LunaException;
 
 @SuppressWarnings("serial")
@@ -25,6 +26,8 @@ public abstract class HierarchialEntity<E extends HierarchialEntity<E>> implemen
 	protected boolean leaf = true;
 	
 	protected int treeLevel;
+	
+	
 
 	public HierarchialEntity() {
 	}
