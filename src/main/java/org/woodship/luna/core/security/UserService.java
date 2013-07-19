@@ -117,7 +117,7 @@ public class UserService implements Serializable{
 		Root<Organization> subfrom = subquery.from(Organization.class);
 		subquery.select(subfrom);
 		ListJoin<Organization, Organization> join = subfrom.join(Organization_.ancestors,JoinType.INNER);
-		In<String>subin = cb.in(join.get(Organization_.id));
+		In<Long>subin = cb.in(join.get(Organization_.id));
 		for(Organization o : topCanReadOrgs){
 			subin = subin.value(o.getId());
 		}
@@ -131,7 +131,7 @@ public class UserService implements Serializable{
 		}
 		//3.增加祖先节点
 		if(containRoot){
-			In<String> in = cb.in(from.get(Organization_.id));
+			In<Long> in = cb.in(from.get(Organization_.id));
 			boolean hasdata = false;
 			for(Organization o : topCanReadOrgs){
 				Organization parento = o.getParent();

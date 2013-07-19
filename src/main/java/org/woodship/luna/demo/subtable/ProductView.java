@@ -128,7 +128,7 @@ public class ProductView extends VerticalLayout implements ComponentContainer, V
                 Product p = newItemItem.getEntity();
                 for(Element e : Element.values()){
                 	ElementScope es = new ElementScope(e, 0, 0);
-                	es.setId(java.util.UUID.randomUUID().toString());
+                	es.setId(System.currentTimeMillis());
                 	p.addElementScope(es);
                 }
                 ProductEditor personEditor = new ProductEditor(newItemItem,mainContainer,mainTable);

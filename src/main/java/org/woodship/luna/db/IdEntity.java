@@ -3,6 +3,7 @@ package org.woodship.luna.db;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,17 +15,17 @@ public  class IdEntity<E> implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	protected String id;
+	protected Long id;
 	
 	@Version
 	protected Integer version;
 	
 	protected Date createDate =new Date();
 	
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	} 
 

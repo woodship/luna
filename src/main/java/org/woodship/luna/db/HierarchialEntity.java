@@ -3,6 +3,7 @@ package org.woodship.luna.db;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,7 +19,7 @@ public abstract class HierarchialEntity<E extends HierarchialEntity<E>> implemen
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	protected String id;
+	protected Long id;
 
 	@Version
 	protected Integer version;
@@ -32,11 +33,11 @@ public abstract class HierarchialEntity<E extends HierarchialEntity<E>> implemen
 	public HierarchialEntity() {
 	}
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

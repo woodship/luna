@@ -208,7 +208,7 @@ public class EntitySubTable<E extends IdEntity<E>> extends CustomField<List<E>> 
 								try {
 									table.setEditable(true);
 									E bean = entityClass.newInstance();
-									bean.setId(java.util.UUID.randomUUID().toString());
+									bean.setId(System.currentTimeMillis());
 									container.addBean(bean);
 									edited = true;
 								} catch (Exception e) {
