@@ -58,4 +58,5 @@ vaadin + spring + shiro + hibernate + h2 +osgi + maven
 
 6.如何保持自己的fork与原始库的同步：再建立一个指向原始库的remote,然后fetch,merge
 
-
+#更多资料
+https://github.com/woodship/luna/wiki
