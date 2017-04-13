@@ -1,0 +1,20 @@
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <servlet>
+        <servlet-name>VaadinApplication</servlet-name>
+        <servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
+        <init-param>
+            <description>luna_osgi UI</description>
+            <param-name>UI</param-name>
+            <param-value>org.woodship.luna_osgi.UI_MainFrame.MainFrame</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>VaadinApplication</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            60
+        </session-timeout>
+    </session-config>
+</web-app>
